@@ -19,7 +19,11 @@ const config: Config = {
 
   i18n: {
     defaultLocale: 'zh-TW',
-    locales: ['zh-TW'],
+    locales: ['zh-TW', 'en'],
+    localeConfigs: {
+      'zh-TW': { label: '繁體中文' },
+      en: { label: 'English' },
+    },
   },
 
   markdown: {
@@ -51,10 +55,11 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Sentinel',
+      title: '',
       logo: {
-        alt: 'Sentinel Logo',
-        src: 'img/logo.svg',
+        alt: 'Sentinel',
+        src: 'img/sentinel-lockup.svg',
+        srcDark: 'img/sentinel-lockup-dark.svg',
       },
       items: [
         {
@@ -62,6 +67,10 @@ const config: Config = {
           sidebarId: 'sentinelSidebar',
           position: 'left',
           label: '文件',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/cooloo9871/Sentinel',

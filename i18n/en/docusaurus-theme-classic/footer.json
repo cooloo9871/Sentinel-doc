@@ -1,0 +1,30 @@
+{
+  "link.item.label.快速開始": {
+    "message": "Quick Start",
+    "description": "The label of footer link with label=快速開始"
+  },
+  "link.item.label.安裝與部署": {
+    "message": "Installation",
+    "description": "The label of footer link with label=安裝與部署"
+  },
+  "link.item.label.功能操作教學": {
+    "message": "Feature Tutorials",
+    "description": "The label of footer link with label=功能操作教學"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub"
+  },
+  "link.item.label.Cilium Tetragon": {
+    "message": "Cilium Tetragon",
+    "description": "The label of footer link with label=Cilium Tetragon"
+  },
+  "link.title.文件": {
+    "message": "Documentation",
+    "description": "The title of footer link group with title=文件"
+  },
+  "link.title.相關連結": {
+    "message": "Links",
+    "description": "The title of footer link group with title=相關連結"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "item.label.文件": {
+    "message": "Docs",
+    "description": "Navbar item with label 文件"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "sidebar.sentinelSidebar.category.開始使用": {
+    "message": "Getting Started",
+    "description": "The label for category 開始使用 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.安裝與部署": {
+    "message": "Installation",
+    "description": "The label for category 安裝與部署 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.存取 UI": {
+    "message": "Accessing the UI",
+    "description": "The label for category 存取 UI in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.功能操作教學": {
+    "message": "Feature Tutorials",
+    "description": "The label for category 功能操作教學 in sidebar sentinelSidebar"
+  }
+}
