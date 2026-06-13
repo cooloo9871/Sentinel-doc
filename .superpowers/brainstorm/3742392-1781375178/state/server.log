@@ -1,0 +1,4 @@
+{"type":"server-started","port":55327,"host":"0.0.0.0","url_host":"172.20.7.56","url":"http://172.20.7.56:55327","screen_dir":"/home/bigred/Sentinel-doc/.superpowers/brainstorm/3742392-1781375178/content","state_dir":"/home/bigred/Sentinel-doc/.superpowers/brainstorm/3742392-1781375178/state"}
+{"type":"screen-added","file":"/home/bigred/Sentinel-doc/.superpowers/brainstorm/3742392-1781375178/content/logo-options.html"}
+{"source":"user-event","type":"click","text":"Sentinel\n          TRACING POLICY CONSOLE\n        \n        文件GitHub\n      \n    \n    \n      B — 完整 Lockup（透明背景）推薦\n      使用 lockup 構圖，移除白色背景，圖示 + \"Sentinel\" + \"TRACING POLICY CONSOLE\" 直接融入深色 navbar。去掉獨立 title 文字避免重複。","choice":"b","id":null,"timestamp":1781375259543}
+{"type":"screen-added","file":"/home/bigred/Sentinel-doc/.superpowers/brainstorm/3742392-1781375178/content/waiting-1.html"}

@@ -1,0 +1,118 @@
+<h2>Navbar Logo — 選擇方案</h2>
+<p class="subtitle">三種方式將 Sentinel logo 放入 Docusaurus navbar，請選擇最符合你期望的呈現方式</p>
+
+<style>
+  .navbar-mock {
+    background: #1b1b1d;
+    padding: 0 16px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .navbar-text {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: -apple-system, sans-serif;
+  }
+  .navbar-links {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+    color: #ccc;
+    font-size: 14px;
+    font-family: -apple-system, sans-serif;
+  }
+  .logo-icon-box {
+    background: #fff;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .badge {
+    display: inline-block;
+    background: #3578e5;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+</style>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="navbar-mock">
+        <!-- Icon only, with white background box -->
+        <div class="logo-icon-box">
+          <svg width="26" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 7 L85 21 V51 C85 71 69 85 50 93 C31 85 15 71 15 51 V21 Z" fill="#0B0F19"/>
+            <path d="M50 16 L77 27 V51 C77 66 65 77 50 84 C35 77 23 66 23 51 V27 Z" fill="#FFFFFF"/>
+            <path d="M31 50 Q50 35 69 50 Q50 65 31 50 Z" fill="none" stroke="#0B0F19" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="50" cy="50" r="7.5" fill="#0B0F19"/><circle cx="50" cy="50" r="2.6" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <span class="navbar-text">Sentinel</span>
+        <div class="navbar-links"><span>文件</span><span>GitHub</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 圖示 + 文字標題</h3>
+      <p>左方放 sentinel-logo-black.svg icon（白色背景小框），右側保留 "Sentinel" 文字。最接近目前 Docusaurus 預設排版。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="navbar-mock">
+        <!-- Lockup with transparent background (no white box) -->
+        <svg width="160" height="40" viewBox="0 0 360 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(8,8) scale(0.8)">
+            <path d="M50 7 L85 21 V51 C85 71 69 85 50 93 C31 85 15 71 15 51 V21 Z" fill="#ffffff"/>
+            <path d="M50 16 L77 27 V51 C77 66 65 77 50 84 C35 77 23 66 23 51 V27 Z" fill="#1b1b1d"/>
+            <path d="M31 50 Q50 35 69 50 Q50 65 31 50 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="50" cy="50" r="7.5" fill="#ffffff"/><circle cx="50" cy="50" r="2.6" fill="#1b1b1d"/>
+          </g>
+          <text x="96" y="52" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="38" font-weight="600" fill="#ffffff">Sentinel</text>
+          <text x="97" y="74" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" letter-spacing="3" fill="#aaaaaa">TRACING POLICY CONSOLE</text>
+        </svg>
+        <div class="navbar-links"><span>文件</span><span>GitHub</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 完整 Lockup（背景透明化）<span class="badge">推薦</span></h3>
+      <p>使用 sentinel-lockup-light.svg 的構圖，但移除白色背景，直接在深色 navbar 上顯示圖示 + "Sentinel" + "TRACING POLICY CONSOLE"。去掉 navbar title 文字避免重複。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="navbar-mock">
+        <!-- Icon transparent, no white box -->
+        <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 7 L85 21 V51 C85 71 69 85 50 93 C31 85 15 71 15 51 V21 Z" fill="#ffffff"/>
+          <path d="M50 16 L77 27 V51 C77 66 65 77 50 84 C35 77 23 66 23 51 V27 Z" fill="#1b1b1d"/>
+          <path d="M31 50 Q50 35 69 50 Q50 65 31 50 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+          <circle cx="50" cy="50" r="7.5" fill="#ffffff"/><circle cx="50" cy="50" r="2.6" fill="#1b1b1d"/>
+        </svg>
+        <span class="navbar-text">Sentinel</span>
+        <div class="navbar-links"><span>文件</span><span>GitHub</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — 圖示透明背景 + 文字標題</h3>
+      <p>與 A 相同排版，但移除 logo 的白色背景框，讓盾牌圖示直接融入深色 navbar。最簡潔乾淨。</p>
+    </div>
+  </div>
+
+</div>
