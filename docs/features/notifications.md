@@ -1,7 +1,7 @@
 ---
 id: notifications
 title: 安全通知
-sidebar_position: 7
+sidebar_position: 8
 ---
 
 # 安全通知

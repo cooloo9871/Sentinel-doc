@@ -1,7 +1,7 @@
 ---
 id: namespace-view
 title: Namespace 與叢集資訊
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 # Namespace 與叢集資訊

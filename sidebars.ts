@@ -36,6 +36,7 @@ const sidebars: SidebarsConfig = {
         'features/yaml-editor',
         'features/execution-mode',
         'features/behavior-discovery',
+        'features/templates',
         'features/notifications',
         'features/namespace-view',
       ],

@@ -1,7 +1,7 @@
 ---
 id: namespace-view
 title: Namespace & Cluster Info
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 # Namespace & Cluster Info
