@@ -35,6 +35,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
+          exclude: ['**/superpowers/**'],
         },
         blog: false,
         theme: {
