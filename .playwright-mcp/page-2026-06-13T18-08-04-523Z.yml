@@ -1,0 +1,118 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e6]:
+        - generic [ref=e8]:
+          - img "Sentinel" [ref=e9]
+          - generic [ref=e10]: Sentinel
+        - generic [ref=e11]:
+          - list [ref=e14]:
+            - listitem [ref=e15]:
+              - link "Dashboard" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard
+          - generic [ref=e17]:
+            - generic [ref=e18]: Policies
+            - list [ref=e20]:
+              - listitem [ref=e21]:
+                - link "TracingPolicy" [ref=e22] [cursor=pointer]:
+                  - /url: /policies/tracing
+              - listitem [ref=e23]:
+                - link "Behavior Discovery" [ref=e24] [cursor=pointer]:
+                  - /url: /security/discovery
+              - listitem [ref=e25]:
+                - link "Templates" [ref=e26] [cursor=pointer]:
+                  - /url: /policies/templates
+          - generic [ref=e27]:
+            - generic [ref=e28]: Notifications
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Security Events" [ref=e32] [cursor=pointer]:
+                  - /url: /security/events
+          - generic [ref=e33]:
+            - generic [ref=e34]: Cluster
+            - list [ref=e36]:
+              - listitem [ref=e37]:
+                - link "Namespaces" [ref=e38] [cursor=pointer]:
+                  - /url: /cluster/namespaces
+              - listitem [ref=e39]:
+                - link "Tetragon Agents" [ref=e40] [cursor=pointer]:
+                  - /url: /cluster/tetragon
+          - generic [ref=e41]:
+            - generic [ref=e42]: Settings
+            - list [ref=e44]:
+              - listitem [ref=e45]:
+                - link "Users" [ref=e46] [cursor=pointer]:
+                  - /url: /settings/users
+      - main [ref=e47]:
+        - generic [ref=e48]:
+          - button "Toggle Sidebar" [ref=e49]:
+            - img
+            - generic [ref=e50]: Toggle Sidebar
+          - navigation "breadcrumb" [ref=e51]:
+            - list [ref=e52]:
+              - listitem [ref=e53]:
+                - link "Home" [ref=e54] [cursor=pointer]:
+                  - /url: /dashboard
+              - listitem [ref=e55]:
+                - img [ref=e56]
+              - listitem [ref=e58]:
+                - link "Policies" [ref=e59] [cursor=pointer]:
+                  - /url: /policies
+              - listitem [ref=e60]:
+                - img [ref=e61]
+              - listitem [ref=e63]:
+                - link "TracingPolicy" [ref=e105] [cursor=pointer]:
+                  - /url: /policies/tracing
+              - listitem [ref=e106]:
+                - img [ref=e107]
+              - listitem [ref=e109]:
+                - link "New Policy" [disabled] [ref=e110]
+          - generic [ref=e65]:
+            - generic [ref=e66]: MONITORING
+            - generic [ref=e67]: admin
+            - button "Sign out" [ref=e68]
+        - main [ref=e69]:
+          - generic [ref=e111]:
+            - heading "New Policy" [level=4] [ref=e113]
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: Mode
+                - combobox [ref=e117]:
+                  - generic: Monitoring
+                  - img
+              - button "Cancel" [ref=e118]
+              - button "Save Changes" [ref=e119]
+          - generic [ref=e120]:
+            - tablist [ref=e121]:
+              - tab "Form" [ref=e122]
+              - tab "YAML" [active] [selected] [ref=e123]
+            - tabpanel "YAML" [ref=e190]:
+              - code [ref=e194]:
+                - generic [ref=e195]:
+                  - textbox "Editor content"
+                  - textbox [ref=e196]
+                  - generic [ref=e198]:
+                    - generic [ref=e201]: "1"
+                    - generic [ref=e203]: "2"
+                    - generic [ref=e204]:
+                      - generic [ref=e205] [cursor=pointer]: 
+                      - generic [ref=e206]: "3"
+                    - generic [ref=e208]: "4"
+                    - generic [ref=e210]: "5"
+                    - generic [ref=e211]:
+                      - generic [ref=e212] [cursor=pointer]: 
+                      - generic [ref=e213]: "6"
+                    - generic [ref=e215]: "7"
+                    - generic [ref=e217]: "8"
+                  - generic [ref=e231]:
+                    - generic [ref=e233]: "apiVersion: cilium.io/v1alpha1"
+                    - generic [ref=e235]: "kind: TracingPolicyNamespaced"
+                    - generic [ref=e237]: "metadata:"
+                    - generic [ref=e239]: "name: demo-policy"
+                    - generic [ref=e241]: "namespace: default"
+                    - generic [ref=e243]: "spec:"
+                    - generic [ref=e245]: "kprobes: []"
+    - region "Notifications alt+T"
+  - generic [ref=e250]:
+    - alert
+    - alert

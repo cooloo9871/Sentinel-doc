@@ -1,0 +1,90 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - img "Sentinel" [ref=e9]
+        - generic [ref=e10]: Sentinel
+      - generic [ref=e11]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - link "Dashboard" [ref=e16] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e17]:
+          - generic [ref=e18]: Policies
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - link "TracingPolicy" [ref=e22] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e23]:
+              - link "Behavior Discovery" [ref=e24] [cursor=pointer]:
+                - /url: /security/discovery
+            - listitem [ref=e25]:
+              - link "Templates" [ref=e26] [cursor=pointer]:
+                - /url: /policies/templates
+        - generic [ref=e27]:
+          - generic [ref=e28]: Notifications
+          - list [ref=e30]:
+            - listitem [ref=e31]:
+              - link "Security Events" [ref=e32] [cursor=pointer]:
+                - /url: /security/events
+        - generic [ref=e33]:
+          - generic [ref=e34]: Cluster
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "Namespaces" [ref=e38] [cursor=pointer]:
+                - /url: /cluster/namespaces
+            - listitem [ref=e39]:
+              - link "Tetragon Agents" [ref=e40] [cursor=pointer]:
+                - /url: /cluster/tetragon
+        - generic [ref=e41]:
+          - generic [ref=e42]: Settings
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - link "Users" [ref=e46] [cursor=pointer]:
+                - /url: /settings/users
+    - main [ref=e47]:
+      - generic [ref=e48]:
+        - button "Toggle Sidebar" [ref=e49]:
+          - img
+          - generic [ref=e50]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e51]:
+          - list [ref=e52]:
+            - listitem [ref=e53]:
+              - link "Home" [ref=e54] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e55]:
+              - img [ref=e56]
+            - listitem [ref=e58]:
+              - link "Policies" [ref=e59] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e60]:
+              - img [ref=e61]
+            - listitem [ref=e63]:
+              - link "Behavior Discovery" [disabled] [ref=e64]
+        - generic [ref=e65]:
+          - generic [ref=e66]: MONITORING
+          - generic [ref=e67]: admin
+          - button "Sign out" [ref=e68]
+      - main [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - heading "Behavior Discovery" [level=4] [ref=e72]
+            - paragraph [ref=e73]: Process behaviors learned from the Tetragon base sensor. No policy required.
+          - button "Clear All" [ref=e74]:
+            - img
+            - text: Clear All
+        - generic [ref=e75]:
+          - combobox [ref=e76]:
+            - generic: All Namespaces
+            - img
+          - generic [ref=e77]:
+            - img [ref=e78]
+            - textbox "Search pod..." [ref=e81]
+          - button "Group by namespace" [ref=e82]:
+            - img
+          - generic [ref=e83]: 0 workloads · 0 pods total
+        - generic [ref=e84]:
+          - img [ref=e85]
+          - paragraph [ref=e88]: Listening for process activity...
+          - paragraph [ref=e89]: Pod behaviors appear automatically as processes run across the cluster.
+  - region "Notifications alt+T"

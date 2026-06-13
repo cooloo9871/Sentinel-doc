@@ -1,0 +1,105 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - img "Sentinel" [ref=e9]
+        - generic [ref=e10]: Sentinel
+      - generic [ref=e11]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - link "Dashboard" [ref=e16] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e17]:
+          - generic [ref=e18]: Policies
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - link "TracingPolicy" [ref=e22] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e23]:
+              - link "Behavior Discovery" [ref=e24] [cursor=pointer]:
+                - /url: /security/discovery
+            - listitem [ref=e25]:
+              - link "Templates" [ref=e26] [cursor=pointer]:
+                - /url: /policies/templates
+        - generic [ref=e27]:
+          - generic [ref=e28]: Notifications
+          - list [ref=e30]:
+            - listitem [ref=e31]:
+              - link "Security Events" [ref=e32] [cursor=pointer]:
+                - /url: /security/events
+        - generic [ref=e33]:
+          - generic [ref=e34]: Cluster
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "Namespaces" [ref=e38] [cursor=pointer]:
+                - /url: /cluster/namespaces
+            - listitem [ref=e39]:
+              - link "Tetragon Agents" [ref=e40] [cursor=pointer]:
+                - /url: /cluster/tetragon
+        - generic [ref=e41]:
+          - generic [ref=e42]: Settings
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - link "Users" [ref=e46] [cursor=pointer]:
+                - /url: /settings/users
+    - main [ref=e47]:
+      - generic [ref=e48]:
+        - button "Toggle Sidebar" [ref=e49]:
+          - img
+          - generic [ref=e50]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e51]:
+          - list [ref=e52]:
+            - listitem [ref=e53]:
+              - link "Home" [ref=e54] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e55]:
+              - img [ref=e56]
+            - listitem [ref=e58]:
+              - link "Policies" [ref=e59] [cursor=pointer]:
+                - /url: /policies
+            - listitem [ref=e60]:
+              - img [ref=e61]
+            - listitem [ref=e63]:
+              - link "TracingPolicy" [disabled] [ref=e64]
+        - generic [ref=e65]:
+          - generic [ref=e66]: MONITORING
+          - generic [ref=e67]: admin
+          - button "Sign out" [ref=e68]
+      - main [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e72]:
+            - paragraph [ref=e73]: Global Protect Mode
+            - paragraph [ref=e74]: Turn on to enforce all policies; turn off to monitor only
+            - generic [ref=e75]:
+              - generic [ref=e76]: "OFF"
+              - generic [ref=e77]: Protect mode is off — monitoring only, no blocking
+          - button "Turn On" [ref=e78]
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - heading "TracingPolicy" [level=4] [ref=e81]
+            - paragraph [ref=e82]: Manage Cilium tracing policies
+          - button "+ New Policy" [ref=e83]
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - textbox "Search policy name..." [ref=e87]
+            - combobox [ref=e88]:
+              - generic: All Scopes
+              - img
+            - combobox [ref=e89]:
+              - generic: All Namespaces
+              - img
+            - generic [ref=e90]: 0 results
+          - table [ref=e92]:
+            - rowgroup [ref=e93]:
+              - row "Name Scope Mode Namespace Created By Created Time Actions" [ref=e94]:
+                - columnheader "Name" [ref=e95]
+                - columnheader "Scope" [ref=e96]
+                - columnheader "Mode" [ref=e97]
+                - columnheader "Namespace" [ref=e98]
+                - columnheader "Created By" [ref=e99]
+                - columnheader "Created Time" [ref=e100]
+                - columnheader "Actions" [ref=e101]
+            - rowgroup [ref=e102]:
+              - row "No policies found" [ref=e103]:
+                - cell "No policies found" [ref=e104]
+  - region "Notifications alt+T"

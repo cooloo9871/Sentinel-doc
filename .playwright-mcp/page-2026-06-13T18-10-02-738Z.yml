@@ -1,0 +1,82 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - img "Sentinel" [ref=e9]
+        - generic [ref=e10]: Sentinel
+      - generic [ref=e11]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - link "Dashboard" [ref=e16] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e17]:
+          - generic [ref=e18]: Policies
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - link "TracingPolicy" [ref=e22] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e23]:
+              - link "Behavior Discovery" [ref=e24] [cursor=pointer]:
+                - /url: /security/discovery
+            - listitem [ref=e25]:
+              - link "Templates" [ref=e26] [cursor=pointer]:
+                - /url: /policies/templates
+        - generic [ref=e27]:
+          - generic [ref=e28]: Notifications
+          - list [ref=e30]:
+            - listitem [ref=e31]:
+              - link "Security Events" [ref=e32] [cursor=pointer]:
+                - /url: /security/events
+        - generic [ref=e33]:
+          - generic [ref=e34]: Cluster
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "Namespaces" [ref=e38] [cursor=pointer]:
+                - /url: /cluster/namespaces
+            - listitem [ref=e39]:
+              - link "Tetragon Agents" [ref=e40] [cursor=pointer]:
+                - /url: /cluster/tetragon
+        - generic [ref=e41]:
+          - generic [ref=e42]: Settings
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - link "Users" [ref=e46] [cursor=pointer]:
+                - /url: /settings/users
+    - main [ref=e47]:
+      - generic [ref=e48]:
+        - button "Toggle Sidebar" [ref=e49]:
+          - img
+          - generic [ref=e50]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e51]:
+          - list [ref=e52]:
+            - listitem [ref=e53]:
+              - link "Home" [ref=e54] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e55]:
+              - img [ref=e56]
+            - listitem [ref=e58]:
+              - link "settings" [ref=e59] [cursor=pointer]:
+                - /url: /settings
+            - listitem [ref=e60]:
+              - img [ref=e61]
+            - listitem [ref=e63]:
+              - link "users" [disabled] [ref=e64]
+        - generic [ref=e65]:
+          - generic [ref=e66]: MONITORING
+          - generic [ref=e67]: admin
+          - button "Sign out" [ref=e68]
+      - main [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - heading "Users" [level=4] [ref=e72]
+            - paragraph [ref=e73]: Local dashboard user accounts.
+          - button "+ New User" [ref=e74]
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: admin
+            - generic [ref=e80]: admin
+            - generic [ref=e81]: You
+          - generic [ref=e82]:
+            - generic [ref=e83]: 6/14/2026
+            - button "Change Password" [ref=e84]
+  - region "Notifications alt+T"

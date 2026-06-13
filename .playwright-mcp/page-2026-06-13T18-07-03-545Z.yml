@@ -1,0 +1,145 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - img "Sentinel" [ref=e9]
+        - generic [ref=e10]: Sentinel
+      - generic [ref=e11]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - link "Dashboard" [ref=e16] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e17]:
+          - generic [ref=e18]: Policies
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - link "TracingPolicy" [ref=e22] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e23]:
+              - link "Behavior Discovery" [ref=e24] [cursor=pointer]:
+                - /url: /security/discovery
+            - listitem [ref=e25]:
+              - link "Templates" [ref=e26] [cursor=pointer]:
+                - /url: /policies/templates
+        - generic [ref=e27]:
+          - generic [ref=e28]: Notifications
+          - list [ref=e30]:
+            - listitem [ref=e31]:
+              - link "Security Events" [ref=e32] [cursor=pointer]:
+                - /url: /security/events
+        - generic [ref=e33]:
+          - generic [ref=e34]: Cluster
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "Namespaces" [ref=e38] [cursor=pointer]:
+                - /url: /cluster/namespaces
+            - listitem [ref=e39]:
+              - link "Tetragon Agents" [ref=e40] [cursor=pointer]:
+                - /url: /cluster/tetragon
+        - generic [ref=e41]:
+          - generic [ref=e42]: Settings
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - link "Users" [ref=e46] [cursor=pointer]:
+                - /url: /settings/users
+    - main [ref=e47]:
+      - generic [ref=e48]:
+        - button "Toggle Sidebar" [ref=e49]:
+          - img
+          - generic [ref=e50]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e51]:
+          - list [ref=e52]:
+            - listitem [ref=e53]:
+              - link "Home" [ref=e54] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e55]:
+              - img [ref=e56]
+            - listitem [ref=e58]:
+              - link "Policies" [ref=e59] [cursor=pointer]:
+                - /url: /policies
+            - listitem [ref=e60]:
+              - img [ref=e61]
+            - listitem [ref=e63]:
+              - link "TracingPolicy" [ref=e105] [cursor=pointer]:
+                - /url: /policies/tracing
+            - listitem [ref=e106]:
+              - img [ref=e107]
+            - listitem [ref=e109]:
+              - link "New Policy" [disabled] [ref=e110]
+        - generic [ref=e65]:
+          - generic [ref=e66]: MONITORING
+          - generic [ref=e67]: admin
+          - button "Sign out" [ref=e68]
+      - main [ref=e69]:
+        - generic [ref=e111]:
+          - heading "New Policy" [level=4] [ref=e113]
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e116]: Mode
+              - combobox [ref=e117]:
+                - generic: Monitoring
+                - img
+            - button "Cancel" [ref=e118]
+            - button "Save Changes" [ref=e119]
+        - generic [ref=e120]:
+          - tablist [ref=e121]:
+            - tab "Form" [selected] [ref=e122]
+            - tab "YAML" [ref=e123]
+          - tabpanel "Form" [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - generic [ref=e127]:
+                  - generic [ref=e129]: Basic Information
+                  - generic [ref=e131]:
+                    - generic [ref=e132]:
+                      - generic [ref=e133]:
+                        - text: Policy Name
+                        - generic [ref=e134]: "*"
+                      - textbox "Policy Name *" [ref=e135]:
+                        - /placeholder: my-policy
+                    - generic [ref=e136]:
+                      - generic [ref=e137]: Namespace
+                      - combobox [ref=e138]:
+                        - generic: default
+                        - img
+                - generic [ref=e139]:
+                  - generic [ref=e141]: Pod Selector
+                  - generic [ref=e142]:
+                    - paragraph [ref=e143]: Target specific pods by label. Leave empty to apply to all pods in the namespace.
+                    - button "+ Add Label" [ref=e146]
+                - generic [ref=e147]:
+                  - generic [ref=e149]: Process Rules
+                  - generic [ref=e150]:
+                    - generic [ref=e151]:
+                      - generic [ref=e152]: Mode
+                      - combobox [ref=e153]:
+                        - generic: NotPostfix — Whitelist
+                        - img
+                      - paragraph [ref=e154]: "Whitelist: only the binaries you list are allowed to run. Everything else is blocked."
+                    - button "+ Add" [ref=e157]
+                - generic [ref=e158]:
+                  - generic [ref=e160]: File Rules
+                  - generic [ref=e161]:
+                    - paragraph [ref=e162]: "Blacklist: only the paths you list are blocked. Everything else is allowed."
+                    - button "+ Add" [ref=e165]
+                - generic [ref=e166]:
+                  - generic [ref=e168]: Network Rules
+                  - generic [ref=e169]:
+                    - generic [ref=e170]:
+                      - generic [ref=e171]: Mode
+                      - combobox [ref=e172]:
+                        - generic: NotDAddr — Whitelist
+                        - img
+                      - paragraph [ref=e173]: "Whitelist: only connections to the listed addresses (and ports, if set) are allowed. Everything else is blocked."
+                    - paragraph [ref=e174]: Addresses
+                    - button "+ Add" [ref=e177]
+                    - generic [ref=e178]:
+                      - paragraph [ref=e179]: Ports(optional — leave empty to match all ports)
+                      - paragraph [ref=e180]: "DPort: rule triggers only when destination port matches. ANDed with the address condition above."
+                      - button "+ Add Port" [ref=e183]
+              - generic [ref=e185]:
+                - generic [ref=e186]:
+                  - generic [ref=e187]: YAML Preview
+                  - generic [ref=e188]: —
+                - generic [ref=e189]: Enter a policy name to preview…
+  - region "Notifications alt+T"
