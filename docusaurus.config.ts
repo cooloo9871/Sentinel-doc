@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Sentinel',
   tagline: 'Kubernetes Cilium Tetragon TracingPolicy 管理平台',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   future: {
     v4: true,
@@ -55,11 +55,11 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: '',
+      title: 'Sentinel',
       logo: {
         alt: 'Sentinel',
-        src: 'img/sentinel-lockup.svg',
-        srcDark: 'img/sentinel-lockup-dark.svg',
+        src: 'img/sentinel-icon.svg',
+        srcDark: 'img/sentinel-icon-dark.svg',
       },
       items: [
         {
