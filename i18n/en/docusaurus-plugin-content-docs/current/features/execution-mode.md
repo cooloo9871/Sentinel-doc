@@ -17,40 +17,53 @@ Each TracingPolicy in Sentinel supports two execution modes that can be switched
 
 ---
 
-## Per-Policy Mode Setting
+## Method 1: Inline Switch in the Policy List (Fastest)
 
-Each TracingPolicy can have its execution mode set independently at creation time, without affecting other Policies.
+The quickest way to switch modes: on the **Tracing Policy list page**, click the **Mode** column dropdown directly and select `Monitoring` or `Protect`.
 
-**How to set:**
+![Tracing Policy list — Mode column dropdown](/img/features/policy/list.png)
 
-1. When creating a new Policy, select `Monitoring` or `Protect` in the **"Mode"** field
-2. After creation, click **"Edit"** in the Actions column on the TracingPolicy list page at any time to change the mode
-3. Click **"Save Changes"** to save — the Tetragon Agent applies the new mode within seconds
+The Tetragon Agent applies the new mode within seconds — no need to open the edit page or restart any service.
 
 ---
 
-## Global Protect Mode (Bulk Switch)
+## Method 2: In the Create / Edit Page
+
+When creating a new Policy or clicking **"Edit"** from the list, the **Mode** dropdown in the top-right corner of the page sets the execution mode for that Policy.
+
+![Create Policy page — Mode dropdown](/img/features/policy/create.png)
+
+After changing the mode, click **"Save Changes"** to save. The Tetragon Agent applies the change immediately.
+
+---
+
+## Method 3: Global Protect Mode (Bulk Switch)
 
 In addition to switching individual Policy modes one by one, Sentinel provides a **Global Protect Mode** feature that switches all TracingPolicies in the cluster to the same execution mode with one click.
 
-![Global Protect Mode toggle](/img/features/mode/monitoring.png)
+The Global Protect Mode toggle banner is located at the **top of the TracingPolicy list page**.
 
-The Global Protect Mode toggle banner is located at the top of the TracingPolicy page, showing the current global mode status.
+![Global Protect Mode toggle banner](/img/features/mode/monitoring.png)
+
+| State | Banner Text |
+|---|---|
+| **OFF (default)** | "Protect mode is off — monitoring only, no blocking" |
+| **ON** | "Protect mode is on — all policies are enforcing" |
 
 ### Enable Global Protect Mode
 
-**Action:** Click the **"Turn On"** button on the banner
+**Action:** Click the **"Turn On"** button on the banner.
 
-**How it works:** The Sentinel backend receives the request, queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster, and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules — no Agent restart required.
+**How it works:** The Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules — no Agent restart required.
 
 ### Disable Global Protect Mode
 
-**Action:** Click the toggle button on the banner again
+**Action:** Click the **"Turn Off"** button on the banner.
 
 **How it works:** Sentinel batch-reverts all TracingPolicy `mode` fields in the cluster to `Monitoring`. After the Tetragon Agent receives the update, it immediately switches back to record-only mode and stops blocking all behavior.
 
 ---
 
 :::warning
-Before enabling Global Protect Mode, make absolutely sure all TracingPolicies in the cluster have been thoroughly validated. If a rule is incorrectly configured (e.g., a Whitelist is missing a required executable path), switching to Protect mode may block legitimate business traffic or critical services, causing service outages. We recommend validating in a test environment first, or switching Policies to Protect mode one by one to confirm no issues before enabling the global switch.
+Before enabling Global Protect Mode, make absolutely sure all TracingPolicies in the cluster have been thoroughly validated. If a rule is incorrectly configured (e.g., a Whitelist is missing a required executable path), switching to Protect mode may block legitimate business traffic or critical services, causing service outages. We recommend validating in a test environment first, or using Method 1 to switch Policies to Protect mode one by one to confirm no issues before enabling the global switch.
 :::

@@ -1,67 +1,77 @@
 ---
 id: notifications
-title: 安全通知
+title: Security Events
 sidebar_position: 8
 ---
 
-# 安全通知
+# Security Events
 
 ## 功能說明
 
-安全通知頁面（Security Events）以即時串流方式顯示 Tetragon 偵測到的 kprobe 事件，包含所有違反 TracingPolicy 規則的安全事件。無論是 Monitoring 模式下記錄的行為，或是 Protect 模式下被阻擋的操作，皆會在此頁面即時呈現。
+Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe 事件，包含所有違反 TracingPolicy 規則的安全事件。無論是 Monitoring 模式下記錄的行為，或是 Protect 模式下被阻擋的操作，皆會在此頁面即時呈現。
 
 ---
 
 ## 即時串流原理
 
-後端透過 **Server-Sent Events（SSE）** 技術，建立一條從伺服器到瀏覽器的單向持久連線，持續將 Tetragon 偵測到的新事件推送至前端頁面。瀏覽器無需定期輪詢（polling），可大幅降低伺服器負載，並確保事件以最低延遲呈現在畫面上。
+後端透過 **Server-Sent Events（SSE）** 技術，建立一條從伺服器到瀏覽器的單向持久連線，持續將 Tetragon 偵測到的新事件推送至前端頁面，無需定期輪詢（polling），確保事件以最低延遲呈現。
 
 ---
 
 ## 查看安全事件
 
-進入「**Security Events**」頁面後，所有即時事件會以時間序列方式列出，最新事件顯示於最上方。
+進入「**Security Events**」頁面後，事件會以時間倒序列出，最新事件顯示於最上方。
 
 ![Security Events 頁面](/img/features/notifications/list.png)
 
-**頁面元素說明：**
+**頁面頂部工具列說明：**
 
-- **Live 指示燈**：頁面頂部的綠色 Live 指示燈代表 SSE 連線正常，事件正在即時接收中；若指示燈轉為灰色或顯示「Disconnected」，表示連線中斷，需重新整理頁面以重建連線
-- **事件統計**：頂部橫幅顯示目前累計的事件數量，依嚴重性分為 Events（總數）、Warning（警告）、Critical（危急）三類計數
-- **⏸ Pause 按鈕**：點擊後暫停事件串流，頁面停止自動捲動並凍結目前的事件列表，方便使用者仔細審閱當前事件內容；再次點擊即可恢復即時接收
+| 元素 | 說明 |
+|---|---|
+| **Live 指示燈** | 綠色動態燈號代表 SSE 連線正常，事件正在即時接收中 |
+| **⏸ Pause** | 點擊後暫停事件串流，頁面凍結目前列表方便審閱；再次點擊恢復即時接收 |
+| **Export CSV** | 將目前顯示的事件列表匯出為 CSV 檔案，方便離線分析或存檔 |
+
+**事件統計列：** 顯示目前資料庫中的事件總數、Warning 數量與 Critical 數量。
 
 ---
 
 ## 過濾事件
 
-當事件數量龐大時，可使用過濾功能縮小顯示範圍，快速定位關注的事件。
-
-![過濾器（Namespace、搜尋框）](/img/features/notifications/filter.png)
-
-**三種過濾器說明：**
+頁面上方提供三種過濾器，可同時套用（AND 邏輯）：
 
 | 過濾器 | 說明 |
 |---|---|
-| **Namespace 篩選** | 從下拉選單選擇特定 Namespace，僅顯示該 Namespace 內 Pod 產生的事件 |
-| **Pod 名稱搜尋** | 在搜尋框輸入 Pod 名稱關鍵字，即時篩選符合條件的事件列表 |
-| **事件類型** | 切換顯示範圍：`All Events`（全部）、`Process`（行程事件）、`File`（檔案存取事件）、`Network`（網路連線事件） |
+| **Search pod name...** | 輸入 Pod 名稱關鍵字即時篩選 |
+| **All Namespaces** | 從下拉選單選擇特定 Namespace，僅顯示該 Namespace 內的事件 |
+| **All Events** | 切換事件類型：`All Events`（全部）、`Process`（行程事件）、`File`（檔案存取事件）、`Network`（網路連線事件） |
 
-多個過濾器可同時套用，條件之間為 AND 邏輯（同時符合所有條件才顯示）。
+---
+
+## 事件表格欄位
+
+| 欄位 | 說明 |
+|---|---|
+| **Severity** | 嚴重性等級：`Warning` 或 `Critical` |
+| **Rule / Detail** | 觸發事件的規則類型（Process Rule / File Rule / Network Rule）及相關摘要，例如執行的 binary 名稱或連線目標 IP |
+| **Namespace** | 觸發事件的 Pod 所在 Namespace |
+| **Pod / Container** | 觸發事件的 Pod 名稱與 Container 名稱 |
+| **Policy** | 匹配到此事件的 TracingPolicy 名稱 |
+| **Time** | 事件發生的時間（相對時間，例如「just now」、「5m ago」） |
+
+**點擊任意事件列**可展開該事件的詳細資訊面板，顯示 binary 完整路徑、Container 名稱、連線來源與目標等原始資料。
 
 ---
 
 ## 事件嚴重性分類
 
-每筆安全事件都會依照偵測到的行為類型自動標記嚴重性等級：
-
 | 等級 | 說明 |
 |---|---|
-| **Info** | 一般監控事件，屬於正常範圍內的行為記錄，無立即威脅 |
-| **Warning** | 潛在異常行為，例如存取非預期的檔案路徑或發起異常網路連線，需進一步審查 |
-| **Critical** | 高危操作，例如嘗試執行特權程式、存取高度敏感的系統檔案（`/etc/shadow`、`/root/.ssh/`）或嘗試連線至已知惡意 IP，需立即處理 |
+| **Warning** | 潛在異常行為，例如執行非預期的程式、存取非預期的檔案路徑，或發起異常網路連線，需進一步審查 |
+| **Critical** | 高危操作，例如嘗試執行特權程式、存取高度敏感的系統檔案（`/etc/shadow`、`/root/.ssh/`）或連線至已知惡意 IP，需立即處理 |
 
 ---
 
 :::info
-安全事件資料庫的保留期限為 **7 天**。超過 7 天的歷史事件會由系統自動清除，以控制資料庫儲存空間的使用量。若需要長期保存事件記錄，請考慮在 Sentinel 設定中啟用事件匯出功能，將事件轉送至外部日誌系統（如 Elasticsearch 或 Loki）進行長期存檔。
+安全事件的保留數量與天數可在「**Settings → Event Retention**」頁面進行調整。預設保留最多 500 筆 Warning 事件、300 筆 Critical 事件，TTL 為 7 天。
 :::

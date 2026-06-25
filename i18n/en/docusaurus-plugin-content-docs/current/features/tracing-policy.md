@@ -21,11 +21,21 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 
 ![TracingPolicy list page](/img/features/policy/list.png)
 
+**Search and filter bar:**
+
+| Element | Description |
+|---|---|
+| **Search policy name...** | Enter a keyword to instantly filter policies by name |
+| **All Scopes** | Filter by scope: `All Scopes`, `cluster`, or `namespaced` |
+| **All Namespaces** | Filter by Namespace (only applies to Namespace-scoped policies) |
+
+**Table columns:**
+
 | Column | Description |
 |---|---|
 | **Name** | The resource name of the TracingPolicy |
 | **Scope** | Scope: `cluster` (cluster-level) or `namespaced` (Namespace-level) |
-| **Mode** | Execution mode: `Monitoring` (record only) or `Protect` (record and block) |
+| **Mode** | Execution mode dropdown — click to switch between `Monitoring` and `Protect` directly in the list |
 | **Namespace** | The Namespace a Namespace-scoped Policy belongs to; blank for Cluster-scoped |
 | **Created By** | The user account that created this Policy |
 | **Created Time** | The creation timestamp of the Policy |
@@ -43,11 +53,11 @@ Form field descriptions:
 
 - **Policy Name** (required): Resource name of the TracingPolicy; must follow Kubernetes naming conventions (lowercase letters, numbers, and hyphens)
 - **Namespace**: Select the target Namespace for this Policy; leave blank to create a Cluster-scoped Policy
-- **Mode**: Select the initial execution mode; for initial deployment, `Monitoring` mode is recommended so you can observe behavior before switching to `Protect`
+- **Mode** (top-right dropdown): Select the initial execution mode; `Monitoring` mode is recommended for initial deployment so you can observe behavior before switching to `Protect`
 
 Click **"Save Changes"** when done.
 
-**How it works:** Sentinel automatically generates the corresponding TracingPolicyNamespaced YAML structure from the form data and creates the resource in the cluster via the Kubernetes API Server. The Tetragon Agent applies the new policy within seconds.
+**How it works:** Sentinel automatically generates the corresponding TracingPolicy or TracingPolicyNamespaced YAML from the form data and creates the resource in the cluster via the Kubernetes API Server. The Tetragon Agent applies the new policy within seconds.
 
 ---
 
@@ -57,10 +67,15 @@ The top of the TracingPolicy page contains a **Global Protect Mode** banner that
 
 ![Global Protect Mode toggle](/img/features/mode/monitoring.png)
 
-**How to use:**
+| State | Banner Text | Effect |
+|---|---|---|
+| **OFF (default)** | "Protect mode is off — monitoring only, no blocking" | All Policies record events only; no blocking |
+| **ON** | "Protect mode is on — all policies are enforcing" | All Policies simultaneously switch to Protect mode |
 
-1. When Global Protect Mode is off, the banner shows a **"Turn On"** button
-2. Click "Turn On" — Sentinel batch-updates the `mode` field of all TracingPolicies in the cluster to `Protect`
-3. The Tetragon Agent takes effect immediately upon receiving the Policy update event, blocking all behavior that violates the rules
+Click **"Turn On"** — Sentinel batch-updates the `mode` field of all TracingPolicies to `Protect`. The Tetragon Agent takes effect immediately.
 
-**To disable:** Click the toggle button again. Sentinel batch-reverts all Policy `mode` fields to `Monitoring`, restoring record-only mode and stopping any blocking.
+Click **"Turn Off"** — Sentinel batch-reverts all Policy `mode` fields to `Monitoring`, restoring record-only mode.
+
+:::warning
+Before enabling Global Protect Mode, make sure all TracingPolicies have been thoroughly validated. If a Whitelist is missing required executable paths, switching to Protect mode may block legitimate services. Switch Policies one by one first to confirm no issues before using the global switch.
+:::

@@ -14,52 +14,66 @@ The Security Events page displays kprobe events detected by Tetragon in a real-t
 
 ## Real-Time Streaming
 
-The backend uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing newly detected events to the frontend. The browser does not need to poll, which significantly reduces server load and ensures events appear on screen with minimal latency.
+The backend uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing newly detected Tetragon events to the frontend — no polling required, ensuring events appear with minimal latency.
 
 ---
 
 ## Viewing Security Events
 
-Navigate to the **"Security Events"** page. All real-time events are listed in chronological order with the latest event at the top.
+Navigate to the **"Security Events"** page. Events are listed in reverse chronological order with the most recent at the top.
 
 ![Security Events page](/img/features/notifications/list.png)
 
-**Page elements:**
+**Toolbar elements:**
 
-- **Live indicator**: The green Live indicator at the top of the page means the SSE connection is active and events are being received in real time. If it turns gray or shows "Disconnected", the connection has been interrupted — refresh the page to re-establish the connection
-- **Event statistics**: The top banner shows the current cumulative event counts, categorized as Events (total), Warning, and Critical
-- **⏸ Pause button**: Click to pause the event stream — the page stops auto-scrolling and freezes the current event list, making it easier to review events carefully; click again to resume live reception
+| Element | Description |
+|---|---|
+| **Live indicator** | Green animated dot means the SSE connection is active and events are being received in real time |
+| **⏸ Pause** | Click to pause the event stream; the page freezes the current list for easier review. Click again to resume |
+| **Export CSV** | Export the currently displayed event list as a CSV file for offline analysis or archiving |
+
+**Event statistics row:** Shows the total event count in the database, broken down by Warning and Critical.
 
 ---
 
 ## Filtering Events
 
-When there are many events, use the filter features to narrow the display and quickly locate events of interest.
-
-![Filters (Namespace, search box)](/img/features/notifications/filter.png)
+Three filters at the top of the page can be applied simultaneously (AND logic):
 
 | Filter | Description |
 |---|---|
-| **Namespace filter** | Select a specific Namespace from the dropdown to show only events from Pods in that Namespace |
-| **Pod name search** | Enter a Pod name keyword in the search box to instantly filter matching events |
-| **Event type** | Switch between `All Events`, `Process`, `File`, and `Network` event types |
+| **Search pod name...** | Enter a Pod name keyword to instantly filter matching events |
+| **All Namespaces** | Select a specific Namespace from the dropdown to show only events from that Namespace |
+| **All Events** | Switch event type: `All Events`, `Process` (process events), `File` (file access events), `Network` (network connection events) |
 
-Multiple filters can be applied simultaneously — they use AND logic (only events matching all conditions are shown).
+---
+
+## Event Table Columns
+
+| Column | Description |
+|---|---|
+| **Severity** | Severity level: `Warning` or `Critical` |
+| **Rule / Detail** | The rule type that triggered the event (Process Rule / File Rule / Network Rule) and a summary — e.g., the binary name executed or the connection destination IP |
+| **Namespace** | The Namespace of the Pod that triggered the event |
+| **Pod / Container** | The Pod name and Container name that triggered the event |
+| **Policy** | The TracingPolicy name that matched this event |
+| **Time** | When the event occurred (relative time, e.g., "just now", "5m ago") |
+
+**Click any event row** to expand an inline detail panel showing the full binary path, container name, connection source and destination, and other raw event data.
+
+![Event detail panel](/img/features/notifications/detail.png)
 
 ---
 
 ## Event Severity Levels
 
-Each security event is automatically tagged with a severity level based on the detected behavior:
-
 | Level | Description |
 |---|---|
-| **Info** | General monitoring events; normal behavior records within expected range, no immediate threat |
-| **Warning** | Potentially anomalous behavior, such as accessing unexpected file paths or initiating unusual network connections; requires further review |
-| **Critical** | High-risk operations, such as attempting to run privileged programs, accessing highly sensitive system files (`/etc/shadow`, `/root/.ssh/`), or attempting to connect to known malicious IPs; requires immediate action |
+| **Warning** | Potentially anomalous behavior — e.g., executing an unexpected program, accessing an unexpected file path, or initiating an unusual network connection. Requires further review |
+| **Critical** | High-risk operations — e.g., attempting to run a privileged program, accessing highly sensitive system files (`/etc/shadow`, `/root/.ssh/`), or connecting to a known malicious IP. Requires immediate action |
 
 ---
 
 :::info
-The security event database retention period is **7 days**. Events older than 7 days are automatically purged by the system to control storage usage. If you need long-term event retention, consider enabling event export in Sentinel settings to forward events to an external logging system (such as Elasticsearch or Loki) for long-term archiving.
+The number of retained events and retention period can be configured under **Settings → Event Retention**. The default is up to 500 Warning events, 300 Critical events, and a TTL of 7 days.
 :::
