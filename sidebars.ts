@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
         'installation/index',
         'installation/job-install',
         'installation/script-install',
+        'login',
       ],
     },
     {
