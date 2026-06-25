@@ -51,7 +51,6 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'features/admission-policy',
-            'features/admission-events',
           ],
         },
         {
@@ -60,6 +59,7 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'features/notifications',
+            'features/admission-events',
           ],
         },
         {

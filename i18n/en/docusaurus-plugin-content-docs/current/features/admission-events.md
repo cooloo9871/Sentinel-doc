@@ -30,24 +30,145 @@ Navigate to **"Admission Events"** to see the list of captured admission violati
 
 ---
 
-## Configuring the Webhook
-
-Admission Events are sourced from the Kubernetes Audit Webhook. Configure the Kubernetes API Server's audit webhook to forward Admission Policy Warning events to Sentinel:
-
-```
-POST /api/admission-events/webhook
-```
-
-Refer to the Kubernetes documentation on [Audit Webhook Backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) and set the webhook URL to Sentinel's `/api/admission-events/webhook` endpoint.
-
----
-
 ## Event Severity
 
 | Severity | Description |
 |---|---|
 | **Warning** | Resource violated an Admission Policy rule but was still admitted because `failurePolicy: Warn` was set |
 | **Critical** | Resource was rejected by the API Server due to an Admission Policy violation (`failurePolicy: Fail`) |
+
+---
+
+## Configuring Kubernetes Audit Log
+
+Admission Events are sourced from the Kubernetes Audit Webhook. The following steps show how to configure Audit Policy and Webhook on a kubeadm-deployed cluster so the API Server forwards Admission Policy violation events to Sentinel.
+
+:::note
+The following steps must be performed on **every control plane node**.
+:::
+
+### Step 1: Create the Audit Policy file
+
+```bash
+sudo nano /etc/kubernetes/audit-policy.yaml
+```
+
+```yaml
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  # Capture only rejected admission requests (VAP violations)
+  - level: Metadata
+    verbs: ["create", "update", "patch", "delete"]
+    omitStages: ["RequestReceived"]
+```
+
+### Step 2: Create the Audit Webhook config file
+
+```bash
+sudo nano /etc/kubernetes/audit-webhook.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Config
+clusters:
+  - name: sentinel
+    cluster:
+      # Replace with your Sentinel service ClusterIP
+      server: http://10.96.83.239/api/admission-events/webhook
+users:
+  - name: sentinel
+contexts:
+  - name: default
+    context:
+      cluster: sentinel
+      user: sentinel
+current-context: default
+```
+
+:::tip
+Replace the IP in the `server` field with your cluster's Sentinel Service ClusterIP. To find it:
+```bash
+kubectl get svc -n <sentinel-namespace>
+```
+:::
+
+### Step 3: Update the kube-apiserver configuration
+
+Edit the kubeadm configmap to add Audit-related extraArgs and extraVolumes:
+
+```bash
+kubectl edit cm -n kube-system kubeadm-config
+```
+
+Under the `ClusterConfiguration.apiServer` section, add:
+
+```yaml
+data:
+  ClusterConfiguration: |
+    apiServer:
+      extraArgs:
+      - name: audit-policy-file
+        value: "/etc/kubernetes/audit-policy.yaml"
+      - name: audit-log-path
+        value: "/var/log/kubernetes/audit-logs.txt"
+      - name: audit-log-maxage
+        value: "10"
+      - name: audit-log-maxbackup
+        value: "2"
+      - name: audit-log-maxsize
+        value: "100"
+      - name: audit-webhook-config-file
+        value: "/etc/kubernetes/audit-webhook.yaml"
+      - name: audit-webhook-batch-max-wait
+        value: "5s"
+      extraVolumes:
+      - name: audit-policy
+        hostPath: /etc/kubernetes/
+        mountPath: /etc/kubernetes/
+        readOnly: true
+      - name: audit-log
+        hostPath: /var/log/kubernetes/
+        mountPath: /var/log/kubernetes/
+```
+
+### Step 4: Apply the configuration to the kube-apiserver static pod
+
+Export the configmap to a file:
+
+```bash
+kubectl get cm -n kube-system kubeadm-config \
+  -o jsonpath={.data.ClusterConfiguration} > config.yaml
+```
+
+Copy `config.yaml` to each control plane node, then apply:
+
+```bash
+sudo kubeadm init phase control-plane apiserver --config ./config.yaml
+```
+
+### Step 5: Restart kubelet and verify the kube-apiserver is updated
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
+Confirm the kube-apiserver container has been recreated:
+
+```bash
+sudo crictl ps --name kube-apiserver
+```
+
+Example output:
+
+```
+CONTAINER           IMAGE               CREATED             STATE     NAME             ATTEMPT
+eff3881e1f2fc       c3994bc6961024...   3 seconds ago       Running   kube-apiserver   0
+```
+
+A `CREATED` time of a few seconds ago confirms the restart was successful.
 
 ---
 
