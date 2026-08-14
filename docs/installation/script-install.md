@@ -107,5 +107,5 @@ kubectl logs -n sentinel-system deployment/sentinel
 ---
 
 :::warning 正式環境注意事項
-腳本執行過程中會自動安裝 Helm 並修改叢集設定（新增 Tetragon、建立 RBAC 資源等）。在**正式環境**中，這類自動化操作可能繞過變更審查流程，建議改用 [Kubernetes Job 安裝](./job-install) 方式，以保有更好的操作透明度與控制性。
+腳本執行過程中會自動安裝 Helm 並修改叢集設定（新增 Tetragon、建立 RBAC 資源等）。在**正式環境**中，這類自動化操作可能繞過變更審查流程，建議改用 [Kubernetes Job 安裝](./job-install.md) 方式，以保有更好的操作透明度與控制性。
 :::

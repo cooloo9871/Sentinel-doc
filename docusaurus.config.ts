@@ -11,8 +11,13 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://your-domain.com',
+  // GitHub Pages（Organization site）：https://sentineldoc.github.io
+  url: 'https://sentineldoc.github.io',
   baseUrl: '/',
+  organizationName: 'sentineldoc',
+  projectName: 'sentineldoc.github.io',
+  deploymentBranch: 'main',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

@@ -24,13 +24,13 @@ Regardless of installation method, confirm the following before starting:
 - Cilium is deployed with kube-proxy replacement and Hubble enabled (see [Installing and Configuring Cilium](./cilium-install.md))
 - Tetragon is installed (see [Installing Tetragon](./tetragon-install.md))
 
-Complete all checks in the [Prerequisites](../prerequisites) page before proceeding.
+Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
 
 After installation, if you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md).
 
 ## Recommendation
 
 :::tip Which method should I use?
-- **Production environments**: Use [Kubernetes Job Installation](./job-install). The Job runs inside the cluster, ensuring network consistency and making it easy to audit and integrate with automation.
-- **Quick evaluation or development**: Use [Local Script Installation](./script-install). The script prints installation progress step by step, making it easy to observe and debug.
+- **Production environments**: Use [Kubernetes Job Installation](./job-install.md). The Job runs inside the cluster, ensuring network consistency and making it easy to audit and integrate with automation.
+- **Quick evaluation or development**: Use [Local Script Installation](./script-install.md). The script prints installation progress step by step, making it easy to observe and debug.
 :::

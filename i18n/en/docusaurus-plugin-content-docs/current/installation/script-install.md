@@ -107,5 +107,5 @@ kubectl logs -n sentinel-system deployment/sentinel
 ---
 
 :::warning Production Environment Note
-The script automatically installs Helm and modifies cluster configuration (adding Tetragon, creating RBAC resources, etc.). In **production environments**, such automated operations may bypass change review processes. Consider using [Kubernetes Job Installation](./job-install) instead for better operational transparency and control.
+The script automatically installs Helm and modifies cluster configuration (adding Tetragon, creating RBAC resources, etc.). In **production environments**, such automated operations may bypass change review processes. Consider using [Kubernetes Job Installation](./job-install.md) instead for better operational transparency and control.
 :::

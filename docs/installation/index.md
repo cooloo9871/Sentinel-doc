@@ -24,13 +24,13 @@ Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適�
 - Cilium 已部署至叢集，並啟用 kube-proxy replacement 與 Hubble（參考 [安裝與設定 Cilium](./cilium-install.md)）
 - Tetragon 已安裝（參考 [安裝 Tetragon](./tetragon-install.md)）
 
-請先完成 [前置需求](../prerequisites) 頁面中的所有確認項目，再繼續進行安裝。
+請先完成 [前置需求](../prerequisites.md) 頁面中的所有確認項目，再繼續進行安裝。
 
 安裝完成後，若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定。
 
 ## 選擇建議
 
 :::tip 如何選擇安裝方式？
-- **正式環境**建議使用 [Kubernetes Job 安裝](./job-install) 方式。Job 在叢集內部執行，確保網路環境一致性，且易於審計與自動化整合。
-- **快速試用或開發測試**建議使用 [本機腳本安裝](./script-install) 方式。腳本會逐步輸出安裝進度，便於觀察與除錯。
+- **正式環境**建議使用 [Kubernetes Job 安裝](./job-install.md) 方式。Job 在叢集內部執行，確保網路環境一致性，且易於審計與自動化整合。
+- **快速試用或開發測試**建議使用 [本機腳本安裝](./script-install.md) 方式。腳本會逐步輸出安裝進度，便於觀察與除錯。
 :::
