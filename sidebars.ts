@@ -14,10 +14,13 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'prerequisites',
+        'installation/cilium-install',
+        'installation/tetragon-install',
         'installation/index',
         'installation/job-install',
         'installation/script-install',
         'login',
+        'installation/audit-webhook',
       ],
     },
     {

@@ -12,10 +12,10 @@ Before deploying Sentinel, confirm your environment meets all of the following r
 
 | Component | Minimum Version | Notes |
 |---|---|---|
-| Kubernetes | 1.26+ | Cluster must be running and accessible via kubeconfig |
-| Cilium | 1.14+ | Provides the network and eBPF foundation required for Tetragon integration |
-| Tetragon | 1.0+ | Deployed as a DaemonSet, providing eBPF security monitoring |
-| kubectl | 1.26+ | For local cluster operations; a valid kubeconfig must be configured |
+| Kubernetes | 1.32+ | Cluster must be running and accessible via kubeconfig |
+| Cilium | 1.14+ | The cluster CNI; **kube-proxy replacement** and **Hubble** must be enabled (see [Installing and Configuring Cilium](./installation/cilium-install.md)) |
+| Tetragon | 1.0+ | Deployed as a DaemonSet, providing eBPF security monitoring (see [Installing Tetragon](./installation/tetragon-install.md)) |
+| kubectl | 1.32+ | For local cluster operations; a valid kubeconfig must be configured |
 | Access | cluster-admin or TracingPolicy RBAC | Sufficient cluster permissions required for installing Sentinel and operating TracingPolicy CRDs |
 
 ## Verify Cilium Installation
@@ -71,5 +71,5 @@ The output should include the following two CRD resources:
 If these CRDs are missing, Tetragon has not completed installation or the CRDs were not applied correctly. Complete the Tetragon installation before continuing.
 
 :::tip
-If Tetragon is not yet installed in your environment, refer to the [Tetragon official documentation](https://tetragon.io/docs/installation/kubernetes/) to install via Helm. The Helm method is the current official recommendation for Kubernetes deployments, automatically handling CRD registration, RBAC configuration, and DaemonSet deployment.
+If Cilium or Tetragon is not yet installed in your environment, follow [Installing and Configuring Cilium](./installation/cilium-install.md) and [Installing Tetragon](./installation/tetragon-install.md) in this documentation.
 :::

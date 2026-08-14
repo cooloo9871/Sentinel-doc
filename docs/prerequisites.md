@@ -12,10 +12,10 @@ sidebar_position: 3
 
 | 元件 | 最低版本 | 說明 |
 |---|---|---|
-| Kubernetes | 1.26+ | 叢集需正常運作，且能透過 kubeconfig 存取 |
-| Cilium | 1.14+ | 提供 Tetragon 整合所需的網路與 eBPF 基礎環境 |
-| Tetragon | 1.0+ | 以 DaemonSet 形式部署，提供 eBPF 安全監控能力 |
-| kubectl | 1.26+ | 用於本機操作叢集，需已設定有效的 kubeconfig |
+| Kubernetes | 1.32+ | 叢集需正常運作，且能透過 kubeconfig 存取 |
+| Cilium | 1.14+ | 作為叢集 CNI，需啟用 **kube-proxy replacement** 與 **Hubble**（安裝方式見 [安裝與設定 Cilium](./installation/cilium-install.md)） |
+| Tetragon | 1.0+ | 以 DaemonSet 形式部署，提供 eBPF 安全監控能力（安裝方式見 [安裝 Tetragon](./installation/tetragon-install.md)） |
+| kubectl | 1.32+ | 用於本機操作叢集，需已設定有效的 kubeconfig |
 | 存取權限 | cluster-admin 或具 TracingPolicy RBAC | 安裝 Sentinel 及操作 TracingPolicy CRD 均需要足夠的叢集權限 |
 
 ## 確認 Cilium 安裝
@@ -71,5 +71,5 @@ kubectl get crd | grep tetragon
 若上述 CRD 不存在，表示 Tetragon 尚未完成安裝或 CRD 未正確套用，請先完成 Tetragon 的安裝程序後再繼續。
 
 :::tip
-若您的環境尚未安裝 Tetragon，可參考 [Tetragon 官方文件](https://tetragon.io/docs/installation/kubernetes/) 使用 Helm 進行安裝。Helm 方式為目前官方推薦的 Kubernetes 部署方式，能自動處理 CRD 註冊、RBAC 設定與 DaemonSet 部署等所有前置步驟。
+若您的環境尚未安裝 Cilium 或 Tetragon，請依序參考本文件的 [安裝與設定 Cilium](./installation/cilium-install.md) 與 [安裝 Tetragon](./installation/tetragon-install.md) 完成部署。
 :::

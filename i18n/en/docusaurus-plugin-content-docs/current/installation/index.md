@@ -19,12 +19,14 @@ Sentinel offers two installation methods. Choose the one that best fits your use
 
 Regardless of installation method, confirm the following before starting:
 
-- Kubernetes cluster is running (version 1.22+)
+- Kubernetes cluster is running (version 1.32+)
 - `kubectl` is installed and configured with cluster-admin permissions
-- Cilium is deployed to the cluster
-- Tetragon is installed (the local script can install it automatically)
+- Cilium is deployed with kube-proxy replacement and Hubble enabled (see [Installing and Configuring Cilium](./cilium-install.md))
+- Tetragon is installed (see [Installing Tetragon](./tetragon-install.md))
 
 Complete all checks in the [Prerequisites](../prerequisites) page before proceeding.
+
+After installation, if you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md).
 
 ## Recommendation
 

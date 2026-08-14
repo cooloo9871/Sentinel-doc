@@ -19,12 +19,14 @@ Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適�
 
 無論選擇哪種安裝方式，在開始之前都需要確認環境已滿足下列前置需求：
 
-- Kubernetes 叢集正常運行（版本 1.22+）
+- Kubernetes 叢集正常運行（版本 1.32+）
 - 已安裝並設定好 `kubectl`，且具備叢集管理員權限
-- Cilium 已部署至叢集
-- Tetragon 已安裝（使用本機腳本時可由腳本自動安裝）
+- Cilium 已部署至叢集，並啟用 kube-proxy replacement 與 Hubble（參考 [安裝與設定 Cilium](./cilium-install.md)）
+- Tetragon 已安裝（參考 [安裝 Tetragon](./tetragon-install.md)）
 
 請先完成 [前置需求](../prerequisites) 頁面中的所有確認項目，再繼續進行安裝。
+
+安裝完成後，若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定。
 
 ## 選擇建議
 
