@@ -72,7 +72,7 @@ Click the **"+ New Template"** button in the top-right corner of the page to exp
 | **Description** | — | Explains the template's purpose to help team members understand when to use it |
 | **YAML** | ✅ | Complete TracingPolicy YAML definition, must comply with the `cilium.io/v1alpha1` schema |
 
-Click **"Save Template"** to save. The custom template will appear in the template list for future reuse.
+Click **"Apply"** to save. The custom template will appear in the template list for future reuse.
 
 :::tip
 Before creating a custom template, design and test your policy in the TracingPolicy page using the Form Editor or YAML Editor first. Once you confirm the rules are correct, save it as a template — this ensures the template YAML is valid before sharing it with your team.

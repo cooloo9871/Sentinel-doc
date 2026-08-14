@@ -43,7 +43,7 @@ Click **"+ New User"** in the top-right corner to expand the new user form.
 | **Password** | ✅ | Initial password — recommend the user change it after first login |
 | **Role** | ✅ | Select `admin` (full access) or `viewer` (read-only) |
 
-Click **"Save"** to create the account.
+Click **"Create"** to create the account.
 
 ---
 

@@ -72,7 +72,7 @@ Policy Templates 是預先定義好的 TracingPolicy 範本庫，包含內建的
 | **Description** | — | 說明此範本的用途，幫助團隊成員了解適用場景 |
 | **YAML** | ✅ | 完整的 TracingPolicy YAML 定義，需符合 `cilium.io/v1alpha1` Schema |
 
-填寫完成後點擊「**Save Template**」儲存。自訂範本建立後會出現在範本列表中，供後續重複使用。
+填寫完成後點擊「**Apply**」儲存。自訂範本建立後會出現在範本列表中，供後續重複使用。
 
 :::tip
 建立自訂範本前，建議先在 TracingPolicy 頁面以表單編輯器或 YAML 編輯器設計並測試好策略，確認規則正確後再轉存為範本，以確保範本 YAML 的正確性。
