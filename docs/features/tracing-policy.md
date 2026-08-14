@@ -21,13 +21,14 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 ![TracingPolicy 列表頁](/img/features/policy/list.png)
 
-**頂部篩選器：**
+**頂部工具列：**
 
-| 篩選器 | 說明 |
+| 元素 | 說明 |
 |---|---|
-| **Search policy name...** | 輸入關鍵字即時篩選 Policy 名稱 |
-| **All Scopes** | 依作用範圍篩選：全部 / cluster / namespaced |
-| **All Namespaces** | 依 Namespace 篩選 Namespace-scoped Policy |
+| **Search by name...** | 輸入關鍵字即時篩選 Policy 名稱 |
+| **All namespaces** | 依 Namespace 篩選 Namespace-scoped Policy |
+| **Refresh** | 重新查詢最新的 Policy 清單 |
+| **+ New Policy / + New YAML** | 分別以表單編輯器或 YAML 編輯器建立新 Policy |
 
 **表格欄位說明：**
 
@@ -49,19 +50,20 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 ## 建立新 Policy
 
-點擊列表頁右上角的「**+ New Policy**」按鈕，進入 Policy 建立頁面。
+Sentinel 提供兩種建立方式：
+
+- 「**+ New Policy**」：圖形化表單編輯器，左側填寫規則、右側 **Generated YAML** 即時預覽（詳見[表單編輯器](./form-editor.md)）
+- 「**+ New YAML**」：全螢幕 YAML 編輯器，直接撰寫完整的 TracingPolicy 定義（詳見 [YAML 編輯器](./yaml-editor.md)）
 
 ![建立 Policy 表單](/img/features/policy/create.png)
 
-頁面分為左側的 **Form / YAML** 標籤編輯區與右側的 **YAML Preview** 即時預覽區。
-
-**頁面頂部設定：**
+**共同設定：**
 
 - **Policy Name**（必填）：TracingPolicy 的資源名稱，需符合 Kubernetes 命名規範（小寫英文、數字與連字號）
-- **Namespace**：選擇目標 Namespace；選 cluster scope 或留空則建立 Cluster-scoped Policy
+- **Namespace**：選擇目標 Namespace 建立 `TracingPolicyNamespaced`；選 **cluster-wide** 則建立套用全叢集的 `TracingPolicy`
 - **Mode**（頁面右上角下拉）：選擇初始執行模式；建議初次部署選 `Monitoring`，觀察行為後再切換至 `Protect`
 
-填寫完成後，點擊「**Save Changes**」儲存。
+填寫完成後，點擊「**Apply**」套用。
 
 **建立原理：** Sentinel 根據表單內容自動產生對應的 TracingPolicy YAML，並透過 Kubernetes API Server 將資源建立至叢集，Tetragon Agent 會在數秒內套用新策略。
 

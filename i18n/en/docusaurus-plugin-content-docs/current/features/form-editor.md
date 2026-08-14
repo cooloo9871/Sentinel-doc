@@ -6,107 +6,91 @@ sidebar_position: 3
 
 # Form Editor
 
-## About This Feature
+## Overview
 
-The Form Editor provides a graphical visual interface that lets users configure four sections of security rules without writing YAML: Pod Selector, Process Rules, File Rules, and Network Rules. A **YAML Preview** panel on the right side updates in real time as you edit the form, so you can always confirm what the generated YAML looks like.
+The form editor provides a graphical interface for configuring the three sections of a TracingPolicy — Pod Selector, Process Rules, and File Rules — without writing YAML by hand. The **Generated YAML** panel on the right updates live as you edit the form, so you can verify the resulting TracingPolicy at any time.
 
----
+Click "**+ New Policy**" on the Tracing Policy list page to open the form editor; click "**Edit**" on an existing policy to edit it in form mode. If you prefer writing YAML directly, use "**+ New YAML**" instead (see [YAML Editor](./yaml-editor.md)).
 
-## Form / YAML Tab Switching
+![TracingPolicy form editor](/img/features/policy/create.png)
 
-When creating or editing a TracingPolicy, two tabs are available at the top of the editor.
-
-![Form / YAML tab switching](/img/features/form-editor/tabs.png)
-
-- Click the **"Form"** tab: Enter the graphical form interface with the YAML Preview panel on the right side updating live
-- Click the **"YAML"** tab: Switch to a full-screen YAML editor to write or paste a complete TracingPolicy YAML directly
-
-Content is kept in sync between the two tabs — switching does not lose any settings you've entered.
+:::note
+Pod **network access rules** have been removed from the TracingPolicy form — they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy).
+:::
 
 ---
 
-## Execution Mode (Mode)
+## Basic Information
 
-The **Mode** dropdown in the top-right corner of the create/edit page sets the execution mode for this Policy:
+| Field | Required | Description |
+|---|---|---|
+| **Policy Name** | ✅ | TracingPolicy resource name; must follow Kubernetes naming conventions (lowercase letters, numbers, hyphens) |
+| **Namespace** | ✅ | Choose a target namespace (creates a `TracingPolicyNamespaced`), or choose **cluster-wide** to create a cluster-scoped `TracingPolicy` |
+
+**Execution mode:** the **Mode** dropdown in the top-right corner sets the policy's execution mode:
 
 | Mode | Description |
 |---|---|
-| **Monitoring** | Records detected events only, without blocking any behavior |
-| **Protect** | Records events and actively blocks non-compliant behavior |
-
-This setting is independent of the form content and can be changed at any time.
+| **Monitoring** | Records detected events only; nothing is blocked |
+| **Protect** | Records events and actively blocks violations |
 
 ---
 
 ## Pod Selector
 
-The Pod Selector section lets you restrict this TracingPolicy's rules to specific Pods, rather than applying them to all Pods in the Namespace.
+The Pod Selector section narrows the policy to specific Pods instead of every Pod in the namespace.
 
 **Steps:**
 
-1. Click **"+ Add Label"** to add a key=value label selector condition
-2. Multiple labels can be added; all conditions use AND logic (a Pod must match all labels to be governed by this Policy)
-3. Leave Pod Selector empty to apply the Policy to all Pods in the Namespace (or cluster-wide for Cluster-scoped Policies)
+1. Click "**+ Add Label**" to add a key=value label condition
+2. Multiple labels combine with AND logic (a Pod must match all labels to be governed by this policy)
+3. Leave the selector empty to apply the policy to every Pod in the namespace (or the whole cluster for a cluster-wide policy)
 
 ---
 
 ## Process Rules
 
-Process Rules control which programs (processes/binaries) can run inside a Pod.
-
-![Process Rules section](/img/features/form-editor/process-rule.png)
+Process Rules control which programs (binaries) may run inside the Pods.
 
 **Mode options:**
 
-| Mode | Type | Description |
-|---|---|---|
-| **NotPostfix — Whitelist** | Whitelist | Only allows the specified executable paths; all other programs are denied execution |
-| **Postfix — Blacklist** | Blacklist | Blocks the specified executable paths; all other programs can run normally |
+| Mode | Description |
+|---|---|
+| **Whitelist** | Only the binaries you list are allowed to run; everything else is blocked |
+| **Blacklist** | Only the binaries you list are blocked; everything else is allowed |
 
 **Steps:**
 
-1. Select a Mode from the Process Rules dropdown
-2. Click **"+ Add"** to add an executable path, e.g., `/bin/bash`, `/usr/bin/curl`
-3. Multiple paths can be added
+1. Choose Whitelist or Blacklist from the Mode dropdown
+2. Click "**+ Add**" and enter an executable path, e.g. `/bin/bash`, `/usr/bin/curl`
+3. Add as many paths as needed
 
-**How it works:** Tetragon intercepts all exec calls (`sys_execve` kprobe) at the kernel layer. When a program inside a Pod attempts to execute, Tetragon compares the TracingPolicy rules to determine whether to allow or block the request.
+:::caution
+Paths are **absolute and matched exactly** — a program name on its own (e.g. `curl`) is not accepted.
+:::
+
+**How it works:** Tetragon hooks the `sys_execve` kprobe in the kernel to intercept every exec syscall. Whitelist mode matches with the `NotEqual` operator (anything not in the list is a violation); Blacklist mode uses `Equal` (anything in the list is a violation). Monitoring mode records violations; Protect mode blocks the execution.
 
 ---
 
 ## File Rules
 
-File Rules control Pod read/write access to the filesystem. File Rules always use **Blacklist** mode.
+File Rules control filesystem access from the Pods and always operate in **Blacklist** mode: only the paths you list are restricted; everything else is allowed.
 
-![File Rules section](/img/features/form-editor/file-rule.png)
+Each file rule has the following settings:
 
-**Blacklist:** Only the paths you list are blocked. Everything else is allowed.
+| Field | Description |
+|---|---|
+| **Path** | The file or directory path to restrict (e.g. `/etc/shadow`, `/root/.ssh`); matched by **prefix**, so a directory covers everything under it |
+| **Permission** | Which access to restrict: `Deny Read & Write`, `Only Deny Read`, or `Only Deny Write` |
+| **Exceptions** | Optional; executable paths of processes that **bypass this rule** (e.g. allow a backup agent to read a restricted directory). Multiple entries allowed |
 
-**Steps:**
-
-1. Click **"+ Add"** in the File Rules section
-2. Enter the file or directory paths to block, e.g., `/etc/passwd`, `/etc/shadow`, `/root/.ssh/`
-3. Multiple paths can be added
-
-**How it works:** Tetragon monitors all file I/O operations via `sys_read` and `sys_write` kprobes. When a Pod accesses a blocked path, the Policy mode determines whether to record the event only or directly block the operation.
+**How it works:** Tetragon hooks the `security_file_permission` kprobe (an LSM hook) to monitor file access, matching paths with the Prefix operator. Exceptions are implemented with `matchBinaries: NotIn`, exempting the listed processes from the rule.
 
 ---
 
-## Network Rules
+## Generated YAML (Live Preview)
 
-Network Rules control outbound TCP connections (Egress) initiated by a Pod.
+The **Generated YAML** panel on the right shows the TracingPolicy YAML produced from the form in real time, with the resource kind (`TracingPolicy` or `TracingPolicyNamespaced`) badged in the corner. Every form change updates the preview instantly, so you can confirm the final manifest before applying.
 
-![Network Rules section](/img/features/form-editor/network-rule.png)
-
-**Mode options:**
-
-| Mode | Type | Description |
-|---|---|---|
-| **NotDAddr — Whitelist** | Whitelist | Only allows connections to the specified IP addresses; all other destinations are blocked |
-| **DAddr — Blacklist** | Blacklist | Blocks connections to the specified IP addresses; all other destinations can connect normally |
-
-**Configuration sections:**
-
-- **Addresses**: Click **"+ Add"** to add a target IP address (e.g., `203.0.113.10`)
-- **Ports** (optional): Click **"+ Add Port"** to add a destination port; leave empty to match all ports. The port condition is ANDed with the address condition — a connection must match both IP and port to trigger the rule
-
-**How it works:** Tetragon monitors all TCP connection initiation events via the `tcp_connect` kprobe. When a Pod attempts to establish an outbound connection, Tetragon compares the destination IP and Port against Policy rules to determine whether to block.
+When everything looks right, click "**Apply**" in the top-right corner to create (or update) the policy. The Tetragon Agent loads the new rules within seconds.

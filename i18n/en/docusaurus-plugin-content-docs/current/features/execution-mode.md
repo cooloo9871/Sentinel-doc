@@ -13,7 +13,7 @@ Each TracingPolicy in Sentinel supports two execution modes that can be switched
 | Mode | Description | When to Use |
 |---|---|---|
 | **Monitoring** | Records detected events only, without blocking any behavior. All policy violations generate security event records, but Pods continue running normally | Initial deployment, observation period, policy validation |
-| **Protect** | Records events and actively blocks non-compliant behavior. Process executions, file access, or network connections that violate Policy rules are directly intercepted by Tetragon | After policy validation is complete and rules are confirmed correct |
+| **Protect** | Records events and actively blocks non-compliant behavior. Process executions or file access that violate Policy rules are directly intercepted by Tetragon | After policy validation is complete and rules are confirmed correct |
 
 ---
 
@@ -33,7 +33,7 @@ When creating a new Policy or clicking **"Edit"** from the list, the **Mode** dr
 
 ![Create Policy page — Mode dropdown](/img/features/policy/create.png)
 
-After changing the mode, click **"Save Changes"** to save. The Tetragon Agent applies the change immediately.
+After changing the mode, click **"Apply"**. The Tetragon Agent applies the change immediately.
 
 ---
 

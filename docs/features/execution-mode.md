@@ -13,7 +13,7 @@ Sentinel 的每條 TracingPolicy 皆支援兩種執行模式，可依照部署�
 | 模式 | 說明 | 適用時機 |
 |---|---|---|
 | **Monitoring** | 僅記錄偵測到的事件，不阻擋任何行為。所有違規操作皆會產生安全事件紀錄，但 Pod 仍可正常執行 | 初期部署階段、觀察期、Policy 驗證階段 |
-| **Protect** | 同時記錄事件並主動阻擋違規行為。違反 Policy 規則的 process 執行、檔案存取或網路連線將被 Tetragon 直接攔截拒絕 | 策略驗證完成、確認規則無誤後正式上線 |
+| **Protect** | 同時記錄事件並主動阻擋違規行為。違反 Policy 規則的 process 執行或檔案存取將被 Tetragon 直接攔截拒絕 | 策略驗證完成、確認規則無誤後正式上線 |
 
 ---
 
@@ -33,7 +33,7 @@ Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重�
 
 ![建立 Policy 頁面 — Mode 下拉](/img/features/policy/create.png)
 
-修改後點擊「**Save Changes**」儲存，Tetragon Agent 立即套用。
+修改後點擊「**Apply**」套用，Tetragon Agent 立即生效。
 
 ---
 

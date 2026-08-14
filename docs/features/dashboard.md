@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## 功能說明
 
-Dashboard 是登入 Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy 與 Admission Policy 設定。
+Dashboard 是登入 Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy 與 Quarantine 隔離狀態。
 
 ---
 
@@ -40,6 +40,18 @@ Dashboard 中段會顯示最新建立的 Tracing Policy（最多 4 筆），包�
 ## Admission Policy 預覽
 
 Dashboard 下段會顯示 Admission Policy 的摘要（Policy 數與 Binding 數）。若尚未建立，會顯示「No admission policies」提示。點擊「**View all →**」可跳轉至 Admission Policy 頁面。
+
+---
+
+## Network Policy 預覽
+
+顯示叢集內 Cilium Network Policy 的數量摘要。若尚未建立，會顯示「No network policies」提示。點擊「**View all →**」可跳轉至 [Network Policy](./network-policy.md) 頁面。
+
+---
+
+## Quarantine 隔離狀態
+
+顯示目前被隔離的 Pod 概況。若沒有任何 Pod 被隔離，會顯示「Nothing is quarantined」。點擊「**View all →**」可跳轉至 [Quarantine](./quarantine.md) 頁面。
 
 ---
 

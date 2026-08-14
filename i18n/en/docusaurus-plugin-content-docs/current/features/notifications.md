@@ -28,7 +28,7 @@ Navigate to the **"Security Events"** page. Events are listed in reverse chronol
 
 | Element | Description |
 |---|---|
-| **Live indicator** | Green animated dot means the SSE connection is active and events are being received in real time |
+| **Live / Disconnected indicator** | `Live` means the SSE connection is active and events are being received in real time; `Disconnected` means the stream dropped — wait a moment or reload the page to reconnect |
 | **⏸ Pause** | Click to pause the event stream; the page freezes the current list for easier review. Click again to resume |
 | **Export CSV** | Export the currently displayed event list as a CSV file for offline analysis or archiving |
 
@@ -43,8 +43,8 @@ Three filters at the top of the page can be applied simultaneously (AND logic):
 | Filter | Description |
 |---|---|
 | **Search pod name...** | Enter a Pod name keyword to instantly filter matching events |
-| **All Namespaces** | Select a specific Namespace from the dropdown to show only events from that Namespace |
-| **All Events** | Switch event type: `All Events`, `Process` (process events), `File` (file access events), `Network` (network connection events) |
+| **All namespaces** | Select a specific Namespace from the dropdown to show only events from that Namespace |
+| **Filter** | Opens a filter panel with **Severity** checkboxes (`Warning` / `Critical`) and **Rule** type checkboxes (`Process` / `File` / `Network` / `Kernel`) |
 
 ---
 
@@ -59,9 +59,13 @@ Three filters at the top of the page can be applied simultaneously (AND logic):
 | **Policy** | The TracingPolicy name that matched this event |
 | **Time** | When the event occurred (relative time, e.g., "just now", "5m ago") |
 
-**Click any event row** to expand an inline detail panel showing the full binary path, container name, connection source and destination, and other raw event data.
+**Click any event row** to expand an inline detail panel:
 
 ![Event detail panel](/img/features/notifications/detail.png)
+
+The panel shows the raw event data: **Binary** (full executable path and arguments), **Parent** (full parent process command line), **User** (user and uid), **Namespace**, **Pod / Container**, **Policy**, **Function** (the kernel function that fired, e.g. `__x64_sys_execve`), **Hook** (hook type, e.g. kprobe), **Node**, and **Time**.
+
+The bottom-right of the panel has a "**Quarantine this pod**" button to network-isolate the Pod that triggered the event — see [Pod Quarantine](./quarantine.md).
 
 ---
 

@@ -6,58 +6,75 @@ sidebar_position: 10
 
 # Network Topology
 
-## About This Feature
+## Overview
 
-Network Topology visualizes TCP connections between Pods in your cluster using an interactive graph. The data is sourced from network events captured by Tetragon kprobe hooks. This visualization lets operators understand real network traffic flows at a glance — without parsing raw event logs — and helps identify anomalous connections or build precise network security policies.
+Network Topology visualizes the actual network connections between Pods in the cluster as an interactive graph. The data comes from network traffic observed by **Cilium**, including L7 application-layer information (the page badge shows "Cilium · L7"). Operators can grasp real traffic flows at a glance — no raw event logs to decipher — making it easy to spot anomalous connections and to design [Network Policies](./network-policy.md) from observed behavior.
 
 ---
 
 ## Viewing the Topology Graph
 
-Navigate to **"Network Topology"** to see observed Pod network connections rendered as a node graph.
+Open the "**Network Topology**" page and the observed connections render automatically as a node graph.
 
 ![Network Topology overview](/img/features/network-topology/overview.png)
 
-**Legend:**
+**Nodes and legend:**
 
-| Icon | Description |
+| Item | Description |
 |---|---|
-| **Pod node** | A Pod in the cluster, showing Namespace and Pod name |
-| **Service node** | A Kubernetes Service resource |
-| **External node** | An IP address outside the cluster that a Pod connected to |
-| **Edge (Blocked)** | Red dashed line — a connection attempt blocked by a TracingPolicy in Protect mode |
-| **Edge (Allowed)** | Solid line — a successfully established TCP connection |
-| **×N label** | Number of times this connection was observed during the collection period |
+| **Pod node** | A Pod in the cluster, showing its namespace and Pod name |
+| **Node node** | A Kubernetes node, showing its name and IP address |
+| **External node** | A connection source or destination outside the cluster (e.g. external traffic entering via a node) |
+| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside |
+| **×N label** | The number on an edge is the cumulative connection count observed |
 
 ---
 
-## Filtering and Search
+## Connection Detail
 
-Use the toolbar at the top of the page to narrow the view:
+Click any edge to open the **Connection Detail** panel:
 
-- **Namespace dropdown** — show only Pods in a specific Namespace
-- **Pod / Service name search** — type a name to highlight matching nodes
+![Connection Detail panel](/img/features/network-topology/connection-detail.png)
+
+| Field | Description |
+|---|---|
+| **Source / Destination** | Pod names and IP addresses of both ends |
+| **Connections** | Cumulative connection count |
+| **Ports** | Destination ports used, with a count per port |
 
 ---
 
-## Graph Controls
+## Filters and View Options
+
+The toolbar at the top offers:
+
+| Element | Description |
+|---|---|
+| **All namespaces** | Show only connections involving a specific namespace |
+| **Pod name...** | Search box to quickly locate a node by name |
+| **View menu** | View options: `Hide kube-system` (on by default), `Hide health probes` (on by default), `Exposed only` (show only externally exposed connections), `Auto refresh` (on by default) |
+| **Auto Layout** | Re-run the automatic layout of all nodes |
+| **Refresh** | Re-query the latest connection data immediately |
+
+---
+
+## Graph Interactions
 
 | Action | Description |
 |---|---|
-| **Drag nodes** | Move nodes to rearrange the layout manually |
-| **Scroll to zoom** | Zoom in or out on the graph |
-| **Auto Layout** | Click "Auto Layout" to automatically reposition all nodes |
-| **Refresh** | Click "Refresh" to re-fetch the latest connection events from the backend |
-| **Fit View** | Click the ⊡ button (bottom-right) to fit the full graph into the viewport |
-| **Zoom In / Out** | Use the +/- buttons (bottom-right) for precise zoom control |
-| **Mini Map** | The bottom-right minimap shows your current viewport position within the full graph |
+| **Drag a node** | Freely reposition nodes to adjust the layout |
+| **Mouse wheel** | Zoom the whole graph in and out |
+| **Zoom In / Out** | Precise zoom via the +/- buttons |
+| **Fit View** | Scale the graph to fit the window |
+| **Toggle Interactivity** | Lock/unlock graph interaction |
+| **Mini Map** | Thumbnail in the corner showing your position in the overall topology |
 
 ---
 
 ## How It Works
 
-Tetragon hooks `tcp_connect` kprobe to monitor all TCP connection establishment events, recording the source Pod, destination IP/port, and whether the connection was allowed or blocked. The Sentinel backend continuously collects these events, aggregates them by Pod and destination, and exposes the latest connections via API for the frontend graph renderer.
+Cilium, as the cluster CNI, observes all Pod traffic in the data plane, including L7 protocol information. The Sentinel backend continuously aggregates these observations by Pod, node and external endpoint, and serves the latest connection graph to the frontend. With `Auto refresh` enabled, the topology updates automatically as new traffic is observed.
 
 :::tip
-For the best results, enable TracingPolicy Monitoring mode and let your workloads run normally for a period of time before checking Network Topology. With enough events accumulated, the graph will give a complete picture of real connection behavior — helping you craft accurate network Whitelist / Blacklist rules.
+Let your workloads run under normal traffic for a while to accumulate observations, then base your Network Policy whitelist rules on the connections actually shown in the graph (source, destination and ports). This avoids missing a required connection and breaking a service.
 :::

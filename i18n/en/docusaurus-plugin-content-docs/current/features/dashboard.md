@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## About This Page
 
-The Dashboard is the home page after logging in to Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode — letting you assess the security posture of your entire cluster at a glance.
+The Dashboard is the home page after logging in to Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode — letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, and the current Quarantine state.
 
 ---
 
@@ -40,6 +40,18 @@ If no TracingPolicies have been created yet, this section displays a **"Create y
 ## Admission Policy Overview
 
 The Dashboard shows an Admission Policy summary (Policy count and Binding count). If none exist, it shows a "No admission policies" prompt. Click **"View all →"** to navigate to the Admission Policy page.
+
+---
+
+## Network Policy Overview
+
+Shows a summary of the Cilium Network Policies in the cluster. If none exist, it shows a "No network policies" prompt. Click **"View all →"** to navigate to the [Network Policy](./network-policy.md) page.
+
+---
+
+## Quarantine Status
+
+Shows the Pods currently under quarantine. When nothing is quarantined, it shows "Nothing is quarantined". Click **"View all →"** to navigate to the [Quarantine](./quarantine.md) page.
 
 ---
 

@@ -58,10 +58,10 @@ After confirming that the workload behavior summary matches expectations, you ca
 
 1. Find the target workload card in the grid
 2. Click the **"Create Policy"** button on the card
-3. Sentinel automatically generates a TracingPolicy draft pre-populated with the observed process list and opens the Policy editor for review and adjustment
-4. Click **"Save Changes"** to save and apply after confirming the rules
+3. Sentinel generates a TracingPolicy draft and opens it in the form editor: the Policy Name and Namespace are pre-filled, the Pod Selector carries the workload's labels, and the Process Rules list every observed executable path in **Whitelist** mode
+4. Review and adjust the rules as needed, then click **"Apply"**
 
-**How it works:** Based on all unique process execution paths recorded during the observation period, Sentinel automatically generates a TracingPolicy using **NotPostfix (Whitelist)** mode, allowing only those paths that were observed and deemed normal. Any program that did not appear during the observation period will be blocked once the Policy switches to Protect mode.
+**How it works:** Based on all unique process execution paths recorded during the observation period, Sentinel automatically generates **Whitelist**-mode Process Rules, allowing only those paths that were observed and deemed normal. Any program that did not appear during the observation period will be blocked once the Policy switches to Protect mode.
 
 ---
 

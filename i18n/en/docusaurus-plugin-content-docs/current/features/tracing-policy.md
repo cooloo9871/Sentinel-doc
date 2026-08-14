@@ -21,13 +21,14 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 
 ![TracingPolicy list page](/img/features/policy/list.png)
 
-**Search and filter bar:**
+**Toolbar:**
 
 | Element | Description |
 |---|---|
-| **Search policy name...** | Enter a keyword to instantly filter policies by name |
-| **All Scopes** | Filter by scope: `All Scopes`, `cluster`, or `namespaced` |
-| **All Namespaces** | Filter by Namespace (only applies to Namespace-scoped policies) |
+| **Search by name...** | Enter a keyword to instantly filter policies by name |
+| **All namespaces** | Filter by Namespace (only applies to Namespace-scoped policies) |
+| **Refresh** | Re-query the latest policy list |
+| **+ New Policy / + New YAML** | Create a new policy with the form editor or the YAML editor |
 
 **Table columns:**
 
@@ -45,17 +46,20 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 
 ## Creating a New Policy
 
-Click the **"+ New Policy"** button in the top-right corner of the list page to enter the Policy creation page.
+Sentinel offers two ways to create a policy:
+
+- **"+ New Policy"**: the graphical form editor, with the rules on the left and a live **Generated YAML** preview on the right (see [Form Editor](./form-editor.md))
+- **"+ New YAML"**: a full-screen YAML editor for writing a complete TracingPolicy manifest (see [YAML Editor](./yaml-editor.md))
 
 ![Create Policy form](/img/features/policy/create.png)
 
-Form field descriptions:
+Common settings:
 
 - **Policy Name** (required): Resource name of the TracingPolicy; must follow Kubernetes naming conventions (lowercase letters, numbers, and hyphens)
-- **Namespace**: Select the target Namespace for this Policy; leave blank to create a Cluster-scoped Policy
+- **Namespace**: Select the target Namespace to create a `TracingPolicyNamespaced`, or choose **cluster-wide** to create a cluster-scoped `TracingPolicy`
 - **Mode** (top-right dropdown): Select the initial execution mode; `Monitoring` mode is recommended for initial deployment so you can observe behavior before switching to `Protect`
 
-Click **"Save Changes"** when done.
+Click **"Apply"** when done.
 
 **How it works:** Sentinel automatically generates the corresponding TracingPolicy or TracingPolicyNamespaced YAML from the form data and creates the resource in the cluster via the Kubernetes API Server. The Tetragon Agent applies the new policy within seconds.
 

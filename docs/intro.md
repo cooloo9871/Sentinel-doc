@@ -17,7 +17,9 @@ Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 所�
 |---|---|
 | TracingPolicy 管理 | 以視覺化方式建立、編輯、啟用、停用及刪除 TracingPolicy，無需手動撰寫 YAML |
 | Admission Policy | 圖形化建立 Kubernetes ValidatingAdmissionPolicy，支援 Label、Image、資源限制等七種規則類型 |
-| Network Topology | 以互動式圖形呈現叢集內 Pod 的 TCP 連線關係，快速識別異常網路流量 |
+| Network Policy | 圖形化建立 Cilium Network Policy，管理 Pod 的 Ingress / Egress 網路存取規則（含 L7 HTTP 規則） |
+| Quarantine | 事件應變時一鍵隔離可疑 Pod 的網路連線，保留行程與記憶體狀態供鑑識調查 |
+| Network Topology | 以互動式圖形呈現 Cilium 觀測到的 Pod 連線關係（含 L7），快速識別異常網路流量 |
 | Behavior Discovery | 自動分析叢集內的工作負載行為，協助工程師探索潛在的安全基準線 |
 | Security Events | 即時呈現 Tetragon 捕捉到的 kprobe 安全事件，支援篩選與追蹤 |
 | Admission Events | 記錄 ValidatingAdmissionPolicy 違規事件，透過 Audit Webhook 接收 |

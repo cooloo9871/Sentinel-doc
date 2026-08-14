@@ -58,10 +58,10 @@ Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並�
 
 1. 在卡片網格中找到目標工作負載卡片
 2. 點擊卡片右上角的「**Create Policy**」按鈕
-3. Sentinel 自動根據觀察到的 process 清單產生一份 TracingPolicy 草稿，並帶入至 Policy 編輯頁面供您審閱與調整
-4. 確認規則無誤後，點擊「**Save Changes**」儲存並套用
+3. Sentinel 自動產生一份 TracingPolicy 草稿並帶入表單編輯器：Policy Name 與 Namespace 已預先填妥，Pod Selector 自動帶入該工作負載的 Label，Process Rules 以 **Whitelist** 模式列出所有觀察到的執行檔路徑
+4. 審閱並視需要調整規則後，點擊「**Apply**」套用
 
-**執行原理：** Sentinel 根據觀察期間記錄到的所有不重複 process 執行路徑，自動產生一條採用 **NotPostfix — Whitelist** 模式的 TracingPolicy，僅允許這些已被觀察且認定為正常的執行路徑。任何未曾出現的程式，在切換至 Protect 模式後都將被阻擋執行。
+**執行原理：** Sentinel 根據觀察期間記錄到的所有不重複 process 執行路徑，自動產生一條 **Whitelist（白名單）** 模式的 Process Rules，僅允許這些已被觀察且認定為正常的執行路徑。任何未曾出現的程式，在切換至 Protect 模式後都將被阻擋執行。
 
 ---
 

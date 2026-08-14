@@ -28,7 +28,7 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 
 | 元素 | 說明 |
 |---|---|
-| **Live 指示燈** | 綠色動態燈號代表 SSE 連線正常，事件正在即時接收中 |
+| **Live / Disconnected 指示燈** | `Live` 代表 SSE 連線正常，事件正在即時接收中；`Disconnected` 代表串流連線中斷，稍待或重新整理頁面即可重連 |
 | **⏸ Pause** | 點擊後暫停事件串流，頁面凍結目前列表方便審閱；再次點擊恢復即時接收 |
 | **Export CSV** | 將目前顯示的事件列表匯出為 CSV 檔案，方便離線分析或存檔 |
 
@@ -43,8 +43,8 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 | 過濾器 | 說明 |
 |---|---|
 | **Search pod name...** | 輸入 Pod 名稱關鍵字即時篩選 |
-| **All Namespaces** | 從下拉選單選擇特定 Namespace，僅顯示該 Namespace 內的事件 |
-| **All Events** | 切換事件類型：`All Events`（全部）、`Process`（行程事件）、`File`（檔案存取事件）、`Network`（網路連線事件） |
+| **All namespaces** | 從下拉選單選擇特定 Namespace，僅顯示該 Namespace 內的事件 |
+| **Filter** | 開啟過濾面板，可勾選 **Severity**（`Warning` / `Critical`）與 **Rule** 類型（`Process` / `File` / `Network` / `Kernel`）多重條件 |
 
 ---
 
@@ -59,7 +59,13 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 | **Policy** | 匹配到此事件的 TracingPolicy 名稱 |
 | **Time** | 事件發生的時間（相對時間，例如「just now」、「5m ago」） |
 
-**點擊任意事件列**可展開該事件的詳細資訊面板，顯示 binary 完整路徑、Container 名稱、連線來源與目標等原始資料。
+**點擊任意事件列**可展開該事件的詳細資訊面板：
+
+![事件詳細資訊面板](/img/features/notifications/detail.png)
+
+詳細面板包含 **Binary**（完整執行檔路徑與參數）、**Parent**（父行程完整指令）、**User**（執行者與 uid）、**Namespace**、**Pod / Container**、**Policy**、**Function**（觸發的 Kernel 函式，例如 `__x64_sys_execve`）、**Hook**（掛勾類型，例如 kprobe）、**Node**（事件發生的節點）與 **Time** 等原始資料。
+
+面板右下角提供「**Quarantine this pod**」按鈕，可直接對觸發此事件的 Pod 執行網路隔離，詳見 [Pod 隔離（Quarantine）](./quarantine.md)。
 
 ---
 

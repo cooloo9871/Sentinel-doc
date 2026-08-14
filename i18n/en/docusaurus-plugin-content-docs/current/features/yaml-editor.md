@@ -6,44 +6,38 @@ sidebar_position: 4
 
 # YAML Editor
 
-## About This Feature
+## Overview
 
-Sentinel provides two YAML operation modes for different use cases:
+Besides the graphical form, Sentinel offers two YAML-oriented workflows for different situations:
 
-- **(a) Direct YAML Editing**: When creating or editing a Policy, switch to the "YAML" tab to write or paste a complete TracingPolicy YAML directly in a full-screen editor
-- **(b) YAML Preview**: In the "Form" tab, a right-side panel updates in real time as form fields change, letting you confirm the generated YAML structure at any moment
+- **(a) Direct YAML editing**: click "**+ New YAML**" on the Tracing Policy list page and write or paste a complete TracingPolicy manifest in a full-screen editor
+- **(b) Generated YAML live preview**: the panel on the right side of the form editor shows the YAML produced from the form fields in real time
 
 ---
 
 ## YAML Editor (Direct Editing)
 
-Click the **"YAML"** tab at the top of the editor to open the full-screen dark YAML code editor.
+Clicking "**+ New YAML**" on the list page opens a full-screen dark-themed YAML code editor.
 
-![YAML tab (editor open)](/img/features/yaml-editor/open.png)
+![YAML editor](/img/features/yaml-editor/open.png)
 
-**How to use:**
+**Usage:**
 
-- Type or modify TracingPolicy YAML content directly in the editor
-- Supports copying and pasting a complete YAML definition from an external source
-- The editor provides syntax highlighting for easier identification of YAML structure
+- Type or modify the TracingPolicy YAML directly; pasting a complete manifest from an external source is supported
+- The editor provides syntax highlighting and line numbers
+- The **Mode** dropdown in the top-right corner sets the policy's execution mode (`Monitoring` / `Protect`)
+- Click "**Apply**" when done
 
-**How it works:** The Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema upon receipt, confirming field formats and required fields are correct, before creating or updating the TracingPolicy resource via the Kubernetes API Server. If the YAML is invalid, the page displays an error message indicating the issue.
-
----
-
-## Applying YAML
-
-After editing, click the **"Save Changes"** button at the bottom of the page to save and apply the configuration.
-
-Sentinel immediately submits the YAML to the backend for validation and application. On success, the page shows a confirmation message and you can see the updated status in the TracingPolicy list. If the apply fails (e.g., the Kubernetes API returns an error), the page displays the detailed error reason.
+**How it works:** the Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema — checking field structure and required fields — before creating or updating the TracingPolicy resource through the Kubernetes API Server. If the YAML is invalid, the page shows an error message pointing at the problem.
 
 ---
 
-## YAML Preview (Live Preview)
+## Generated YAML (Live Preview)
 
-Switch back to the **"Form"** tab to see the **YAML Preview** panel on the right side (dark background). If no Policy Name has been entered yet, the panel shows a "Enter a policy name to preview..." placeholder; once a name is entered, the panel immediately generates a live YAML preview based on the current form state.
+When using the form editor ("**+ New Policy**" or "**Edit**"), the right side of the page always shows the **Generated YAML** panel (dark background) with the resulting resource kind (`TracingPolicy` or `TracingPolicyNamespaced`) badged in the corner.
 
-**Details:**
+**Notes:**
 
-- Whenever you add or modify a rule (Pod Selector, Process Rules, File Rules, Network Rules), the YAML Preview panel immediately reflects the latest TracingPolicy YAML structure
-- The YAML Preview is generated entirely by frontend JavaScript in real time — no backend communication required
+- Every change in the form (Pod Selector, Process Rules, File Rules) is reflected in the panel immediately
+- The preview is computed entirely in the frontend — no backend round-trip
+- Clicking "**Apply**" submits exactly the YAML shown in this panel

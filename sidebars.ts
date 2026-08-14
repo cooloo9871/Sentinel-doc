@@ -56,6 +56,22 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'category',
+          label: 'Network Policy',
+          collapsed: false,
+          items: [
+            'features/network-policy',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Quarantine',
+          collapsed: false,
+          items: [
+            'features/quarantine',
+          ],
+        },
+        {
+          type: 'category',
           label: '通知與事件',
           collapsed: false,
           items: [
