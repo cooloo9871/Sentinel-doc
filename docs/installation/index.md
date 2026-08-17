@@ -26,7 +26,10 @@ Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適�
 
 請先完成 [前置需求](../prerequisites.md) 頁面中的所有確認項目，再繼續進行安裝。
 
-安裝完成後，若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定。
+安裝完成後：
+
+- **正式環境請先完成 [設定永久儲存（PV / PVC）](./persistent-storage.md)**——預設的 `emptyDir` 會在 Pod 重啟時清空所有帳號、規則與事件資料
+- 若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定
 
 ## 選擇建議
 

@@ -26,7 +26,10 @@ Regardless of installation method, confirm the following before starting:
 
 Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
 
-After installation, if you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md).
+After installation:
+
+- **For production, set up [Persistent Storage (PV / PVC)](./persistent-storage.md) first** — the default `emptyDir` wipes all accounts, rules and event data whenever the Pod restarts
+- If you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md)
 
 ## Recommendation
 

@@ -25,6 +25,8 @@ sidebar_position: 5
 
 :::warning
 首次登入後請立即至「**Settings → Users**」修改預設密碼，避免未授權存取。
+
+另外請注意：若尚未[設定永久儲存（PV / PVC）](./installation/persistent-storage.md)，修改後的密碼與所有設定會在 Pod 重啟後**還原為預設值**。
 :::
 
 ## 登入原理

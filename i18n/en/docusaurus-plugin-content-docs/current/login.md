@@ -25,6 +25,8 @@ Enter the credentials and click the **Sign in** button to log in.
 
 :::warning
 After your first login, immediately go to **Settings → Users** to change the default password and prevent unauthorized access.
+
+Also note: without [Persistent Storage (PV / PVC)](./installation/persistent-storage.md) configured, the changed password and all settings **revert to defaults** when the Pod restarts.
 :::
 
 ## How Authentication Works

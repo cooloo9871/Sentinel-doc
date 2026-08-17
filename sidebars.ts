@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
         'installation/index',
         'installation/job-install',
         'installation/script-install',
+        'installation/persistent-storage',
         'login',
         'installation/audit-webhook',
       ],
