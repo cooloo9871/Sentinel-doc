@@ -8,7 +8,12 @@ sidebar_position: 12
 
 ## 功能說明
 
-Admission Events 頁面記錄並呈現 Kubernetes **ValidatingAdmissionPolicy** 的違規事件。當叢集中的資源操作（建立或更新）違反已套用的 Admission Policy 規則時，API Server 會產生 Warning 事件，Sentinel 透過 Webhook 端點接收並儲存這些事件，供使用者即時查閱與審查。
+Admission Events 頁面記錄並呈現 Kubernetes **ValidatingAdmissionPolicy** 的違規事件。事件有兩種來源：
+
+- **Kubernetes Warning Events**（預設）：未做任何設定即可使用，但僅涵蓋會產生 Warning Event 的違規
+- **Audit Webhook**（建議設定）：將 kube-apiserver 的 audit webhook 指向 Sentinel 後可完整涵蓋所有違規，包含 `kubectl apply` 當下直接被拒絕的請求
+
+頁面上的 **Source** 過濾器可辨別每筆事件來自哪個管線。
 
 ---
 
@@ -41,9 +46,9 @@ Admission Events 頁面記錄並呈現 Kubernetes **ValidatingAdmissionPolicy** 
 
 ## 設定 Kubernetes Audit Log
 
-Admission Events 的資料來源為 Kubernetes Audit Webhook，需在每台 control plane 節點上設定 kube-apiserver 的 Audit Policy 與 Webhook。完整設定步驟請參考「安裝與部署」章節的 [串接 API Server Audit Log](../installation/audit-webhook.md)。
+要取得完整的違規涵蓋（含 `kubectl apply` 直接被拒的請求），需在每台 control plane 節點上設定 kube-apiserver 的 Audit Policy 與 Webhook，並建議以 Token 保護 Webhook 端點。完整設定步驟請參考「安裝與部署」章節的 [串接 API Server Audit Log](../installation/audit-webhook.md)。
 
-若此頁面持續沒有事件，通常代表 Audit Webhook 尚未設定或設定有誤。
+若此頁面持續沒有 `audit` 來源的事件，通常代表 Audit Webhook 尚未設定、設定有誤，或 Token 不一致（見設定頁的排查章節）。
 
 ---
 

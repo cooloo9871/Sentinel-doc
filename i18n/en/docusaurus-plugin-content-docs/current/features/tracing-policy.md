@@ -38,9 +38,14 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 | **Scope** | Scope: `cluster` (cluster-level) or `namespaced` (Namespace-level) |
 | **Mode** | Execution mode dropdown — click to switch between `Monitoring` and `Protect` directly in the list |
 | **Namespace** | The Namespace a Namespace-scoped Policy belongs to; blank for Cluster-scoped |
-| **Created By** | The user account that created this Policy |
+| **Created By** | The user account that created this Policy; policies created with `kubectl apply` show `k8s-apply` |
 | **Created Time** | The creation timestamp of the Policy |
 | **Actions** | Available operations: Edit or Delete the Policy |
+
+:::note How Edit opens (v0.39.6+)
+- **Policies created in Sentinel**: open in the form editor when the form can represent them, otherwise in the YAML editor
+- **Policies applied with `kubectl`** (Created By is `k8s-apply`): always open directly in the **YAML editor**, showing the YAML as its author wrote it — a save from the form would rewrite field order, quoting and comments, leaving the file in git no longer matching the cluster
+:::
 
 ---
 

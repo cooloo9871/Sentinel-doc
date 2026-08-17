@@ -62,6 +62,10 @@ The **Generated YAML** panel on the right shows the complete `ValidatingAdmissio
 
 For finer-grained control, click **"+ New YAML"** to paste a complete `ValidatingAdmissionPolicy` YAML definition directly.
 
+:::note How Edit opens
+A policy built with the form reopens in the **form** (defaults the kube-apiserver adds on persist, such as `matchPolicy: Equivalent`, don't affect this); a policy applied with `kubectl` or carrying explicit non-default settings the form cannot represent opens in the **YAML editor**, so a form save cannot erase them. Bindings behave the same way.
+:::
+
 ---
 
 ## Managing Bindings

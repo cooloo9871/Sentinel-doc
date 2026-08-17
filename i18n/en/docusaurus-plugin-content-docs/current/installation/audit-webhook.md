@@ -65,7 +65,7 @@ current-context: default
 ```
 
 :::caution
-The `/api/admission-events/webhook` endpoint is intentionally **unauthenticated** and accepts audit-event payloads exclusively. Do not send other requests to it, and do not expose it outside the cluster.
+The `/api/admission-events/webhook` endpoint is **open when no token is configured** (its caller is the kube-apiserver, which has no login session). If the cluster runs workloads you do not fully trust, protect it with a token as described in "[Protecting the Endpoint](#protecting-the-endpoint-recommended)" below, so forged events cannot be injected.
 :::
 
 ## Step 3: Update the kube-apiserver configuration
@@ -160,5 +160,83 @@ A `CREATED` time of a few seconds ago confirms the restart was successful.
 Trigger an Admission Policy violation (e.g. create a resource that violates a bound policy). Within seconds the event should appear on Sentinel's "**Notifications → Admission Events**" page. Use the **Source** filter on that page to confirm events are arriving from the Audit Log — proof the webhook pipeline is active.
 
 :::info
-If no events show up, check in order: (1) the ClusterIP in `audit-webhook.yaml` is correct; (2) the control plane nodes can reach that ClusterIP (`curl -s -o /dev/null -w "%{http_code}" http://<clusterip>/api/admission-events/webhook` should not be a connection error); (3) the kube-apiserver log for audit-webhook errors.
+If no events show up, check in order: (1) the ClusterIP in `audit-webhook.yaml` is correct; (2) the control plane nodes can reach that ClusterIP (`curl -s -o /dev/null -w "%{http_code}" http://<clusterip>/api/admission-events/webhook` should not be a connection error); (3) the kube-apiserver log for audit-webhook errors; (4) if a token is configured, see "[When the Tokens Do Not Match](#when-the-tokens-do-not-match)" below.
 :::
+
+---
+
+## Protecting the Endpoint (Recommended)
+
+*Requires Sentinel v0.39.1+; the token-in-URL scheme requires v0.39.4+.*
+
+Without a token the webhook endpoint is an open write path — anything in the cluster could forge admission events, and since retention evicts the oldest first, flooding fakes pushes the real ones out. Protect it with a shared token.
+
+### 1. Create the token Secret
+
+```bash
+kubectl -n sentinel-system create secret generic sentinel-audit-webhook \
+  --from-literal=token="$(openssl rand -hex 24)"
+```
+
+### 2. Give Sentinel the token
+
+Add the environment variable to the container spec in `deploy/sentinel.yaml`:
+
+```yaml
+        env:
+        - name: AUDIT_WEBHOOK_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: sentinel-audit-webhook
+              key: token
+```
+
+After re-applying, Sentinel's webhook endpoint requires the token on every request (compared in constant time). **With `AUDIT_WEBHOOK_TOKEN` unset the endpoint stays open**, so existing setups keep working.
+
+### 3. Append the same token to the webhook URL
+
+Edit `/etc/kubernetes/audit-webhook.yaml` and put the token at the **end of the `server` URL**:
+
+```yaml
+clusters:
+  - name: sentinel
+    cluster:
+      server: http://<sentinel-clusterip>/api/admission-events/webhook/<token>
+```
+
+:::caution In the URL — not as a kubeconfig `user.token`
+client-go **silently refuses to send bearer tokens to a plain-HTTP server** — no error is raised anywhere; the apiserver just posts without the token and every delivery is rejected with 401. The URL is sent as-is, so the token always arrives; Sentinel strips it **before** access logging, so it never appears in its own logs. (A `user.token` does work if Sentinel is served over TLS — the endpoint accepts it as a bearer token too.)
+:::
+
+### 4. Restart the kube-apiserver
+
+The apiserver reads the audit-webhook kubeconfig only at startup — editing that file alone does **not** restart the static pod. Restart it manually:
+
+```bash
+sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/ && sleep 5 && \
+  sudo mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
+```
+
+---
+
+## When the Tokens Do Not Match
+
+If Sentinel has the token but the apiserver's kubeconfig is missing it (or carries a different value), audit events are rejected and **silently stop appearing** — the Admission Events page just shows nothing new from the `audit` source. Two places say why:
+
+**On the Sentinel side** (printed at most once a minute):
+
+```bash
+kubectl -n sentinel-system logs deploy/sentinel | grep audit-webhook
+# audit-webhook: rejected a request whose bearer token is missing or wrong — ...
+# its audit events are NOT being recorded
+```
+
+**On the kube-apiserver side** (a static pod, on the control-plane node):
+
+```bash
+kubectl -n kube-system logs kube-apiserver-<node> | grep -i audit
+# ... Failed to send audit events ... the server has asked for the client to
+# provide credentials
+```
+
+After fixing the token in `/etc/kubernetes/audit-webhook.yaml`, restart the kube-apiserver as above. The most common cause of a mismatch is carrying the token as a kubeconfig `user.token` instead of in the server URL — over plain HTTP, client-go silently drops bearer tokens, so the apiserver posts with no token at all and no error anywhere says why.

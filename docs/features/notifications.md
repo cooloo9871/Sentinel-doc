@@ -65,6 +65,8 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 
 詳細面板包含 **Binary**（完整執行檔路徑與參數）、**Parent**（父行程完整指令）、**User**（執行者與 uid）、**Namespace**、**Pod / Container**、**Policy**、**Function**（觸發的 Kernel 函式，例如 `__x64_sys_execve`）、**Hook**（掛勾類型，例如 kprobe）、**Node**（事件發生的節點）與 **Time** 等原始資料。
 
+LSM 掛勾的事件也會顯示該呼叫實際觸及的對象，例如 `file_open` 顯示 `File (open): /etc/shadow`、`socket_connect` 顯示 `Destination: 10.0.0.5:443`。
+
 面板右下角提供「**Quarantine this pod**」按鈕，可直接對觸發此事件的 Pod 執行網路隔離，詳見 [Pod 隔離（Quarantine）](./quarantine.md)。
 
 ---
@@ -73,8 +75,8 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 
 | 等級 | 說明 |
 |---|---|
-| **Warning** | 潛在異常行為，例如執行非預期的程式、存取非預期的檔案路徑，或發起異常網路連線，需進一步審查 |
-| **Critical** | 高危操作，例如嘗試執行特權程式、存取高度敏感的系統檔案（`/etc/shadow`、`/root/.ssh/`）或連線至已知惡意 IP，需立即處理 |
+| **Warning** | Monitoring 模式下記錄的違規行為，例如執行非預期的程式、存取非預期的檔案路徑，或發起異常網路連線，需進一步審查 |
+| **Critical** | **在 Protect 模式下被強制阻擋的行為**（Tetragon 以 Signal / NotifyEnforcer 終止行程），無論掛勾類型一律列為 Critical，需立即檢視 |
 
 ---
 

@@ -38,9 +38,14 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 | **Scope** | 作用範圍：`cluster`（叢集層級）或 `namespaced`（Namespace 層級） |
 | **Mode** | 執行模式下拉選單：可直接在列表中切換 `Monitoring` 或 `Protect`，無需進入編輯頁 |
 | **Namespace** | Namespace-scoped Policy 所屬的 Namespace；Cluster-scoped 顯示「-」 |
-| **Created By** | 建立此 Policy 的使用者帳號 |
+| **Created By** | 建立此 Policy 的使用者帳號；以 `kubectl apply` 建立的 Policy 顯示 `k8s-apply` |
 | **Created Time** | Policy 建立的完整時間戳記 |
 | **Actions** | `Edit`（進入編輯頁面）與 `Delete`（刪除）按鈕 |
+
+:::note Edit 的開啟方式（v0.39.6+）
+- **Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
+- **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML——避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
+:::
 
 :::tip
 **Mode 支援 inline 切換**：直接點擊列表中 Mode 欄位的下拉選單即可切換 Monitoring / Protect，Tetragon Agent 會在數秒內套用，無需進入編輯頁面。

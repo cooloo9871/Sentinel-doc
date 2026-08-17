@@ -65,6 +65,8 @@ Three filters at the top of the page can be applied simultaneously (AND logic):
 
 The panel shows the raw event data: **Binary** (full executable path and arguments), **Parent** (full parent process command line), **User** (user and uid), **Namespace**, **Pod / Container**, **Policy**, **Function** (the kernel function that fired, e.g. `__x64_sys_execve`), **Hook** (hook type, e.g. kprobe), **Node**, and **Time**.
 
+Events from LSM hooks also show what the call actually touched — e.g. `file_open` shows `File (open): /etc/shadow`, and `socket_connect` shows `Destination: 10.0.0.5:443`.
+
 The bottom-right of the panel has a "**Quarantine this pod**" button to network-isolate the Pod that triggered the event — see [Pod Quarantine](./quarantine.md).
 
 ---
@@ -73,8 +75,8 @@ The bottom-right of the panel has a "**Quarantine this pod**" button to network-
 
 | Level | Description |
 |---|---|
-| **Warning** | Potentially anomalous behavior — e.g., executing an unexpected program, accessing an unexpected file path, or initiating an unusual network connection. Requires further review |
-| **Critical** | High-risk operations — e.g., attempting to run a privileged program, accessing highly sensitive system files (`/etc/shadow`, `/root/.ssh/`), or connecting to a known malicious IP. Requires immediate action |
+| **Warning** | Violations recorded in Monitoring mode — e.g., executing an unexpected program, accessing an unexpected file path, or initiating an unusual network connection. Requires further review |
+| **Critical** | **Behavior actively blocked in Protect mode** (the process was terminated by Tetragon's Signal / NotifyEnforcer actions) — reported as Critical on every hook kind. Requires immediate review |
 
 ---
 
