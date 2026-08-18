@@ -14,7 +14,9 @@ The diagram below illustrates the deployment relationships and communication pat
 graph TD
     A["Browser (React SPA)"] -->|"HTTP/REST + SSE"| B["Go Backend (port 8080)"]
     B -->|"Kubernetes API"| C["K8s Cluster"]
-    C --> D["Cilium Tetragon (eBPF)"]
+    B -->|"gRPC GetEvents (per node)"| D["Cilium Tetragon (eBPF)"]
+    B -->|"gRPC GetFlows"| H["Hubble Relay"]
+    C --> D
     D --> E["TracingPolicy CRD"]
     B -->|"/data/sentinel/"| F["Persistent Storage"]
 ```
@@ -25,7 +27,8 @@ graph TD
 |---|---|---|
 | Frontend | TypeScript + React + Vite + shadcn/ui | Web UI delivered as an SPA, providing TracingPolicy management, event viewing, and cluster monitoring |
 | Backend | Go 1.x + HTTP Server (port 8080) | RESTful API service with a built-in Kubernetes client, handling cluster communication and user authentication |
-| Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and network events at the kernel layer via eBPF |
+| Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and file access at the kernel layer via eBPF; Sentinel collects events per node over gRPC (`GetEvents`) |
+| Hubble Relay | Cilium component | Aggregates every node's network flows behind one gRPC endpoint; Sentinel reads its `GetFlows` stream as the data source for Network Topology |
 | TracingPolicy | Kubernetes CRD (cilium.io/v1alpha1) | Custom Resource Definition that defines the kprobe rules and security policies Tetragon should enforce |
 | Persistent Storage | /data/sentinel/ | Local persistence path for user accounts (`users.json`) and JWT signing key (`.jwt-secret`) |
 

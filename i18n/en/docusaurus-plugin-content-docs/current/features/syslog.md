@@ -22,7 +22,7 @@ Navigate to **"Settings → Syslog"** to see all configured syslog forwarding ru
 
 ## Creating a New Syslog Config
 
-Click **"+ New Config"** in the top-right corner to expand the configuration form.
+Click **"+ New Config"** in the top-right corner to open the configuration page.
 
 ![New syslog config form](/img/features/syslog/new-config.png)
 

@@ -19,10 +19,21 @@ sidebar_position: 3
 ```bash
 helm repo add cilium https://helm.cilium.io/
 helm repo update
-helm install tetragon cilium/tetragon -n kube-system
+helm install tetragon cilium/tetragon -n kube-system \
+  --set tetragon.grpc.address=0.0.0.0:54321
 ```
 
-使用預設值即可，無需額外設定——Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container）在 Tetragon 預設值中已啟用。
+唯一必要的自訂參數是 **`tetragon.grpc.address=0.0.0.0:54321`**：Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到；綁定到 Pod 網路後 Sentinel 才能連線。其餘用預設值即可——Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。
+
+:::note 既有的 Tetragon 要升級設定?
+安裝器偵測到 Tetragon DaemonSet 已存在時會跳過安裝，因此不會幫舊環境補上 gRPC 設定。直接修改運行中的設定並重啟：
+
+```bash
+kubectl -n kube-system patch cm tetragon-config --type merge \
+  -p '{"data":{"server-address":"0.0.0.0:54321"}}'
+kubectl -n kube-system rollout restart ds/tetragon
+```
+:::
 
 :::tip
 Sentinel 預設假設 Tetragon 安裝於 `kube-system` Namespace。若安裝於其他 Namespace（例如 `-n tetragon`），部署 Sentinel 時需將環境變數 `TETRAGON_NAMESPACE` 設為對應值。

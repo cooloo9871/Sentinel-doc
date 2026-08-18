@@ -22,7 +22,7 @@ Syslog 頁面允許使用者設定將 Security Events 與 Admission Events 轉�
 
 ## 建立新 Syslog 設定
 
-點擊頁面右上角的「**+ New Config**」按鈕，展開 Syslog 設定建立表單。
+點擊頁面右上角的「**+ New Config**」按鈕，進入 Syslog 設定建立頁面。
 
 ![新增 Syslog 設定表單](/img/features/syslog/new-config.png)
 

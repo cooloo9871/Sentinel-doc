@@ -46,6 +46,10 @@ The Pod Selector section narrows the policy to specific Pods instead of every Po
 2. Multiple labels combine with AND logic (a Pod must match all labels to be governed by this policy)
 3. Leave the selector empty to apply the policy to every Pod in the namespace (or the whole cluster for a cluster-wide policy)
 
+:::tip Live selector preview (v0.40+)
+While editing the Pod Selector, the form shows which pods the selector matches **right now**. It turns red when nothing matches (usually a label typo) and amber when an empty selector is about to govern every pod — catching a mis-aimed selector before Apply.
+:::
+
 ---
 
 ## Process Rules

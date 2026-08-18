@@ -53,6 +53,10 @@ Network Policy 頁面提供 **Cilium Network Policy** 的視覺化管理功能�
 | **Comment** | — | 註解說明，方便團隊了解此 Policy 的用途 |
 | **Applies to** | ✅ | 以 key=value Label 指定此 Policy 管轄的目標 Pod（`endpointSelector`），至少需一組 Label |
 
+:::tip Selector 即時預覽（v0.40+）
+編輯 **Applies to** 時，表單會即時顯示目前選擇器**實際匹配到哪些 Pod**（例如 `Selects 3 pods in demo: web-1, web-2, db-1`）。選不到任何 Pod 時以**紅色**警示（通常是 Label 打錯字）、空選擇器將管轄全部 Pod 時以**橘色**警示——在 Apply 之前就能發現「選錯對象」這類最危險的 Policy 錯誤。
+:::
+
 ### Ingress / Egress 規則
 
 Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何規則的方向不會納入 Policy**（該方向流量不受此 Policy 影響）。
@@ -68,11 +72,16 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 
 | 欄位 | 說明 |
 |---|---|
-| **From / To — kind** | 對象類型：`Labels`（以 Pod Label 選擇對象）或 `Entity`（Cilium 保留身分，無 Label 可選的對象） |
-| **From / To** | kind 為 Labels 時：輸入一組以上的 key=value Label；kind 為 Entity 時：從下拉選擇 `world`、`cluster`、`host`、`remote-node`、`all`、`init`、`health`、`unmanaged` |
+| **From / To — kind** | 對象類型：`Labels`（以 Pod Label 選擇對象）、`Entity`（Cilium 保留身分）、`IP / CIDR`（v0.40+）或 `FQDN`（v0.40+，僅限 Egress 的 Whitelist） |
+| **From / To** | Labels：輸入一組以上的 key=value Label；Entity：從下拉選擇 `world`、`cluster`、`host`、`remote-node`、`all`、`init`、`health`、`unmanaged`；IP / CIDR：輸入 IP 或網段（單一 IP 會寫成 /32 單主機 CIDR）；FQDN：輸入網域名稱，支援萬用字元（`github.com`、`*.github.com`） |
 | **Peer namespace** | （Labels 時選填）限定對象 Pod 所屬的 Namespace |
 | **Ports** | 選填；點擊「**+ Add Port**」新增 Port 與協定（TCP / UDP），留空表示不限制 Port |
 | **L7 — HTTP rules** | 選填；點擊「**+ Add HTTP rule**」設定 HTTP Method 與 Path 的 L7 過濾規則。設定 HTTP rule 時必須同時指定至少一個 Port |
+
+:::note FQDN 對象的限制與 DNS 規則
+- **FQDN 只存在於 Egress 的 allow（Whitelist）方向**：Cilium 是從 Pod 收到的 DNS 回應學習網域對應的 IP，Ingress 與 Deny 方向沒有可比對的資訊，表單會直接說明而不是產生一條永遠不會生效的規則。
+- 選用 FQDN 時，比對所依賴的 **DNS visibility 規則會自動附帶**——否則 Whitelist 的 Egress 會先把 DNS 本身擋掉，網域永遠解析不了。這條規則在表單讀取時自動摺疊、儲存時自動補回；手寫的變體則會以 YAML 模式開啟而不被改寫。
+:::
 
 表單下方會即時列出未完成的必填項目清單，全部通過驗證後「**Apply**」按鈕才會啟用。點擊 Apply 即建立 Policy 並套用至叢集。
 

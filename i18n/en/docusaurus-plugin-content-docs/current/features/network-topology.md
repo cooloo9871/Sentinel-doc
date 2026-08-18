@@ -25,7 +25,7 @@ Open the "**Network Topology**" page and the observed connections render automat
 | **Pod node** | A Pod in the cluster, showing its namespace and Pod name |
 | **Node node** | A Kubernetes node, showing its name and IP address |
 | **External node** | A connection source or destination outside the cluster (e.g. external traffic entering via a node) |
-| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside |
+| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside. Detection sources cover Kubernetes Ingress, Gateway API (HTTPRoute / GRPCRoute, plus TCPRoute / TLSRoute / UDPRoute since v0.41), Istio VirtualService / Gateway, Traefik IngressRoute variants, and Contour HTTPProxy; CRDs that are not installed are skipped silently |
 | **×N label** | The number on an edge is the cumulative connection count observed |
 
 ---
@@ -73,7 +73,9 @@ The toolbar at the top offers:
 
 ## How It Works
 
-Cilium, as the cluster CNI, observes all Pod traffic in the data plane, including L7 protocol information. The Sentinel backend continuously aggregates these observations by Pod, node and external endpoint, and serves the latest connection graph to the frontend. With `Auto refresh` enabled, the topology updates automatically as new traffic is observed.
+Cilium, as the cluster CNI, observes all Pod traffic in the data plane, including L7 protocol information; every node's flows are aggregated behind one gRPC endpoint by **Hubble Relay**. The Sentinel backend (v0.43+) reads the cluster-wide traffic from Relay's `GetFlows` stream, aggregates it by Pod, node and external endpoint, and serves the latest connection graph to the frontend. With `Auto refresh` enabled, the topology updates automatically as new traffic is observed.
+
+This feature therefore requires Cilium with both `hubble.enabled=true` (flow observation) **and** `hubble.relay.enabled=true` (the `hubble-relay` service Sentinel reads) — see [Installing and Configuring Cilium](../installation/cilium-install.md).
 
 :::tip
 Let your workloads run under normal traffic for a while to accumulate observations, then base your Network Policy whitelist rules on the connections actually shown in the graph (source, destination and ports). This avoids missing a required connection and breaking a service.

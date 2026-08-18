@@ -22,7 +22,7 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ## 建立新告警規則
 
-點擊頁面右上角的「**+ New Rule**」按鈕，展開告警規則建立表單。
+點擊頁面右上角的「**+ New Rule**」按鈕，進入告警規則建立頁面。
 
 ![新增告警規則表單](/img/features/alerts/new-rule.png)
 

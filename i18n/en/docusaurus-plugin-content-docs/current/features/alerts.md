@@ -22,7 +22,7 @@ Navigate to **"Settings → Alerts"** to see all configured alert rules.
 
 ## Creating a New Alert Rule
 
-Click **"+ New Rule"** in the top-right corner to expand the rule creation form.
+Click **"+ New Rule"** in the top-right corner to open the rule creation page.
 
 ![New alert rule form](/img/features/alerts/new-rule.png)
 

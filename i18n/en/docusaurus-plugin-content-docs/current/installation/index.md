@@ -26,6 +26,16 @@ Regardless of installation method, confirm the following before starting:
 
 Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
 
+:::caution Upgrading from before v0.43?
+Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Existing clusters need three things before upgrading:
+
+1. **Expose Tetragon's gRPC**: `kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` then `rollout restart ds/tetragon` (see [Installing Tetragon](./tetragon-install.md))
+2. **Enable Hubble Relay on Cilium**: `--set hubble.relay.enabled=true` (see [Installing and Configuring Cilium](./cilium-install.md))
+3. **Re-apply the ClusterRole**: `kubectl apply -f deploy/sentinel.yaml` — the new version drops `pods/exec` (the largest privilege Sentinel held) and adds read access to the resources exposure detection needs
+
+Fresh installs (install-job / install.sh) handle all of this automatically.
+:::
+
 After installation:
 
 - **For production, set up [Persistent Storage (PV / PVC)](./persistent-storage.md) first** — the default `emptyDir` wipes all accounts, rules and event data whenever the Pod restarts

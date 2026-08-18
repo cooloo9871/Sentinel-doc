@@ -25,7 +25,7 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 | **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱 |
 | **Node 節點** | Kubernetes Node，顯示節點名稱與 IP 位址 |
 | **External 節點** | 叢集外部的連線來源或目標（例如經由節點進入的外部流量） |
-| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑 |
+| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute，v0.41 起含 TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列與 Contour HTTPProxy；未安裝的 CRD 會自動略過 |
 | **×N 標籤** | 邊線上的數字代表觀察期間累計的連線次數 |
 
 ---
@@ -73,7 +73,9 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 ## 運作原理
 
-Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊）。Sentinel 後端持續收集這些觀測資料，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
+Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。Sentinel 後端（v0.43+）透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
+
+因此本功能需要 Cilium 啟用 `hubble.enabled=true`（流量觀測）**與** `hubble.relay.enabled=true`（Sentinel 讀取的 `hubble-relay` 服務），詳見 [安裝與設定 Cilium](../installation/cilium-install.md)。
 
 :::tip
 建議讓工作負載正常運行一段時間、累積足夠的網路觀測資料後，再依拓撲圖上實際觀察到的連線（來源、目標與 Port）制定 Network Policy 的 Whitelist 規則，可有效避免遺漏必要連線。

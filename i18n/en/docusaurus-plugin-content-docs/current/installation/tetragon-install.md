@@ -19,10 +19,21 @@ Complete the [Cilium installation and configuration](./cilium-install.md) before
 ```bash
 helm repo add cilium https://helm.cilium.io/
 helm repo update
-helm install tetragon cilium/tetragon -n kube-system
+helm install tetragon cilium/tetragon -n kube-system \
+  --set tetragon.grpc.address=0.0.0.0:54321
 ```
 
-The default values are sufficient — the Kubernetes metadata enrichment Sentinel needs (associating events with Pods / Namespaces / Containers) is enabled by default.
+The one required custom setting is **`tetragon.grpc.address=0.0.0.0:54321`**: Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321` — reachable only from inside the pod. Binding it to the pod network lets Sentinel connect. Everything else can stay at defaults — the Kubernetes metadata enrichment Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default.
+
+:::note Upgrading an existing Tetragon?
+The installer skips Tetragon when its DaemonSet is already present, so it will not reconfigure one installed before gRPC collection. Set the address on the running config and restart:
+
+```bash
+kubectl -n kube-system patch cm tetragon-config --type merge \
+  -p '{"data":{"server-address":"0.0.0.0:54321"}}'
+kubectl -n kube-system rollout restart ds/tetragon
+```
+:::
 
 :::tip
 Sentinel assumes Tetragon is installed in the `kube-system` namespace by default. If you install it elsewhere (e.g. `-n tetragon`), set the `TETRAGON_NAMESPACE` environment variable accordingly when deploying Sentinel.

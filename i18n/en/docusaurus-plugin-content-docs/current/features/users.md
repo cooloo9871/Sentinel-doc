@@ -31,7 +31,7 @@ Navigate to **"Settings → Users"** to see all current user accounts.
 
 ## Creating a New User
 
-Click **"+ New User"** in the top-right corner to expand the new user form.
+Click **"+ New User"** in the top-right corner to open the new-user page (since v0.42 every editor has its own URL — bookmarkable, and F5 stays on the editor).
 
 ![New user form](/img/features/users/new-user.png)
 

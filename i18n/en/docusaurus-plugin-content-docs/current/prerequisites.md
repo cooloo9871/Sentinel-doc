@@ -13,8 +13,8 @@ Before deploying Sentinel, confirm your environment meets all of the following r
 | Component | Minimum Version | Notes |
 |---|---|---|
 | Kubernetes | 1.32+ | Cluster must be running and accessible via kubeconfig |
-| Cilium | 1.14+ | The cluster CNI; **kube-proxy replacement** and **Hubble** must be enabled (see [Installing and Configuring Cilium](./installation/cilium-install.md)) |
-| Tetragon | 1.0+ | Deployed as a DaemonSet, providing eBPF security monitoring (see [Installing Tetragon](./installation/tetragon-install.md)) |
+| Cilium | 1.14+ | The cluster CNI; **kube-proxy replacement**, **Hubble** and **Hubble Relay** must be enabled (see [Installing and Configuring Cilium](./installation/cilium-install.md)) |
+| Tetragon | 1.0+ | Deployed as a DaemonSet, with **gRPC bound to the pod network** (`0.0.0.0:54321`, see [Installing Tetragon](./installation/tetragon-install.md)) |
 | kubectl | 1.32+ | For local cluster operations; a valid kubeconfig must be configured |
 | Access | cluster-admin or TracingPolicy RBAC | Sufficient cluster permissions required for installing Sentinel and operating TracingPolicy CRDs |
 

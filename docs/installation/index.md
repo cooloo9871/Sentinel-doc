@@ -26,6 +26,16 @@ Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適�
 
 請先完成 [前置需求](../prerequisites.md) 頁面中的所有確認項目，再繼續進行安裝。
 
+:::caution 從 v0.42 以前的版本升級到 v0.43+
+v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境升級前需完成三件事：
+
+1. **Tetragon 開啟 gRPC**：`kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` 後 `rollout restart ds/tetragon`（詳見 [安裝 Tetragon](./tetragon-install.md)）
+2. **Cilium 啟用 Hubble Relay**：`--set hubble.relay.enabled=true`（詳見 [安裝與設定 Cilium](./cilium-install.md)）
+3. **重新套用 ClusterRole**：`kubectl apply -f deploy/sentinel.yaml`——新版移除了 `pods/exec` 權限（Sentinel 持有的最大權限），並新增了 exposure 偵測所需資源的讀取權
+
+全新安裝（install-job / install.sh）會自動處理，無需手動操作。
+:::
+
 安裝完成後：
 
 - **正式環境請先完成 [設定永久儲存（PV / PVC）](./persistent-storage.md)**——預設的 `emptyDir` 會在 Pod 重啟時清空所有帳號、規則與事件資料

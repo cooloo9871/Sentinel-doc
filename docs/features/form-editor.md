@@ -46,6 +46,10 @@ Pod Selector 區段允許您將此 TracingPolicy 的規則限縮到特定 Pod，
 2. 可新增多組 Label；所有條件之間為 AND 邏輯（Pod 必須同時符合所有 Label 才受此 Policy 管轄）
 3. 若 Pod Selector 留空，則 Policy 套用至 Namespace 內全部 Pod（或 cluster-wide 時套用全叢集）
 
+:::tip Selector 即時預覽（v0.40+）
+編輯 Pod Selector 時，表單會即時顯示目前選擇器**實際匹配到哪些 Pod**。選不到任何 Pod 時以紅色警示（通常是 Label 打錯字）、空選擇器將套用到全部 Pod 時以橘色警示，讓「選錯對象」在 Apply 之前就被發現。
+:::
+
 ---
 
 ## Process Rules（行程規則）

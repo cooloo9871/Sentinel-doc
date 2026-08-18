@@ -13,8 +13,8 @@ sidebar_position: 3
 | 元件 | 最低版本 | 說明 |
 |---|---|---|
 | Kubernetes | 1.32+ | 叢集需正常運作，且能透過 kubeconfig 存取 |
-| Cilium | 1.14+ | 作為叢集 CNI，需啟用 **kube-proxy replacement** 與 **Hubble**（安裝方式見 [安裝與設定 Cilium](./installation/cilium-install.md)） |
-| Tetragon | 1.0+ | 以 DaemonSet 形式部署，提供 eBPF 安全監控能力（安裝方式見 [安裝 Tetragon](./installation/tetragon-install.md)） |
+| Cilium | 1.14+ | 作為叢集 CNI，需啟用 **kube-proxy replacement**、**Hubble** 與 **Hubble Relay**（安裝方式見 [安裝與設定 Cilium](./installation/cilium-install.md)） |
+| Tetragon | 1.0+ | 以 DaemonSet 形式部署，需將 **gRPC 綁定至 Pod 網路**（`0.0.0.0:54321`，安裝方式見 [安裝 Tetragon](./installation/tetragon-install.md)） |
 | kubectl | 1.32+ | 用於本機操作叢集，需已設定有效的 kubeconfig |
 | 存取權限 | cluster-admin 或具 TracingPolicy RBAC | 安裝 Sentinel 及操作 TracingPolicy CRD 均需要足夠的叢集權限 |
 
