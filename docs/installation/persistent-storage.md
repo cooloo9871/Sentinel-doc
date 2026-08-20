@@ -16,7 +16,7 @@ Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的是 
           emptyDir: {}
 ```
 
-`emptyDir` 的生命週期跟著 Pod 走：**只要 Pod 重啟或被重新調度，以下資料就會全部歸零**：
+`emptyDir` 的生命週期跟著 Pod 走，**只要 Pod 重啟或被重新調度，以下資料就會全部歸零**：
 
 - 使用者帳號與密碼（回到預設 `admin` / `admin`）
 - Alerts 告警規則與 Syslog 轉送設定
