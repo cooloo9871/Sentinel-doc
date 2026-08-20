@@ -30,7 +30,7 @@ graph TD
 | Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and file access at the kernel layer via eBPF; K8s Sentinel collects events per node over gRPC (`GetEvents`) |
 | Hubble Relay | Cilium component | Aggregates every node's network flows behind one gRPC endpoint; K8s Sentinel reads its `GetFlows` stream as the data source for Network Topology |
 | TracingPolicy | Kubernetes CRD (cilium.io/v1alpha1) | Custom Resource Definition that defines the kprobe rules and security policies Tetragon should enforce |
-| Persistent Storage | /data/sentinel/ | Local persistence path for user accounts (`users.json`) and JWT signing key (`.jwt-secret`) |
+| Persistent Storage | /data/sentinel/ | Local persistence path: user accounts, the JWT signing key, alert and syslog configs, custom templates, event history and the Audit Log |
 
 ## Data Flow
 
@@ -62,5 +62,6 @@ Persistent data is stored at the following paths:
 
 | Path | Purpose |
 |---|---|
-| `/data/sentinel/users.json` | Stores user accounts and password hashes |
-| `/data/sentinel/.jwt-secret` | Stores the JWT Token signing key, auto-generated on first startup |
+| `/data/sentinel/users.json` | User accounts and password hashes |
+| `/data/sentinel/.jwt-secret` | The JWT token signing key, auto-generated on first startup |
+| `/data/sentinel/` (rest) | Alert / syslog configs, custom policy templates, Security / Admission event history and the Audit Log |

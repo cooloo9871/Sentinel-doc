@@ -36,7 +36,7 @@ Event Retention 頁面提供 Security Events 與 Admission Events 的資料保�
 
 ## Admission Events 保留設定
 
-切換至「**Admission Events**」標籤頁，可設定 ValidatingAdmissionPolicy 違規事件的保留策略，欄位設定與 Security Events 相同。
+切換至「**Admission Events**」標籤頁，可設定 ValidatingAdmissionPolicy 違規事件的保留策略。與 Security Events 不同，此處為**單一筆數上限**（不分嚴重性，預設 500 筆）搭配 TTL，且 TTL 範圍為 **1 至 365 天**（預設 30 天）。
 
 ---
 

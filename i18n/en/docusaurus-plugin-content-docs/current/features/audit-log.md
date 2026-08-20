@@ -45,5 +45,5 @@ Open "**Settings → Audit Log**" to view it (admin role only):
 - Passwords are never recorded
 
 :::tip
-For long-term retention, export regularly with **Export CSV** or forward security events to a SIEM via [Syslog](./syslog.md); the 5,000-entry cap is a rolling window and the oldest entries are evicted.
+The Audit Log is **not** forwarded to Syslog or Alerts ([Syslog](./syslog.md) carries Security Events and Admission Events). The 5,000-entry cap is a rolling window with the oldest entries evicted, so for long-term retention export regularly with **Export CSV**.
 :::

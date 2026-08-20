@@ -74,9 +74,9 @@ The Ingress and Egress sections are configured independently and share the same 
 |---|---|
 | **From / To - kind** | Peer type: `Labels` (select peers by Pod label), `Entity` (a reserved Cilium identity), `IP / CIDR` (v0.40+), or `FQDN` (v0.40+, egress whitelist only) |
 | **From / To** | Labels: one or more key=value labels; Entity: choose from `world`, `cluster`, `host`, `remote-node`, `all`, `init`, `health`, `unmanaged`; IP / CIDR: an address or subnet (a bare IP is written as a single-host CIDR); FQDN: a domain name, wildcards supported (`github.com`, `*.github.com`) |
-| **Peer namespace** | (Optional, Labels only) restrict peers to a specific namespace |
+| **Peer namespace** | (Labels only) the namespace the peer Pods live in. **A peer in another namespace has to name it**: a namespaced policy's label selector only matches its own namespace, so allowing egress to CoreDNS in `kube-system` without naming the namespace selects nothing and the traffic is dropped by the whitelist's default deny |
 | **Ports** | Optional; click "**+ Add Port**" to add a port and protocol (TCP / UDP). Leave empty for no port restriction |
-| **L7 - HTTP rules** | Optional; click "**+ Add HTTP rule**" to filter by HTTP method and path. An HTTP rule requires at least one port |
+| **L7 - HTTP rules** | Optional; click "**+ Add HTTP rule**" to filter by HTTP method and path. An HTTP rule requires at least one port. **The L7 fields are disabled under Blacklist**: Cilium deny rules match on L3/L4 only, so "deny POST /admin" has to be expressed as a whitelist of what is allowed |
 
 :::note FQDN limits and the DNS rule
 - **FQDN exists on the egress allow (whitelist) side only**: Cilium learns a name's addresses from the DNS answers the pod receives, so there is nothing to match on ingress or in a deny rule - the form says so instead of generating a rule that cannot fire.
@@ -84,6 +84,18 @@ The Ingress and Egress sections are configured independently and share the same 
 :::
 
 A validation checklist below the form lists anything still missing; the "**Apply**" button is enabled once everything passes. Clicking Apply creates the policy and applies it to the cluster.
+
+:::caution A whitelist blocks more than it names
+In Cilium, an allow section switches the selected endpoint to default-deny for that direction. An ingress whitelist permitting only `app=frontend` **also drops the kubelet's liveness / readiness probes** (they come from the node and match no Pod label) and Cilium's own health checks, so the Pod gets restarted repeatedly. Add two Entity rules alongside the one you wanted:
+
+| Rule | Peer | Why |
+|---|---|---|
+| 1 | Labels `app=frontend` | the traffic you wanted |
+| 2 | Entity `host` | kubelet probes |
+| 3 | Entity `health` | Cilium health checks |
+:::
+
+Traffic denied by a policy becomes a [Security Event](./notifications.md), fires Alerts / Syslog, and shows as a red dashed edge on the [Network Topology](./network-topology.md).
 
 **How it works:** K8s Sentinel generates the `CiliumNetworkPolicy` (or `CiliumClusterwideNetworkPolicy`) YAML from the form and creates the resource through the Kubernetes API Server. The Cilium CNI enforces it in the data plane immediately; L7 HTTP rules are handled by Cilium's Envoy proxy.
 

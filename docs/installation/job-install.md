@@ -67,14 +67,14 @@ kubectl get svc -n sentinel-system
 **預期輸出**：
 
 - `sentinel-XXXX` Pod 狀態為 `Running`
-- Service `sentinel-svc` 建立完成，顯示 ClusterIP
+- Service `sentinel` 建立完成，顯示 ClusterIP
 
 ```
 NAME                        READY   STATUS    RESTARTS   AGE
 sentinel-7d9f8b6c4-xxxxx    1/1     Running   0          3m
 
 NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-sentinel-svc    ClusterIP   10.96.123.45    <none>        8080/TCP   3m
+sentinel        ClusterIP   10.96.123.45    <none>        80/TCP     3m
 ```
 
 若 Pod 狀態為 `Pending` 或 `CrashLoopBackOff`，請使用 `kubectl describe pod <pod-name> -n sentinel-system` 查看詳細事件。

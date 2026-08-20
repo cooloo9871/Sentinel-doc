@@ -39,9 +39,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sentinel-svc
+                name: sentinel
                 port:
-                  number: 8080
+                  number: 80
 ```
 
 **原理：** Ingress 是 Kubernetes 的 L7 路由資源，由 Ingress Controller 持續監聽（watch）Ingress 物件的異動，並自動設定 reverse proxy 規則，將外部 HTTP/HTTPS 請求路由至指定的 Service。

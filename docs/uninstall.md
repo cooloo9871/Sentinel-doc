@@ -14,7 +14,7 @@ sidebar_position: 17
 
 ```bash
 kubectl delete deployment -n sentinel-system sentinel
-kubectl delete service -n sentinel-system sentinel-svc
+kubectl delete service -n sentinel-system sentinel
 ```
 
 或使用 Kustomize 一次刪除所有由 `deploy/base/` 管理的資源：

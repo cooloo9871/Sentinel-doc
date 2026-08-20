@@ -15,7 +15,7 @@ Click "**+ New Policy**" on the Tracing Policy list page to open the form editor
 ![TracingPolicy form editor](/img/features/policy/create.png)
 
 :::note
-Pod **network access rules** have been removed from the TracingPolicy form - they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy).
+Pod **network access rules** have been removed from the TracingPolicy form - they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy). The one exception: **process-bound network control** (e.g. "kill any binary outside an allow-list the moment it opens an outbound connection") cannot be expressed in CNP, which judges by workload identity and cannot distinguish processes inside a pod. Such a `tcp_connect` kprobe can still be written in the [YAML editor](./yaml-editor.md); a policy carrying network kprobes opens as YAML on edit so a form save cannot drop those rules.
 :::
 
 ---

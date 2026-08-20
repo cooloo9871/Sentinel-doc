@@ -37,10 +37,14 @@ Navigate to **"Admission Events"** to see the list of captured admission violati
 
 ## Event Severity
 
+Severity follows the binding's **validation action**:
+
 | Severity | Description |
 |---|---|
-| **Warning** | Resource violated an Admission Policy rule but was still admitted because `failurePolicy: Warn` was set |
-| **Critical** | Resource was rejected by the API Server due to an Admission Policy violation (`failurePolicy: Fail`) |
+| **Critical** | Validation action `Deny`: the request was **actually blocked** by the API Server |
+| **Warning** | Validation action `Audit`: the request was allowed, but the violation was recorded |
+
+Events are deduplicated over a 30-second window and persisted; the default retention is 500 events with a 30-day TTL (adjustable in Event Retention).
 
 ---
 

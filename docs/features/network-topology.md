@@ -14,19 +14,21 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 ## 查看網路拓撲圖
 
-進入「**Network Topology**」頁面後，叢集內已觀察到的網路連線會自動以節點圖形式呈現。
+進入「**Network Topology**」頁面後，叢集內已觀察到的網路連線會自動以節點圖形式呈現。圖上顯示的是**最近 15 分鐘視窗內**的即時流量：停止的連線會從圖上消失，恢復後重新出現。開啟 Auto refresh 時每 60 秒靜默更新（不會閃爍或重置視角）。
 
 ![Network Topology 總覽](/img/features/network-topology/overview.png)
 
-**節點與圖例說明：**
+**節點與圖例說明**（圖例只列出畫面上實際出現的類型）：
 
 | 圖示 | 說明 |
 |---|---|
-| **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱 |
-| **Node 節點** | Kubernetes Node，顯示節點名稱與 IP 位址 |
-| **External 節點** | 叢集外部的連線來源或目標（例如經由節點進入的外部流量） |
-| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute，v0.41 起含 TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列與 Contour HTTPProxy；未安裝的 CRD 會自動略過 |
-| **×N 標籤** | 邊線上的數字代表觀察期間累計的連線次數 |
+| **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱；**被隔離（Quarantine）的 Pod 帶紅框與鎖頭圖示** |
+| **Node 節點** | Kubernetes Node（藍色），顯示節點名稱與 IP 位址 |
+| **Link-local 節點** | `169.254.0.0/16` 等本地鏈路位址（灰色），例如 Sidecar 對 cloud metadata（`169.254.169.254`）的探測，與外部流量區分開 |
+| **External 節點** | 叢集外部的連線來源或目標（琥珀色）；經節點 SNAT 進入的外部流量標為「world via 節點名」 |
+| **紅色虛線邊** | 被 Network Policy **拒絕**的連線；點擊可看到是哪一條 Policy 擋下的（default-deny 造成的丟棄無規則可歸因時會如實顯示，不會捏造） |
+| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Service（NodePort / LoadBalancer / externalIPs）、Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute，v0.41 起含 TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列、Contour HTTPProxy 與 hostNetwork / hostPort；未安裝的 CRD 會自動略過 |
+| **×N 標籤** | 同一組來源/目標的連線彙整為一條邊，數字為連線次數，各 Port 明細在點擊後的詳情面板中 |
 
 ---
 

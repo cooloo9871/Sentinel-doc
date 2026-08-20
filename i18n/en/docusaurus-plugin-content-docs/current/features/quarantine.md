@@ -44,9 +44,17 @@ The quarantine action lives on the "**Notifications → Security Events**" page.
 
 ## Viewing and Releasing
 
-Open "**Policies → Quarantine**" to see all currently quarantined Pods. When nothing is quarantined, the page shows "Nothing is quarantined".
+Open "**Policies → Quarantine**" to see all currently quarantined Pods, including **who asked and when**. When nothing is quarantined, the page shows "Nothing is quarantined".
 
-Once the investigation is complete, **Release** the Pod from this page (which removes the `sentinel.io/quarantine` label) and it regains normal network connectivity.
+Once the investigation is complete, **Release** the Pod from this page (which removes the `sentinel.io/quarantine` label) and it regains normal network connectivity. Because the state lives on the Pod's label, a release also works without the UI:
+
+```bash
+kubectl label pod <pod-name> -n <namespace> sentinel.io/quarantine-
+```
+
+:::note Manual only
+Automatic quarantine on a policy violation is **deliberately not provided**: the Tracing Policy form defaults to whitelist mode, where anything *not* listed fires, so one mis-scoped policy could contain an entire Deployment in seconds.
+:::
 
 ---
 

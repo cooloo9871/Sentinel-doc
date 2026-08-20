@@ -44,9 +44,17 @@ Quarantine 的運作方式如下：
 
 ## 查看與解除隔離
 
-進入「**Policies → Quarantine**」頁面可查看目前所有被隔離的 Pod。尚未隔離任何 Pod 時，頁面會顯示「Nothing is quarantined」。
+進入「**Policies → Quarantine**」頁面可查看目前所有被隔離的 Pod，包含**由誰、在何時**執行隔離。尚未隔離任何 Pod 時，頁面會顯示「Nothing is quarantined」。
 
-完成調查後，在此頁面對該 Pod 執行 **Release** 即可解除隔離（移除 `sentinel.io/quarantine` Label），Pod 隨即恢復正常網路連線。
+完成調查後，在此頁面對該 Pod 執行 **Release** 即可解除隔離（移除 `sentinel.io/quarantine` Label），Pod 隨即恢復正常網路連線。因為隔離狀態就存在 Pod 的 Label 上，不經 UI 也可以直接解除：
+
+```bash
+kubectl label pod <pod-name> -n <namespace> sentinel.io/quarantine-
+```
+
+:::note 只支援手動隔離
+「違規即自動隔離」是**刻意不提供**的功能：TracingPolicy 表單預設為 Whitelist 模式，任何**未列入**清單的行為都會觸發事件，一條範圍設錯的 Policy 可能在數秒內把整個 Deployment 全部隔離。
+:::
 
 ---
 

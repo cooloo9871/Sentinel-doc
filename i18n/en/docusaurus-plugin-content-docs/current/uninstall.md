@@ -14,7 +14,7 @@ Delete the Deployment and Service individually:
 
 ```bash
 kubectl delete deployment -n sentinel-system sentinel
-kubectl delete service -n sentinel-system sentinel-svc
+kubectl delete service -n sentinel-system sentinel
 ```
 
 Or use Kustomize to delete all resources managed by `deploy/base/` at once:

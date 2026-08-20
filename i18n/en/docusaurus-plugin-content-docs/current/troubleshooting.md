@@ -35,29 +35,33 @@ flowchart TD
 
 | Symptom | Possible Cause | Solution |
 |----------|----------|----------|
-| UI not loading (connection refused) | `port-forward` not running or interrupted | Re-run `kubectl port-forward -n sentinel-system svc/sentinel-svc 8080:8080` |
+| UI not loading (connection refused) | `port-forward` not running or interrupted | Re-run `kubectl port-forward -n sentinel-system svc/sentinel 8080:80` |
 | Login failed (wrong credentials) | Default account has been changed or forgotten | Reset `users.json` (see steps below) |
-| Policy has no effect after applying | Mode is Monitoring (not Protect) | Go to Global Settings and set **Global Protect Mode** to ON |
+| Policy has no effect after applying | Mode is Monitoring (not Protect) | Switch the policy Mode on the Tracing Policy list, or flip the **Global Protect Mode** banner at the top of that page to ON |
 | No data in Behavior Discovery | Tetragon Agent not running normally | Check `tetragon` DaemonSet status (see steps below) |
-| Security Events page is empty | No TracingPolicy created or Tetragon has not detected events | Create a TracingPolicy and manually trigger the corresponding event, then refresh |
+| Security Events page is empty | No TracingPolicy created, or a Tetragon event stream is down | Check "Cluster → Event Sources" first: every node should show Ingestion `Connected` (on `Stream Down`, check the Tetragon gRPC bind and network), then confirm a TracingPolicy exists |
 | Pod startup failed (CrashLoopBackOff) | ServiceAccount cannot connect to cluster or RBAC misconfiguration | Verify ServiceAccount and ClusterRoleBinding are configured correctly |
 
 ## Reset Admin Password
 
-If the admin password has been forgotten, delete `users.json` to let K8s Sentinel recreate the default account (`admin` / `admin`):
+If the admin password is forgotten, the fix depends on how storage is deployed:
+
+**Without persistent storage (the default `emptyDir`)**: account data lives and dies with the Pod, so a restart recreates the default account:
 
 ```bash
-# Find the sentinel pod name
-kubectl get pods -n sentinel-system
-
-# Delete users.json so the system rebuilds it with defaults on next startup
-kubectl exec -n sentinel-system <pod-name> -- rm /data/sentinel/users.json
-
-# Delete the pod so the Deployment restarts and rebuilds users.json
-kubectl delete pod -n sentinel-system <pod-name>
+kubectl -n sentinel-system rollout restart deployment sentinel
 ```
 
-After restart, log in with the default credentials `admin` / `admin` and change the password immediately.
+**With a PV / PVC mounted**: delete `users.json` from the volume, then restart. The K8s Sentinel container is a minimal single-binary image running with a read-only root filesystem, so `kubectl exec` may not be available; the reliable way is a temporary Pod mounting the same PVC to remove the file:
+
+```bash
+kubectl -n sentinel-system run cleanup --rm -it --restart=Never --image=busybox \
+  --overrides='{"spec":{"containers":[{"name":"cleanup","image":"busybox","command":["rm","/data/users.json"],"volumeMounts":[{"name":"data","mountPath":"/data"}]}],"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"sentinel-data"}}]}}'
+
+kubectl -n sentinel-system rollout restart deployment sentinel
+```
+
+After the restart, sign in with the default `admin` / `admin`; the first-login flow will **force you to set a new password** (see [Sign In to K8s Sentinel](./login.md)).
 
 ## Check Tetragon Agent Status
 

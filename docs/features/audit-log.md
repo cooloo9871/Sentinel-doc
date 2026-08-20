@@ -45,5 +45,5 @@ Audit Log（v0.45+）記錄**每一筆透過 K8s Sentinel 執行的操作**，�
 - 密碼內容永遠不會被記錄
 
 :::tip
-需要長期保存稽核紀錄時，建議定期以 **Export CSV** 匯出存檔，或搭配 [Syslog](./syslog.md) 將安全事件同步轉送至 SIEM；Audit Log 的 5,000 筆上限是滾動視窗，超出的最舊紀錄會被淘汰。
+Audit Log **不會**轉送到 Syslog 或 Alerts（[Syslog](./syslog.md) 轉送的是 Security Events 與 Admission Events）。5,000 筆上限是滾動視窗，超出的最舊紀錄會被淘汰，需要長期保存稽核紀錄時，請定期以 **Export CSV** 匯出存檔。
 :::

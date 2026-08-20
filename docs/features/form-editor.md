@@ -15,7 +15,7 @@ sidebar_position: 3
 ![TracingPolicy 表單編輯器](/img/features/policy/create.png)
 
 :::note
-Pod 的**網路存取規則**已從 TracingPolicy 表單中移除，改由 [Network Policy](./network-policy.md)（Cilium Network Policy）統一管理。
+Pod 的**網路存取規則**已從 TracingPolicy 表單中移除，改由 [Network Policy](./network-policy.md)（Cilium Network Policy）統一管理。唯一的例外：**綁定行程上下文的網路控制**（例如「非白名單內的 binary 一發起對外連線就終止」）是 CNP 無法表達的（CNP 以工作負載身分判斷，無法區分 Pod 內的行程），這類 `tcp_connect` kprobe 仍可透過 [YAML 編輯器](./yaml-editor.md)撰寫；含網路 kprobe 的 Policy 在編輯時會以 YAML 模式開啟，避免表單儲存時遺失規則。
 :::
 
 ---

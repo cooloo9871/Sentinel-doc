@@ -14,19 +14,21 @@ Network Topology visualizes the actual network connections between Pods in the c
 
 ## Viewing the Topology Graph
 
-Open the "**Network Topology**" page and the observed connections render automatically as a node graph.
+Open the "**Network Topology**" page and the observed connections render automatically as a node graph. The graph shows live traffic within a **15-minute window**: a connection that stops falls off, and one that resumes reappears. With Auto refresh on, it updates silently every 60 seconds (no flicker, no camera reset).
 
 ![Network Topology overview](/img/features/network-topology/overview.png)
 
-**Nodes and legend:**
+**Nodes and legend** (the legend lists only the kinds actually on the canvas):
 
 | Item | Description |
 |---|---|
-| **Pod node** | A Pod in the cluster, showing its namespace and Pod name |
-| **Node node** | A Kubernetes node, showing its name and IP address |
-| **External node** | A connection source or destination outside the cluster (e.g. external traffic entering via a node) |
-| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside. Detection sources cover Kubernetes Ingress, Gateway API (HTTPRoute / GRPCRoute, plus TCPRoute / TLSRoute / UDPRoute since v0.41), Istio VirtualService / Gateway, Traefik IngressRoute variants, and Contour HTTPProxy; CRDs that are not installed are skipped silently |
-| **×N label** | The number on an edge is the cumulative connection count observed |
+| **Pod node** | A Pod in the cluster, showing its namespace and Pod name; **a quarantined Pod carries a red border and a lock icon** |
+| **Node node** | A Kubernetes node (blue), showing its name and IP address |
+| **Link-local node** | Link-local addresses such as `169.254.0.0/16` (slate), e.g. a sidecar probing cloud metadata (`169.254.169.254`), kept distinct from external traffic |
+| **External node** | A connection source or destination outside the cluster (amber); external traffic SNATed through a node is labelled "world via node" |
+| **Red dashed edge** | A connection **denied** by a Network Policy; click it to see which policy blocked it (a default-deny drop with no rule to attribute says so rather than inventing one) |
+| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside. Detection sources cover Services (NodePort / LoadBalancer / externalIPs), Kubernetes Ingress, Gateway API (HTTPRoute / GRPCRoute, plus TCPRoute / TLSRoute / UDPRoute since v0.41), Istio VirtualService / Gateway, Traefik IngressRoute variants, Contour HTTPProxy and hostNetwork / hostPort; CRDs that are not installed are skipped silently |
+| **×N label** | Connections are aggregated per source/destination pair; the number is the connection count, with the per-port breakdown in the detail panel |
 
 ---
 

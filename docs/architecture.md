@@ -30,7 +30,7 @@ graph TD
 | Cilium Tetragon | eBPF DaemonSet | 部署於每個 Kubernetes Node 的安全觀測代理程式，透過 eBPF 技術於 kernel 層捕捉系統呼叫與檔案存取事件；K8s Sentinel 以 gRPC（`GetEvents`）逐節點串流收集事件 |
 | Hubble Relay | Cilium 元件 | 將所有節點的網路 flow 彙整在單一 gRPC 端點，供 K8s Sentinel 以 `GetFlows` 串流讀取，作為 Network Topology 的資料來源 |
 | TracingPolicy | Kubernetes CRD (cilium.io/v1alpha1) | 定義 Tetragon 所要追蹤的 kprobe 規則與安全策略的自訂資源定義 |
-| Persistent Storage | /data/sentinel/ | 儲存使用者帳號資料（users.json）與 JWT 簽署金鑰（.jwt-secret）的本機持久化路徑 |
+| Persistent Storage | /data/sentinel/ | 本機持久化路徑：使用者帳號、JWT 簽署金鑰、Alerts 與 Syslog 設定、自訂範本、事件歷史與 Audit Log |
 
 ## 資料流說明
 
@@ -62,5 +62,6 @@ Go backend 在編譯時透過 `embed.go` 將前端 React SPA 的靜態檔案（H
 
 | 路徑 | 用途 |
 |---|---|
-| `/data/sentinel/users.json` | 儲存使用者帳號與密碼雜湊 |
-| `/data/sentinel/.jwt-secret` | 儲存 JWT Token 簽署金鑰，首次啟動時自動產生 |
+| `/data/sentinel/users.json` | 使用者帳號與密碼雜湊 |
+| `/data/sentinel/.jwt-secret` | JWT Token 簽署金鑰，首次啟動時自動產生 |
+| `/data/sentinel/`（其餘） | Alerts / Syslog 設定、自訂 Policy Templates、Security / Admission 事件歷史、Audit Log |

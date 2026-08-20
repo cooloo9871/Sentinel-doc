@@ -39,9 +39,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sentinel-svc
+                name: sentinel
                 port:
-                  number: 8080
+                  number: 80
 ```
 
 **Why:** Ingress is a Kubernetes L7 routing resource. The Ingress Controller continuously watches Ingress object changes and automatically configures reverse proxy rules to route external HTTP/HTTPS requests to the specified Service.

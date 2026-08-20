@@ -37,10 +37,14 @@ Admission Events 頁面記錄並呈現 Kubernetes **ValidatingAdmissionPolicy** 
 
 ## 事件嚴重性
 
+嚴重性依 Binding 的 **validation action** 分級：
+
 | 等級 | 說明 |
 |---|---|
-| **Warning** | 資源違反 Admission Policy 規則，但因 `failurePolicy: Warn` 設定仍被允許通過 |
-| **Critical** | 資源因違反 Admission Policy 而被 API Server 拒絕（`failurePolicy: Fail`） |
+| **Critical** | validation action 為 `Deny`：請求已被 API Server **實際攔截** |
+| **Warning** | validation action 為 `Audit`：請求被放行，但違規已記錄 |
+
+事件以 30 秒為窗做內容去重並持久化保存，預設保留 500 筆、TTL 30 天（可在 Event Retention 調整）。
 
 ---
 

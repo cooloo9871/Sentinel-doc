@@ -35,29 +35,32 @@ flowchart TD
 
 | 問題症狀 | 可能原因 | 解決方式 |
 |----------|----------|----------|
-| UI 無法開啟（connection refused） | `port-forward` 未執行或已中斷 | 重新執行 `kubectl port-forward -n sentinel-system svc/sentinel-svc 8080:8080` |
+| UI 無法開啟（connection refused） | `port-forward` 未執行或已中斷 | 重新執行 `kubectl port-forward -n sentinel-system svc/sentinel 8080:80` |
 | 登入失敗（帳號密碼錯誤） | 預設帳號已被修改或遺忘 | 重置 `users.json`（見下方步驟） |
-| Policy 套用後無效 | 模式為 Monitoring（非 Protect） | 至 Global Settings 將 **Global Protect Mode** 切換為 ON |
+| Policy 套用後無效 | 模式為 Monitoring（非 Protect） | 在 Tracing Policy 列表切換該 Policy 的 Mode，或以頁面頂部的 **Global Protect Mode** banner 全域切換為 ON |
 | Behavior Discovery 無資料 | Tetragon Agent 未正常運作 | 確認 `tetragon` DaemonSet 狀態（見下方步驟） |
-| Security Events 頁面空白 | TracingPolicy 尚未建立或 Tetragon 未偵測到事件 | 建立 TracingPolicy 並手動觸發對應事件後重新整理 |
+| Security Events 頁面空白 | TracingPolicy 尚未建立，或 Tetragon 事件串流中斷 | 先到「Cluster → Event Sources」確認各節點 Ingestion 為 `Connected`（`Stream Down` 時檢查 Tetragon gRPC 綁定與網路），再確認已建立 TracingPolicy |
 | Pod 啟動失敗（CrashLoopBackOff） | ServiceAccount 無法連線叢集或 RBAC 設定錯誤 | 確認 ServiceAccount 與 ClusterRoleBinding 設定是否正確 |
 
 ## 重置管理員密碼
 
-若忘記管理員密碼，可刪除 `users.json` 讓 K8s Sentinel 重建預設帳號（`admin` / `admin`）：
+忘記管理員密碼時，依部署方式處理：
+
+**未設定永久儲存（預設 `emptyDir`）**：帳號資料跟著 Pod 走，直接重啟即會重建預設帳號：
 
 ```bash
-# 找到 sentinel pod 名稱
-kubectl get pods -n sentinel-system
-
-# 刪除 users.json 讓系統在下次啟動時重建預設 admin/admin
-kubectl exec -n sentinel-system <pod-name> -- rm /data/sentinel/users.json
-
-# 刪除 pod，讓 Deployment 自動重啟並重建 users.json
-kubectl delete pod -n sentinel-system <pod-name>
+kubectl -n sentinel-system rollout restart deployment sentinel
 ```
 
-重啟完成後，即可使用預設帳號 `admin` / `admin` 登入，並立即修改密碼。
+**已掛載 PV / PVC**：需刪除儲存卷上的 `users.json` 再重啟。K8s Sentinel 容器是精簡的單一執行檔映像且以唯讀根檔案系統執行，不一定能以 `kubectl exec` 進入操作；最可靠的方式是建立一個臨時 Pod 掛載同一個 PVC 來刪檔：
+
+```bash
+kubectl -n sentinel-system run cleanup --rm -it --restart=Never --image=busybox   --overrides='{"spec":{"containers":[{"name":"cleanup","image":"busybox","command":["rm","/data/users.json"],"volumeMounts":[{"name":"data","mountPath":"/data"}]}],"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"sentinel-data"}}]}}'
+
+kubectl -n sentinel-system rollout restart deployment sentinel
+```
+
+重啟完成後以預設帳號 `admin` / `admin` 登入，系統會依首次登入流程**強制要求設定新密碼**（見[登入 K8s Sentinel](./login.md)）。
 
 ## 確認 Tetragon Agent 狀態
 

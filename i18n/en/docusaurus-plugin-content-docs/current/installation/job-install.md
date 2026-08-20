@@ -67,14 +67,14 @@ kubectl get svc -n sentinel-system
 **Expected output:**
 
 - `sentinel-XXXX` Pod status is `Running`
-- Service `sentinel-svc` is created, showing a ClusterIP
+- Service `sentinel` is created, showing a ClusterIP
 
 ```
 NAME                        READY   STATUS    RESTARTS   AGE
 sentinel-7d9f8b6c4-xxxxx    1/1     Running   0          3m
 
 NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-sentinel-svc    ClusterIP   10.96.123.45    <none>        8080/TCP   3m
+sentinel        ClusterIP   10.96.123.45    <none>        80/TCP     3m
 ```
 
 If the Pod status is `Pending` or `CrashLoopBackOff`, use `kubectl describe pod <pod-name> -n sentinel-system` to view detailed events.

@@ -36,7 +36,7 @@ Click **"Save"** to apply the settings. The page shows a **Total capacity** summ
 
 ## Admission Events Retention
 
-Switch to the **"Admission Events"** tab to configure the same retention settings for ValidatingAdmissionPolicy violation events.
+Switch to the **"Admission Events"** tab to configure retention for ValidatingAdmissionPolicy violation events. Unlike Security Events, this is a **single event cap** (not split by severity, default 500) plus a TTL, and the TTL range is **1 to 365 days** (default 30).
 
 ---
 

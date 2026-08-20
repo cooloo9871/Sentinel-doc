@@ -8,7 +8,9 @@ sidebar_position: 8
 
 ## About This Feature
 
-The Security Events page displays kprobe events detected by Tetragon in a real-time stream, including all security events that violate TracingPolicy rules. Whether events are recorded in Monitoring mode or blocked in Protect mode, they all appear on this page in real time.
+The Security Events page shows a real-time stream of two kinds of security events: **events detected by Tetragon** (TracingPolicy violations, covering every hook kind a policy can attach to: kprobes, tracepoints, uprobes and LSM hooks) and **Cilium Network Policy denials**. Whether events are recorded in Monitoring mode or blocked in Protect mode, they all appear here in real time, and events are persisted across restarts.
+
+Events are **deduplicated by content over a 30-second window** (the client-side port is ignored for the comparison), so a pod retrying a denied connection accumulates a count on the existing row instead of filling the list. **Alerts and Syslog fire from this list**: each fires once when an event is first recorded, and a repeat folded into an existing row notifies nobody.
 
 ---
 

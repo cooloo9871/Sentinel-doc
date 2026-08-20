@@ -74,9 +74,9 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 |---|---|
 | **From / To - kind** | 對象類型：`Labels`（以 Pod Label 選擇對象）、`Entity`（Cilium 保留身分）、`IP / CIDR`（v0.40+）或 `FQDN`（v0.40+，僅限 Egress 的 Whitelist） |
 | **From / To** | Labels：輸入一組以上的 key=value Label；Entity：從下拉選擇 `world`、`cluster`、`host`、`remote-node`、`all`、`init`、`health`、`unmanaged`；IP / CIDR：輸入 IP 或網段（單一 IP 會寫成 /32 單主機 CIDR）；FQDN：輸入網域名稱，支援萬用字元（`github.com`、`*.github.com`） |
-| **Peer namespace** | （Labels 時選填）限定對象 Pod 所屬的 Namespace |
+| **Peer namespace** | （Labels 時）指定對象 Pod 所屬的 Namespace。**跨 Namespace 的對象必須指名**：Namespaced Policy 的 Label 選擇器只比對自己的 Namespace，例如允許連往 `kube-system` 的 CoreDNS 時若未指名 Namespace，規則會選不到任何對象，流量將被 Whitelist 造成的 default-deny 丟棄 |
 | **Ports** | 選填；點擊「**+ Add Port**」新增 Port 與協定（TCP / UDP），留空表示不限制 Port |
-| **L7 - HTTP rules** | 選填；點擊「**+ Add HTTP rule**」設定 HTTP Method 與 Path 的 L7 過濾規則。設定 HTTP rule 時必須同時指定至少一個 Port |
+| **L7 - HTTP rules** | 選填；點擊「**+ Add HTTP rule**」設定 HTTP Method 與 Path 的 L7 過濾規則。設定 HTTP rule 時必須同時指定至少一個 Port。**Blacklist 模式下 L7 欄位停用**：Cilium 的 deny 規則只支援 L3/L4，「拒絕 POST /admin」須改以 Whitelist 表達 |
 
 :::note FQDN 對象的限制與 DNS 規則
 - **FQDN 只存在於 Egress 的 allow（Whitelist）方向**：Cilium 是從 Pod 收到的 DNS 回應學習網域對應的 IP，Ingress 與 Deny 方向沒有可比對的資訊，表單會直接說明而不是產生一條永遠不會生效的規則。
@@ -84,6 +84,18 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 :::
 
 表單下方會即時列出未完成的必填項目清單，全部通過驗證後「**Apply**」按鈕才會啟用。點擊 Apply 即建立 Policy 並套用至叢集。
+
+:::caution Whitelist 擋掉的比你列出的更多
+Cilium 中只要某方向存在 allow 規則，該 Endpoint 在該方向就進入 default-deny。一條只允許 `app=frontend` 的 Ingress Whitelist **也會擋掉 kubelet 的 liveness / readiness 探測**（來自節點，不帶任何 Pod Label）與 Cilium 自身的健康檢查，導致 Pod 被反覆重啟。請在原本的規則之外，加上兩條 Entity 對象規則：
+
+| 規則 | 對象 | 用途 |
+|---|---|---|
+| 1 | Labels `app=frontend` | 你原本要允許的流量 |
+| 2 | Entity `host` | kubelet 探測 |
+| 3 | Entity `health` | Cilium 健康檢查 |
+:::
+
+被 Policy 拒絕的流量會成為 [Security Events](./notifications.md)、觸發 Alerts / Syslog，並在 [Network Topology](./network-topology.md) 上以紅色虛線呈現。
 
 **執行原理：** K8s Sentinel 依表單內容產生 `CiliumNetworkPolicy`（或 `CiliumClusterwideNetworkPolicy`）YAML，透過 Kubernetes API Server 建立資源，由叢集內的 Cilium CNI 於資料平面即時強制執行。L7 HTTP 規則由 Cilium 的 Envoy 代理處理。
 

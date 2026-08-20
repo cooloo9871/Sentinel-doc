@@ -13,7 +13,7 @@ Local development, quick testing - no need to configure Ingress or a LoadBalance
 Map the in-cluster Service to a local port:
 
 ```bash
-kubectl port-forward -n sentinel-system svc/sentinel-svc 8080:8080
+kubectl port-forward -n sentinel-system svc/sentinel 8080:80
 ```
 
 **Why:** `kubectl port-forward` creates a tunnel on your local machine that forwards packets through the Kubernetes API Server to the Pod. The command occupies the terminal for the duration of the connection - close the terminal or press `Ctrl+C` to disconnect.
@@ -33,7 +33,7 @@ Default credentials:
 | Username | `admin` |
 | Password | `admin` |
 
-> Change the password immediately after your first login to avoid security risks.
+> On the first sign-in with the default account, the console forces you to set a new password (at least 8 characters) before it opens; see [Sign In to K8s Sentinel](../login.md).
 
 ## Step 3: Confirm the Login Screen
 
@@ -49,7 +49,7 @@ Enter your Username and Password, then click **Sign in** to complete login.
 To avoid occupying a terminal, run port-forward in the background with `&`:
 
 ```bash
-kubectl port-forward -n sentinel-system svc/sentinel-svc 8080:8080 &
+kubectl port-forward -n sentinel-system svc/sentinel 8080:80 &
 ```
 
 To stop the background port-forward, bring it to the foreground with `fg` then press `Ctrl+C`, or terminate it with `kill %1`.

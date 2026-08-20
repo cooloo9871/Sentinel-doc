@@ -68,7 +68,7 @@ chmod +x install.sh
 安裝完成後，腳本最後會顯示建議的 port-forward 指令，例如：
 
 ```bash
-kubectl port-forward svc/sentinel-svc -n sentinel-system 8080:8080
+kubectl port-forward svc/sentinel -n sentinel-system 8080:80
 ```
 
 可複製此指令並在本機執行，即可透過瀏覽器開啟 K8s Sentinel 管理介面。
@@ -91,7 +91,7 @@ NAME                                     READY   STATUS    RESTARTS   AGE
 pod/sentinel-7d9f8b6c4-xxxxx            1/1     Running   0          2m
 
 NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/sentinel-svc   ClusterIP   10.96.123.45    <none>        8080/TCP   2m
+service/sentinel       ClusterIP   10.96.123.45    <none>        80/TCP     2m
 
 NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/sentinel    1/1     1            1           2m

@@ -8,7 +8,9 @@ sidebar_position: 8
 
 ## 功能說明
 
-Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe 事件，包含所有違反 TracingPolicy 規則的安全事件。無論是 Monitoring 模式下記錄的行為，或是 Protect 模式下被阻擋的操作，皆會在此頁面即時呈現。
+Security Events 頁面以即時串流方式顯示兩類安全事件：**Tetragon 偵測到的事件**（違反 TracingPolicy 規則的行為，涵蓋 kprobe、tracepoint、uprobe 與 LSM 等所有掛勾類型）與 **Cilium Network Policy 的拒絕事件**。無論是 Monitoring 模式下記錄的行為，或是 Protect 模式下被阻擋的操作，皆會在此頁面即時呈現，且事件會持久化保存、重啟後不遺失。
+
+事件以 **30 秒為窗做內容去重**（比對時忽略用戶端的暫時 Port），因此 Pod 重試被拒的連線會在既有事件上累加次數，而不是灌滿整個列表。**Alerts 與 Syslog 以此列表為準**：事件第一次被記錄時各觸發一次，被折疊進既有事件的重複行為不會再次通知。
 
 ---
 
