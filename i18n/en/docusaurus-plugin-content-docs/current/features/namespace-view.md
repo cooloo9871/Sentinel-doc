@@ -10,7 +10,7 @@ sidebar_position: 9
 
 The Event Sources page (since v0.49, an expansion and rename of the former "Tetragon Agents" page) answers the most important question for a security console: **is K8s Sentinel actually receiving events right now?** It shows the live state of both event sources: the Tetragon agent on every node, and Hubble Relay.
 
-A Pod's Kubernetes readiness only says the agent is up — **not that the event stream is connected**. A blocking NetworkPolicy, a wrong gRPC address, or a TLS mismatch all leave the agent looking healthy while not a single event arrives. This page shows the **real state of the streams**, avoiding the worst failure mode: looking like it is monitoring while it is blind.
+A Pod's Kubernetes readiness only says the agent is up - **not that the event stream is connected**. A blocking NetworkPolicy, a wrong gRPC address, or a TLS mismatch all leave the agent looking healthy while not a single event arrives. This page shows the **real state of the streams**, avoiding the worst failure mode: looking like it is monitoring while it is blind.
 
 ---
 

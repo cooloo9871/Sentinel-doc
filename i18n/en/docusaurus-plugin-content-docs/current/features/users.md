@@ -42,7 +42,7 @@ Password security rules (v0.47+):
 - An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same
 - Every password change, including an attempt rejected for a wrong current password, is recorded in the [Audit Log](./audit-log.md)
 
-Also note: the first sign-in with the default `admin` / `admin` **forces a password change** — see [Sign In to K8s Sentinel](../login.md).
+Also note: the first sign-in with the default `admin` / `admin` **forces a password change** - see [Sign In to K8s Sentinel](../login.md).
 
 ---
 
