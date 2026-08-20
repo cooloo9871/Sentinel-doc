@@ -25,8 +25,9 @@ K8s Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 
 | Admission Events | 記錄 ValidatingAdmissionPolicy 違規事件，透過 Audit Webhook 接收 |
 | Alerts | 設定 Webhook 告警規則，將安全事件推送至 Slack / Teams / Discord |
 | Syslog | 將安全事件轉送至外部 Syslog 伺服器，支援 UDP / TCP |
-| Cluster 資訊 | 總覽 Kubernetes 叢集節點、命名空間與 Tetragon Agent 狀態 |
-| User 管理 | 提供使用者帳號建立、角色指派與 JWT 驗證管理功能 |
+| Event Sources | 即時顯示 Tetragon 各節點與 Hubble Relay 的事件串流健康狀態，避免「看似監控中、實際收不到事件」 |
+| User 管理 | 提供使用者帳號建立、角色指派與 JWT 驗證管理功能，含首次登入強制改密碼與登入速率限制 |
+| Audit Log | 記錄每一筆透過 K8s Sentinel 執行的操作（誰、何時、對誰、結果），支援篩選與 CSV 匯出 |
 | Event Retention | 設定安全事件的最大保留筆數與 TTL，控制資料庫使用空間 |
 
 ## 適用對象

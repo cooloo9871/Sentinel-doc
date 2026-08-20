@@ -25,8 +25,9 @@ K8s Sentinel is a graphical management console for Cilium Tetragon TracingPolicy
 | Admission Events | Record ValidatingAdmissionPolicy violation events received via the Kubernetes Audit Webhook |
 | Alerts | Configure webhook alert rules to push security events to Slack / Teams / Discord |
 | Syslog | Forward security events to an external syslog server via UDP or TCP |
-| Cluster Info | Overview of Kubernetes cluster nodes, namespaces, and Tetragon Agent status |
-| User Management | User account creation, role assignment, and JWT authentication management |
+| Event Sources | Live health of the Tetragon per-node streams and Hubble Relay, so "monitoring" never silently means "blind" |
+| User Management | User account creation, role assignment, and JWT authentication management, with forced first-login password change and login rate limiting |
+| Audit Log | A record of every operation performed through K8s Sentinel (who, when, target, outcome), filterable and exportable to CSV |
 | Event Retention | Configure max event counts and TTL to control database storage usage |
 
 ## Target Audience

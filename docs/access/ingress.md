@@ -74,3 +74,7 @@ echo "192.168.x.x sentinel.example.com" | sudo tee -a /etc/hosts
 :::info
 生產環境建議搭配 **cert-manager** 設定 TLS，自動申請與更新 Let's Encrypt 憑證，確保 HTTPS 加密傳輸。設定方式可參考 [cert-manager 官方文件](https://cert-manager.io/docs/)。
 :::
+
+:::note 來源 IP 與登入速率限制（v0.50+）
+經由 Ingress 存取時，K8s Sentinel 看到的連線來源是 Ingress Controller 而非真實用戶端。請在 Sentinel 容器設定環境變數 **`TRUST_PROXY_HEADERS=true`**，讓登入速率限制與 Audit Log 的來源 IP 改讀 `X-Forwarded-For`，正確反映真實用戶端位址。未設定時一律以連線本身的位址計算（安全預設，避免偽造的 XFF 繞過限流）。
+:::

@@ -29,6 +29,23 @@ sidebar_position: 13
 
 ---
 
+## 變更密碼
+
+點擊帳號列的「**Change Password**」開啟變更密碼對話框：
+
+![Change Password 對話框](/img/features/users/change-password.png)
+
+密碼安全規則（v0.47+）：
+
+- **新密碼至少 8 個字元**（伺服器端強制）
+- **變更自己的密碼需輸入目前密碼（Current Password）**，被劫持的 Session 無法無聲地把帳號主人鎖在門外
+- admin **重設其他帳號**的密碼屬於獨立操作，不需要舊密碼，但同樣會寫入稽核
+- 每一次密碼變更（含因目前密碼錯誤而被拒絕的嘗試）都會記錄在 [Audit Log](./audit-log.md)
+
+另外，以預設 `admin` / `admin` 首次登入時會**強制要求先設定新密碼**，詳見[登入 K8s Sentinel](../login.md)。
+
+---
+
 ## 建立新使用者
 
 點擊頁面右上角的「**+ New User**」按鈕，進入新增使用者頁面（v0.42 起編輯器皆有獨立網址，可書籤、F5 重新整理不會遺失頁面）。

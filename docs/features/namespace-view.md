@@ -1,54 +1,55 @@
 ---
 id: namespace-view
-title: Tetragon Agents 狀態
+title: 事件來源（Event Sources）
 sidebar_position: 9
 ---
 
-# Tetragon Agents 狀態
+# 事件來源（Event Sources）
 
 ## 功能說明
 
-Tetragon Agents 頁面提供叢集中每個 Kubernetes Node 上 Tetragon Agent Pod 的即時健康狀態監控。透過此頁面，維運人員可快速確認各節點的 Tetragon 是否正常運作，並掌握重啟次數等穩定性指標。
+Event Sources 頁面（v0.49 起，由原「Tetragon Agents」頁擴充改名）回答一個安全主控台最關鍵的問題：**K8s Sentinel 現在真的收得到事件嗎？** 頁面同時呈現兩個事件來源的即時狀態：每個節點的 Tetragon Agent，以及 Hubble Relay。
+
+Pod 的 Kubernetes readiness 只能說明 Agent 活著，**不代表事件串流是通的**——NetworkPolicy 擋住、gRPC 位址設錯、TLS 不符，都會讓 Agent 看似健康卻一筆事件也進不來。本頁顯示的是**串流連線的真實狀態**，避免「看起來在監控、實際上是瞎的」這種最糟的失效模式。
 
 ---
 
-## 查看 Tetragon Agents 狀態
+## 查看 Event Sources
 
-進入「**Cluster → Tetragon Agents**」頁面後，會顯示整體統計與各節點的詳細狀態。
+進入「**Cluster → Event Sources**」頁面：
 
-![Tetragon Agents 頁面](/img/features/namespace/tetragon.png)
+![Event Sources 頁面](/img/features/namespace/event-sources.png)
 
-**整體統計卡片：**
+### Tetragon agents 區塊
 
-| 卡片 | 說明 |
-|---|---|
-| **Healthy** | 目前正常運行中的 Tetragon Agent Pod 數量（綠色數字） |
-| **Unhealthy** | 目前處於異常狀態的 Tetragon Agent Pod 數量（例如 CrashLoopBackOff、OOMKilled） |
-| **Total Agents** | 叢集中 Tetragon DaemonSet 管理的 Pod 總數（通常等於 Worker Node 數量） |
+**整體統計卡片**：`Healthy` / `Unhealthy` / `Total Agents`（Tetragon 以 DaemonSet 部署，總數通常等於節點數）。
 
----
-
-## 各 Agent 卡片說明
-
-每個 Node 上的 Tetragon Agent 以獨立卡片呈現，顯示以下資訊：
+**各節點卡片欄位**：
 
 | 欄位 | 說明 |
 |---|---|
-| **Node 名稱** | 此 Agent 所在的 Kubernetes Node 名稱，右上角顯示健康狀態徽章（`Healthy` / `Unhealthy`） |
-| **Pod** | Tetragon DaemonSet 在該 Node 上建立的 Pod 縮短名稱 |
-| **Restarts** | Pod 自部署以來的重啟次數；數值若以橙色顯示，代表有重啟紀錄需留意 |
-| **Started** | Pod 最近一次成功啟動的時間戳記 |
+| **Node 名稱** | Agent 所在節點，右上角顯示健康徽章（`Healthy` / `Unhealthy` / `Stream Down`） |
+| **Pod** | 該節點上的 Tetragon Pod 名稱 |
+| **Restarts** | Pod 重啟次數；有重啟紀錄時以橙色顯示 |
+| **Ingestion** | **事件串流狀態**：`Connected` 代表 K8s Sentinel 與此 Agent 的 gRPC 串流正常；`Stream Down`（紅色）代表 Pod 雖 Ready 但串流中斷，並顯示連續失敗次數與最後錯誤訊息 |
+| **Last event** | 最後一筆事件實際抵達的時間（僅供參考——健康與否取決於**連線活性**而非事件量，安靜的叢集不會被誤判為故障） |
+| **Started** | Pod 最近一次啟動時間 |
 
-頁面右上角顯示資料最後更新時間，點擊「**Refresh**」可手動重新查詢最新狀態。
+### Hubble 區塊
+
+顯示 **Hubble Relay** 的連線狀態卡片：連線狀態、最後一筆 flow 的時間、連續失敗次數與最後錯誤。這是 Network Topology 的資料來源。
+
+叢集未安裝 Cilium 時，此區塊顯示中性的「Not detected」——那是組態事實，不是故障，不會以紅色警示呈現。
 
 ---
 
-## 重要說明
+## 串流異常時的行為
 
-Tetragon 以 **DaemonSet** 形式部署，每個 Node 都必須有一個正常運行的 Agent，才能確保該節點上所有 Pod 的安全事件皆能被捕捉與處理。
+- **任一串流中斷時，Dashboard 會立即出現紅色警示 banner**，Tetragon 統計卡片反映的也是串流狀態而非單純的 Pod readiness
+- 任一節點的串流結束會觸發**全面重連**（v0.50+），修復「單一節點斷線後永遠不再重撥」的問題；已下線縮編的節點會自動從清單移除
+- 串流恢復後，該來源的失敗計數自動歸零
+- 程式化存取：`GET /api/ingestion/health` 回傳所有來源的即時狀態
 
-若某個 Node 的 Tetragon Agent Pod 處於 **Unhealthy** 狀態：
-- 該節點上所有 Pod 的安全事件將**無法被偵測**
-- TracingPolicy 的 Protect 模式對該節點的 Pod **將失效**，形成安全防護缺口
-
-建議定期檢查此頁面，確保所有 Agents 皆維持 Healthy 狀態。
+:::warning
+某節點顯示 `Stream Down` 或 `Unhealthy` 時，該節點上所有 Pod 的安全事件**無法被偵測**，TracingPolicy 的 Protect 模式對該節點**也會失效**，形成防護缺口。請優先排查：Tetragon gRPC 位址（`0.0.0.0:54321`，見[安裝 Tetragon](../installation/tetragon-install.md)）、NetworkPolicy 是否擋住 K8s Sentinel 到節點的連線、TLS 設定是否相符。
+:::

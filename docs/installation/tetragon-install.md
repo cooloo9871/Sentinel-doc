@@ -75,10 +75,10 @@ kubectl exec -it -n kube-system ds/tetragon -c tetragon -- \
 
 K8s Sentinel 部署完成後：
 
-- 「**Cluster → Tetragon Agents**」頁面會顯示每個節點 Agent 的健康狀態與重啟次數
+- 「**Cluster → Event Sources**」頁面會顯示每個節點 Agent 的健康狀態、重啟次數與事件串流（Ingestion）狀態
 - 「**Behavior Discovery**」會立即開始透過 Tetragon base sensor 累積各工作負載的行為觀察
 - 於「**Tracing Policy**」建立的 Policy 會由 Tetragon Agent 在數秒內載入生效
 
 :::info
-升級 Tetragon 可使用 `helm upgrade tetragon cilium/tetragon -n kube-system`。升級期間各節點的 Agent 會滾動重啟，短暫離線的節點在 K8s Sentinel 的 Tetragon Agents 頁面上可能暫時顯示為 Unhealthy，屬正常現象。
+升級 Tetragon 可使用 `helm upgrade tetragon cilium/tetragon -n kube-system`。升級期間各節點的 Agent 會滾動重啟，短暫離線的節點在 K8s Sentinel 的 Event Sources 頁面上可能暫時顯示為 Unhealthy 或 Stream Down，屬正常現象。
 :::

@@ -20,7 +20,7 @@ Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈�
 
 | 卡片名稱 | 說明 |
 |---|---|
-| **Tetragon Agents** | 顯示叢集中 Tetragon Agent 的健康比例（例如 `3 / 3`）及整體狀態（All nodes online / 部分 Unhealthy） |
+| **Tetragon Agents** | 顯示叢集中 Tetragon Agent 的健康比例（例如 `2 / 2`）與整體狀態；v0.49 起反映的是**事件串流狀態**而非單純的 Pod readiness——任一串流中斷時 Dashboard 會出現紅色警示 banner |
 | **Security Events** | Tetragon 偵測到的 kprobe 安全事件總數，細分 `Critical: N / Warning: N` |
 | **Admission Events** | ValidatingAdmissionPolicy 違規事件總數，細分 `Critical: N / Warning: N` |
 | **Global Protect Mode** | 全域保護模式的開關狀態；`OFF` 時顯示「Monitoring only」，`ON` 時顯示「Enforcing」 |

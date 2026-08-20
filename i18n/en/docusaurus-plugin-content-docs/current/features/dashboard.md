@@ -20,7 +20,7 @@ After logging in, the top of the Dashboard displays four statistics cards provid
 
 | Card | Description |
 |---|---|
-| **Tetragon Agents** | Total number of Tetragon Agent Pods running in the cluster (one per Node); click to jump to the Agents status page |
+| **Tetragon Agents** | Health ratio of Tetragon Agents in the cluster (e.g. `2 / 2`); since v0.49 this reflects **event stream state** rather than plain Pod readiness - a red banner appears the moment any stream fails |
 | **Security Events** | Total number of security events (kprobe violations) recorded so far; includes both Warning and Critical events |
 | **Admission Events** | Total number of Kubernetes admission control violations recorded by ValidatingAdmissionPolicy (VAP) |
 | **Global Protect Mode** | Global protection mode toggle state (On / Off); when enabled, all TracingPolicies simultaneously switch to Protect mode |

@@ -1,54 +1,55 @@
 ---
 id: namespace-view
-title: Tetragon Agents Status
+title: Event Sources
 sidebar_position: 9
 ---
 
-# Tetragon Agents Status
+# Event Sources
 
-## About This Page
+## Overview
 
-The Tetragon Agents page provides real-time health monitoring of Tetragon Agent Pods running on each Kubernetes Node in the cluster. Operations teams can use this page to quickly confirm whether Tetragon is functioning normally on every node and track stability indicators such as restart counts.
+The Event Sources page (since v0.49, an expansion and rename of the former "Tetragon Agents" page) answers the most important question for a security console: **is K8s Sentinel actually receiving events right now?** It shows the live state of both event sources: the Tetragon agent on every node, and Hubble Relay.
 
----
-
-## Viewing Tetragon Agent Status
-
-Navigate to **"Cluster → Tetragon Agents"** to see overall statistics and per-node details.
-
-![Tetragon Agents page](/img/features/namespace/tetragon.png)
-
-**Summary cards:**
-
-| Card | Description |
-|---|---|
-| **Healthy** | Number of Tetragon Agent Pods currently running normally (green number) |
-| **Unhealthy** | Number of Tetragon Agent Pods in an abnormal state (e.g., CrashLoopBackOff, OOMKilled) |
-| **Total Agents** | Total number of Pods managed by the Tetragon DaemonSet (typically equals the number of Worker Nodes) |
+A Pod's Kubernetes readiness only says the agent is up — **not that the event stream is connected**. A blocking NetworkPolicy, a wrong gRPC address, or a TLS mismatch all leave the agent looking healthy while not a single event arrives. This page shows the **real state of the streams**, avoiding the worst failure mode: looking like it is monitoring while it is blind.
 
 ---
 
-## Per-Agent Card Details
+## Viewing Event Sources
 
-Each Tetragon Agent on a Node is shown as an individual card with the following information:
+Open "**Cluster → Event Sources**":
+
+![Event Sources page](/img/features/namespace/event-sources.png)
+
+### Tetragon agents section
+
+**Summary cards**: `Healthy` / `Unhealthy` / `Total Agents` (Tetragon is a DaemonSet, so the total usually equals the node count).
+
+**Per-node card fields**:
 
 | Field | Description |
 |---|---|
-| **Node name** | The Kubernetes Node where this Agent is running; a health status badge (`Healthy` / `Unhealthy`) appears in the top-right corner |
-| **Pod** | The shortened name of the Pod created by the Tetragon DaemonSet on this Node |
-| **Restarts** | Number of times the Pod has restarted since deployment; shown in orange if restarts > 0 |
-| **Started** | Timestamp of the Pod's most recent successful startup |
+| **Node name** | The node the agent runs on, with a health badge (`Healthy` / `Unhealthy` / `Stream Down`) |
+| **Pod** | The Tetragon Pod on that node |
+| **Restarts** | Pod restart count; shown in orange when non-zero |
+| **Ingestion** | **The event stream state**: `Connected` means K8s Sentinel's gRPC stream to this agent is live; `Stream Down` (red) means the Pod is Ready but the stream is broken, with the consecutive-failure count and the last error |
+| **Last event** | When an event last actually arrived (informational only: health is **connection liveness, not event volume**, so a calm cluster is never mistaken for a broken one) |
+| **Started** | The Pod's last start time |
 
-The page shows the last updated time in the top-right corner. Click **"Refresh"** to manually re-query the latest status.
+### Hubble section
+
+A standing **Hubble Relay** status card: connection state, last flow time, consecutive failures, and last error. This is the data source for Network Topology.
+
+On a cluster without Cilium, this section reads as a muted "Not detected": that is a configuration fact, not a broken stream, so it is not shown as a red alarm.
 
 ---
 
-## Why Agent Health Matters
+## Behavior When a Stream Fails
 
-Tetragon is deployed as a **DaemonSet**, meaning every Node must have a functioning Agent to ensure security events from all Pods on that node are captured and processed.
+- **A red banner appears on the Dashboard the moment any stream has failed**, and the Tetragon stat card reflects streams rather than plain Pod readiness
+- Any stream ending triggers a **full reconnect** (v0.50+), fixing the case where a single broken node was never redialed; scaled-down nodes are pruned automatically
+- A recovered source clears its failure streak
+- Programmatic access: `GET /api/ingestion/health` returns every source's status
 
-If a Node's Tetragon Agent Pod is in an **Unhealthy** state:
-- Security events from all Pods on that node **cannot be detected**
-- TracingPolicy Protect mode will be **ineffective** for that node's Pods - creating a security gap
-
-Check this page regularly to ensure all Agents remain Healthy.
+:::warning
+When a node shows `Stream Down` or `Unhealthy`, security events from every Pod on that node are **not being detected**, and TracingPolicy Protect mode is **ineffective** there: a real protection gap. Check first: the Tetragon gRPC address (`0.0.0.0:54321`, see [Installing Tetragon](../installation/tetragon-install.md)), NetworkPolicies blocking K8s Sentinel's connection to the node, and TLS settings.
+:::

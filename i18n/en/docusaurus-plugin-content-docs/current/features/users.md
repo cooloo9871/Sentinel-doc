@@ -29,6 +29,23 @@ Navigate to **"Settings → Users"** to see all current user accounts.
 
 ---
 
+## Changing a Password
+
+Click "**Change Password**" on an account row to open the dialog:
+
+![Change Password dialog](/img/features/users/change-password.png)
+
+Password security rules (v0.47+):
+
+- **New passwords must be at least 8 characters** (enforced server-side)
+- **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out
+- An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same
+- Every password change, including an attempt rejected for a wrong current password, is recorded in the [Audit Log](./audit-log.md)
+
+Also note: the first sign-in with the default `admin` / `admin` **forces a password change** — see [Sign In to K8s Sentinel](../login.md).
+
+---
+
 ## Creating a New User
 
 Click **"+ New User"** in the top-right corner to open the new-user page (since v0.42 every editor has its own URL - bookmarkable, and F5 stays on the editor).

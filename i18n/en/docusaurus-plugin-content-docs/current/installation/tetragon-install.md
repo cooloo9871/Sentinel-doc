@@ -75,10 +75,10 @@ A continuous stream of process events from the cluster means Tetragon is capturi
 
 Once K8s Sentinel is deployed:
 
-- The "**Cluster → Tetragon Agents**" page shows each node agent's health and restart count
+- The "**Cluster → Event Sources**" page shows each node agent's health, restart count and ingestion (stream) state
 - "**Behavior Discovery**" immediately starts accumulating workload behavior observations via the Tetragon base sensor
 - Policies created in "**Tracing Policy**" are loaded by the Tetragon Agents within seconds
 
 :::info
-Upgrade Tetragon with `helm upgrade tetragon cilium/tetragon -n kube-system`. Agents roll node by node during the upgrade; a briefly offline node may temporarily show as Unhealthy on K8s Sentinel's Tetragon Agents page - this is expected.
+Upgrade Tetragon with `helm upgrade tetragon cilium/tetragon -n kube-system`. Agents roll node by node during the upgrade; a briefly offline node may temporarily show as Unhealthy or Stream Down on K8s Sentinel's Event Sources page - this is expected.
 :::
