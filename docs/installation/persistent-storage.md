@@ -16,7 +16,7 @@ Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的是 
           emptyDir: {}
 ```
 
-`emptyDir` 的生命週期跟著 Pod 走——**只要 Pod 重啟或被重新調度，以下資料就會全部歸零**：
+`emptyDir` 的生命週期跟著 Pod 走：**只要 Pod 重啟或被重新調度，以下資料就會全部歸零**：
 
 - 使用者帳號與密碼（回到預設 `admin` / `admin`）
 - Alerts 告警規則與 Syslog 轉送設定
@@ -60,7 +60,7 @@ kubectl apply -f sentinel-data-pvc.yaml
 
 ---
 
-## 方式二：靜態 PV — Local Volume（單節點 / 測試環境）
+## 方式二：靜態 PV（Local Volume，單節點 / 測試環境）
 
 沒有 StorageClass 時，可手動建立 `local` 類型的 PV，將資料固定存在某個節點的目錄：
 
@@ -124,7 +124,7 @@ kubectl apply -f sentinel-data-local.yaml
 
 ---
 
-## 方式三：靜態 PV — NFS（多節點共用）
+## 方式三：靜態 PV（NFS，多節點共用）
 
 ```yaml title="sentinel-data-nfs.yaml"
 apiVersion: v1
@@ -227,5 +227,5 @@ kubectl -n sentinel-system rollout restart deployment sentinel
 Pod 重啟後重新登入，若剛才的變更仍然存在，代表永久儲存設定成功。
 
 :::warning
-掛上 PVC 的當下，先前存在 `emptyDir` 中的資料**不會**自動搬移——Sentinel 會以全新狀態啟動（帳號回到 `admin`/`admin`）。建議在完成初始設定（修改密碼、建立使用者與告警規則）**之前**就先設定好永久儲存。
+掛上 PVC 的當下，先前存在 `emptyDir` 中的資料**不會**自動搬移，Sentinel 會以全新狀態啟動（帳號回到 `admin`/`admin`）。建議在完成初始設定（修改密碼、建立使用者與告警規則）**之前**就先設定好永久儲存。
 :::

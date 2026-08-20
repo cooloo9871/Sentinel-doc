@@ -33,10 +33,10 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 | **Name** | ✅ | 告警規則的顯示名稱，用於識別此規則的用途 |
 | **Cooldown (minutes)** | ✅ | 同一規則的最小觸發間隔（分鐘），防止短時間內大量重複推送；預設為 5 分鐘 |
 | **Webhook URL** | ✅ | 接收告警的 Webhook 端點，例如 Slack Incoming Webhook URL |
-| **Event Type** | — | 勾選觸發來源：`Security Events`（Tetragon kprobe 事件）、`Admission Events`（Admission Policy 違規） |
-| **Severity** | — | 勾選要觸發告警的嚴重性等級：`warning`、`critical` |
-| **Namespaces** | — | 以逗號分隔的 Namespace 名稱；留空表示監控所有 Namespace |
-| **Policies** | — | 以逗號分隔的 Policy 名稱；留空表示監控所有 Policy |
+| **Event Type** | - | 勾選觸發來源：`Security Events`（Tetragon kprobe 事件）、`Admission Events`（Admission Policy 違規） |
+| **Severity** | - | 勾選要觸發告警的嚴重性等級：`warning`、`critical` |
+| **Namespaces** | - | 以逗號分隔的 Namespace 名稱；留空表示監控所有 Namespace |
+| **Policies** | - | 以逗號分隔的 Policy 名稱；留空表示監控所有 Policy |
 
 填寫完成後點擊「**Save**」儲存告警規則。
 

@@ -34,10 +34,10 @@ Syslog 頁面允許使用者設定將 Security Events 與 Admission Events 轉�
 | **Host** | ✅ | Syslog 伺服器的 IP 位址或 Hostname |
 | **Port** | ✅ | Syslog 服務的監聽 Port，預設為 `514` |
 | **Protocol** | ✅ | 傳輸協定：`udp`（低延遲，不保證送達）或 `tcp`（可靠傳輸） |
-| **Event Type** | — | 勾選要轉送的事件類型：`Security`（Tetragon kprobe 事件）、`Admission`（Admission Policy 違規） |
-| **Severity** | — | 勾選要轉送的嚴重性等級：`warning`、`critical` |
-| **Namespaces** | — | 以逗號分隔的 Namespace 名稱；留空表示轉送所有 Namespace 的事件 |
-| **Policies** | — | 以逗號分隔的 Policy 名稱；留空表示轉送所有 Policy 的相關事件 |
+| **Event Type** | - | 勾選要轉送的事件類型：`Security`（Tetragon kprobe 事件）、`Admission`（Admission Policy 違規） |
+| **Severity** | - | 勾選要轉送的嚴重性等級：`warning`、`critical` |
+| **Namespaces** | - | 以逗號分隔的 Namespace 名稱；留空表示轉送所有 Namespace 的事件 |
+| **Policies** | - | 以逗號分隔的 Policy 名稱；留空表示轉送所有 Policy 的相關事件 |
 
 填寫完成後點擊「**Save**」儲存設定。
 

@@ -29,7 +29,7 @@ kubectl delete -k deploy/base/
 kubectl delete namespace sentinel-system
 ```
 
-**Why:** Deleting a namespace also deletes all resources within it, including Pods, Services, ConfigMaps, Secrets, and more. This operation is irreversible — confirm that no data needs to be retained before proceeding.
+**Why:** Deleting a namespace also deletes all resources within it, including Pods, Services, ConfigMaps, Secrets, and more. This operation is irreversible - confirm that no data needs to be retained before proceeding.
 
 ## Step 3: Remove RBAC Resources
 
@@ -38,7 +38,7 @@ kubectl delete clusterrole sentinel-role
 kubectl delete clusterrolebinding sentinel-rolebinding
 ```
 
-**Why:** ClusterRole and ClusterRoleBinding are cluster-scoped resources that do not belong to any namespace. Deleting the namespace does not remove them — they must be manually cleaned up.
+**Why:** ClusterRole and ClusterRoleBinding are cluster-scoped resources that do not belong to any namespace. Deleting the namespace does not remove them - they must be manually cleaned up.
 
 ## Step 4: Clear Persistent Data (Optional)
 
@@ -50,7 +50,7 @@ kubectl delete pvc -n sentinel-system --all
 sudo rm -rf /data/sentinel/
 ```
 
-> Double-check the path before running `sudo rm -rf` — this operation cannot be undone.
+> Double-check the path before running `sudo rm -rf` - this operation cannot be undone.
 
 ## Retaining TracingPolicies
 

@@ -6,7 +6,7 @@ sidebar_position: 5
 
 # Sign In to Sentinel
 
-After completing the installation and obtaining the access URL, open the Sentinel management UI in your browser — you will be greeted by the login screen.
+After completing the installation and obtaining the access URL, open the Sentinel management UI in your browser - you will be greeted by the login screen.
 
 ## Login Screen
 

@@ -70,7 +70,7 @@ Process Rules 用於控制 Pod 內可以執行的程式（process/binary）。
 3. 可新增多筆路徑
 
 :::caution
-路徑必須是**絕對路徑且完整比對**——僅輸入程式名稱（例如 `curl`）不會被接受。
+路徑必須是**絕對路徑且完整比對**，僅輸入程式名稱（例如 `curl`）不會被接受。
 :::
 
 **執行原理：** Tetragon 在 Kernel 層掛載 `sys_execve` kprobe 攔截所有 exec syscall。Whitelist 模式以 `NotEqual` 運算子比對（不在列表內即違規）；Blacklist 模式以 `Equal` 運算子比對（在列表內即違規）。Monitoring 模式下違規僅記錄事件，Protect 模式下直接阻擋執行。

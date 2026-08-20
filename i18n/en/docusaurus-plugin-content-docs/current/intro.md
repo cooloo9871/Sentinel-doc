@@ -9,17 +9,17 @@ slug: /
 
 ## What is Sentinel
 
-Sentinel is a graphical management console for Cilium Tetragon TracingPolicy within Kubernetes clusters. It enables DevSecOps engineers and Platform teams to manage the full lifecycle of security monitoring policies through an intuitive web interface — eliminating tedious manual `kubectl` operations and dramatically lowering the barrier to policy deployment and maintenance.
+Sentinel is a graphical management console for Cilium Tetragon TracingPolicy within Kubernetes clusters. It enables DevSecOps engineers and Platform teams to manage the full lifecycle of security monitoring policies through an intuitive web interface - eliminating tedious manual `kubectl` operations and dramatically lowering the barrier to policy deployment and maintenance.
 
 ## Core Features
 
 | Module | Description |
 |---|---|
-| TracingPolicy Management | Visually create, edit, enable, disable, and delete TracingPolicies — no manual YAML required |
+| TracingPolicy Management | Visually create, edit, enable, disable, and delete TracingPolicies - no manual YAML required |
 | Admission Policy | Graphically build Kubernetes ValidatingAdmissionPolicies with seven rule types: Label, Image, resource limits, and more |
 | Network Policy | Graphically build Cilium Network Policies to manage Pod Ingress / Egress access rules, including L7 HTTP rules |
-| Quarantine | One-click network isolation of a suspicious Pod for incident response — the process and memory stay intact for forensics |
-| Network Topology | Interactive graph of Pod connections observed by Cilium (including L7) — quickly identify anomalous network traffic |
+| Quarantine | One-click network isolation of a suspicious Pod for incident response - the process and memory stay intact for forensics |
+| Network Topology | Interactive graph of Pod connections observed by Cilium (including L7) - quickly identify anomalous network traffic |
 | Behavior Discovery | Automatically analyze workload behavior in the cluster to help engineers discover security baselines |
 | Security Events | Real-time display of kprobe security events captured by Tetragon, with filtering and tracking support |
 | Admission Events | Record ValidatingAdmissionPolicy violation events received via the Kubernetes Audit Webhook |

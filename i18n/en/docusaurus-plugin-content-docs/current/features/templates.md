@@ -8,7 +8,7 @@ sidebar_position: 7
 
 ## About This Feature
 
-Policy Templates is a library of pre-defined TracingPolicy templates, including built-in common security policy templates and user-created custom templates. With Templates, you can apply validated policy definitions with one click to quickly deploy security monitoring rules — no need to write YAML from scratch.
+Policy Templates is a library of pre-defined TracingPolicy templates, including built-in common security policy templates and user-created custom templates. With Templates, you can apply validated policy definitions with one click to quickly deploy security monitoring rules - no need to write YAML from scratch.
 
 ---
 
@@ -40,7 +40,7 @@ Click the **"Use Template"** button on a template card to open a confirmation di
 **Steps:**
 
 1. The system auto-generates a Policy Name (format: `<template-name>-<random-suffix>`)
-2. Optionally edit the Policy Name — must follow Kubernetes naming conventions (lowercase letters, numbers, and hyphens)
+2. Optionally edit the Policy Name - must follow Kubernetes naming conventions (lowercase letters, numbers, and hyphens)
 3. Click **"Create"** to complete
 
 **How it works:** Sentinel uses the template's YAML structure as a base, replaces `metadata.name` with the Policy Name you entered, and creates the corresponding TracingPolicy resource in the cluster via the Kubernetes API Server. The newly created Policy will appear on the TracingPolicy list page.
@@ -68,12 +68,12 @@ Click the **"+ New Template"** button in the top-right corner of the page to exp
 | Field | Required | Description |
 |---|---|---|
 | **Name** | ✅ | Display name for the template; use a meaningful, descriptive name |
-| **Tags** | — | Comma-separated labels for categorization and quick identification (e.g., `namespace, process`) |
-| **Description** | — | Explains the template's purpose to help team members understand when to use it |
+| **Tags** | - | Comma-separated labels for categorization and quick identification (e.g., `namespace, process`) |
+| **Description** | - | Explains the template's purpose to help team members understand when to use it |
 | **YAML** | ✅ | Complete TracingPolicy YAML definition, must comply with the `cilium.io/v1alpha1` schema |
 
 Click **"Apply"** to save. The custom template will appear in the template list for future reuse.
 
 :::tip
-Before creating a custom template, design and test your policy in the TracingPolicy page using the Form Editor or YAML Editor first. Once you confirm the rules are correct, save it as a template — this ensures the template YAML is valid before sharing it with your team.
+Before creating a custom template, design and test your policy in the TracingPolicy page using the Form Editor or YAML Editor first. Once you confirm the rules are correct, save it as a template - this ensures the template YAML is valid before sharing it with your team.
 :::

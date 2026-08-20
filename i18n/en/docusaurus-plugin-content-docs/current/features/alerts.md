@@ -31,12 +31,12 @@ Click **"+ New Rule"** in the top-right corner to open the rule creation page.
 | Field | Required | Description |
 |---|---|---|
 | **Name** | ✅ | Display name for this alert rule |
-| **Cooldown (minutes)** | ✅ | Minimum interval between triggers for this rule — prevents alert storms; default is 5 minutes |
+| **Cooldown (minutes)** | ✅ | Minimum interval between triggers for this rule - prevents alert storms; default is 5 minutes |
 | **Webhook URL** | ✅ | The webhook endpoint to POST to (e.g., a Slack Incoming Webhook URL) |
-| **Event Type** | — | Check which event sources to monitor: `Security Events`, `Admission Events`, or both |
-| **Severity** | — | Check which severity levels to trigger on: `warning`, `critical`, or both |
-| **Namespaces** | — | Comma-separated Namespace names to watch; leave empty to watch all Namespaces |
-| **Policies** | — | Comma-separated Policy names to watch; leave empty to watch all Policies |
+| **Event Type** | - | Check which event sources to monitor: `Security Events`, `Admission Events`, or both |
+| **Severity** | - | Check which severity levels to trigger on: `warning`, `critical`, or both |
+| **Namespaces** | - | Comma-separated Namespace names to watch; leave empty to watch all Namespaces |
+| **Policies** | - | Comma-separated Policy names to watch; leave empty to watch all Policies |
 
 Click **"Save"** to activate the rule.
 
@@ -62,5 +62,5 @@ When a new security event arrives and matches a rule's conditions, the backend:
 | **Custom HTTP endpoint** | Any service that can receive an HTTP POST with a JSON payload |
 
 :::tip
-Consider setting up separate rules for different severity levels — route `critical` alerts to a high-priority channel and `warning` alerts to a general monitoring channel to help triage incidents faster.
+Consider setting up separate rules for different severity levels - route `critical` alerts to a high-priority channel and `warning` alerts to a general monitoring channel to help triage incidents faster.
 :::

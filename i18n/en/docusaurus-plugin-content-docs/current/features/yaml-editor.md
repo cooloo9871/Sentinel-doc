@@ -28,7 +28,7 @@ Clicking "**+ New YAML**" on the list page opens a full-screen dark-themed YAML 
 - The **Mode** dropdown in the top-right corner sets the policy's execution mode (`Monitoring` / `Protect`)
 - Click "**Apply**" when done
 
-**How it works:** the Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema — checking field structure and required fields — before creating or updating the TracingPolicy resource through the Kubernetes API Server. If the YAML is invalid, the page shows an error message pointing at the problem.
+**How it works:** the Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema - checking field structure and required fields - before creating or updating the TracingPolicy resource through the Kubernetes API Server. If the YAML is invalid, the page shows an error message pointing at the problem.
 
 ---
 
@@ -39,5 +39,5 @@ When using the form editor ("**+ New Policy**" or "**Edit**"), the right side of
 **Notes:**
 
 - Every change in the form (Pod Selector, Process Rules, File Rules) is reflected in the panel immediately
-- The preview is computed entirely in the frontend — no backend round-trip
+- The preview is computed entirely in the frontend - no backend round-trip
 - Clicking "**Apply**" submits exactly the YAML shown in this panel

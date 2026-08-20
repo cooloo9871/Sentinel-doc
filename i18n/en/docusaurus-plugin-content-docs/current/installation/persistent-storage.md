@@ -16,7 +16,7 @@ In the official Sentinel manifest, the data directory `/data/sentinel` is mounte
           emptyDir: {}
 ```
 
-An `emptyDir` lives and dies with the Pod — **every restart or reschedule wipes all of the following**:
+An `emptyDir` lives and dies with the Pod - **every restart or reschedule wipes all of the following**:
 
 - User accounts and passwords (back to the default `admin` / `admin`)
 - Alert rules and Syslog forwarding configs
@@ -27,7 +27,7 @@ An `emptyDir` lives and dies with the Pod — **every restart or reschedule wipe
 For production, mount `/data/sentinel` on a **PersistentVolume**.
 
 :::info Permissions
-Sentinel runs as a non-root user (`runAsUser: 10001`) and the Deployment sets `fsGroup: 10001`. As long as the storage backend supports Kubernetes fsGroup ownership management (most CSI drivers, local and hostPath volumes do), the volume's group is adjusted to 10001 automatically at mount time. **NFS is the exception** — see below.
+Sentinel runs as a non-root user (`runAsUser: 10001`) and the Deployment sets `fsGroup: 10001`. As long as the storage backend supports Kubernetes fsGroup ownership management (most CSI drivers, local and hostPath volumes do), the volume's group is adjusted to 10001 automatically at mount time. **NFS is the exception** - see below.
 :::
 
 ---
@@ -60,7 +60,7 @@ The event database is bounded by count limits and TTL (see [Event Retention](../
 
 ---
 
-## Option 2: Static PV — Local Volume (Single Node / Test)
+## Option 2: Static PV - Local Volume (Single Node / Test)
 
 Without a StorageClass, create a `local` PV that pins the data to a directory on one node:
 
@@ -124,7 +124,7 @@ A `local` PV pins the Sentinel Pod to that node via `nodeAffinity`. If the node 
 
 ---
 
-## Option 3: Static PV — NFS (Shared Across Nodes)
+## Option 3: Static PV - NFS (Shared Across Nodes)
 
 ```yaml title="sentinel-data-nfs.yaml"
 apiVersion: v1
@@ -170,7 +170,7 @@ Otherwise Sentinel fails to start because it cannot write its database.
 
 ## Mounting the PVC in the Sentinel Deployment
 
-Once the PVC exists (`kubectl get pvc -n sentinel-system` shows `Bound`; with `WaitForFirstConsumer` it stays `Pending` until a Pod mounts it — that's expected), switch the Deployment's `data` volume from `emptyDir` to the PVC:
+Once the PVC exists (`kubectl get pvc -n sentinel-system` shows `Bound`; with `WaitForFirstConsumer` it stays `Pending` until a Pod mounts it - that's expected), switch the Deployment's `data` volume from `emptyDir` to the PVC:
 
 ```bash
 kubectl -n sentinel-system patch deployment sentinel --patch '
@@ -197,7 +197,7 @@ Or edit the manifest (`deploy/sentinel.yaml`) and re-apply:
 ```
 
 :::note
-The `tmp` volume only holds scratch files — keep it as `emptyDir`; it does not need persistence.
+The `tmp` volume only holds scratch files - keep it as `emptyDir`; it does not need persistence.
 :::
 
 The patch triggers a rolling restart and the Pod comes back with the persistent volume mounted.
@@ -224,8 +224,8 @@ Finally, do a real test: log in to Sentinel and change any setting (change the a
 kubectl -n sentinel-system rollout restart deployment sentinel
 ```
 
-Log in again after the restart — if your change survived, persistence is working.
+Log in again after the restart - if your change survived, persistence is working.
 
 :::warning
-Data previously stored in the `emptyDir` is **not** migrated when you switch to the PVC — Sentinel starts fresh (credentials back to `admin`/`admin`). Set up persistent storage **before** doing your initial configuration (passwords, users, alert rules).
+Data previously stored in the `emptyDir` is **not** migrated when you switch to the PVC - Sentinel starts fresh (credentials back to `admin`/`admin`). Set up persistent storage **before** doing your initial configuration (passwords, users, alert rules).
 :::

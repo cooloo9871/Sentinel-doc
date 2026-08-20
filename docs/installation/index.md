@@ -31,14 +31,14 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 
 1. **Tetragon 開啟 gRPC**：`kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` 後 `rollout restart ds/tetragon`（詳見 [安裝 Tetragon](./tetragon-install.md)）
 2. **Cilium 啟用 Hubble Relay**：`--set hubble.relay.enabled=true`（詳見 [安裝與設定 Cilium](./cilium-install.md)）
-3. **重新套用 ClusterRole**：`kubectl apply -f deploy/sentinel.yaml`——新版移除了 `pods/exec` 權限（Sentinel 持有的最大權限），並新增了 exposure 偵測所需資源的讀取權
+3. **重新套用 ClusterRole**：`kubectl apply -f deploy/sentinel.yaml`，新版移除了 `pods/exec` 權限（Sentinel 持有的最大權限），並新增了 exposure 偵測所需資源的讀取權
 
 全新安裝（install-job / install.sh）會自動處理，無需手動操作。
 :::
 
 安裝完成後：
 
-- **正式環境請先完成 [設定永久儲存（PV / PVC）](./persistent-storage.md)**——預設的 `emptyDir` 會在 Pod 重啟時清空所有帳號、規則與事件資料
+- **正式環境請先完成 [設定永久儲存（PV / PVC）](./persistent-storage.md)**：預設的 `emptyDir` 會在 Pod 重啟時清空所有帳號、規則與事件資料
 - 若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定
 
 ## 選擇建議

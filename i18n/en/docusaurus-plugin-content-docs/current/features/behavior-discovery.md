@@ -8,7 +8,7 @@ sidebar_position: 6
 
 ## About This Feature
 
-Behavior Discovery is Sentinel's automated learning feature. Without creating any TracingPolicy in advance, it automatically collects and analyzes the actual execution behavior (process calls) of each Pod in the cluster — letting you build precise security policies based on real workload behavior rather than manually guessing which programs should be allowed.
+Behavior Discovery is Sentinel's automated learning feature. Without creating any TracingPolicy in advance, it automatically collects and analyzes the actual execution behavior (process calls) of each Pod in the cluster - letting you build precise security policies based on real workload behavior rather than manually guessing which programs should be allowed.
 
 ---
 
@@ -16,7 +16,7 @@ Behavior Discovery is Sentinel's automated learning feature. Without creating an
 
 After Tetragon is installed, its **base sensor** starts by default and records process events for all Pods in the cluster, including each process's execution path, parent process, and associated Namespace and Pod information. Sentinel continuously collects these raw events, groups and aggregates them by workload (Deployment / DaemonSet / Pod), and presents a readable behavior summary for review.
 
-This feature requires no pre-existing TracingPolicy — it continuously accumulates observation data in the background.
+This feature requires no pre-existing TracingPolicy - it continuously accumulates observation data in the background.
 
 ---
 
@@ -30,7 +30,7 @@ Navigate to the **"Behavior Discovery"** page. Observation results are displayed
 
 | Element | Description |
 |---|---|
-| **Stats counter** | Shows "N workloads · N pods total" in the top-right corner — the current count of observed workloads and Pods |
+| **Stats counter** | Shows "N workloads · N pods total" in the top-right corner - the current count of observed workloads and Pods |
 | **Namespace filter** | Select a specific Namespace to narrow the display |
 | **Search pod...** | Enter a Pod name keyword to quickly locate workload cards containing that Pod |
 | **Group by namespace** | Toggle to group cards by Namespace |

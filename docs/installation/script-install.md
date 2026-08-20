@@ -47,9 +47,9 @@ chmod +x install.sh
 
 **原理**：腳本依序執行以下流程：
 
-1. **安裝 Helm** — 若本機未偵測到 `helm` 指令，腳本會自動下載並安裝最新穩定版 Helm
-2. **使用 Helm 安裝 Tetragon** — 透過 Cilium 官方 Helm Chart 將 Tetragon 部署至叢集
-3. **kubectl apply 部署 Sentinel 清單** — 建立 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
+1. **安裝 Helm**：若本機未偵測到 `helm` 指令，腳本會自動下載並安裝最新穩定版 Helm
+2. **使用 Helm 安裝 Tetragon**：透過 Cilium 官方 Helm Chart 將 Tetragon 部署至叢集
+3. **kubectl apply 部署 Sentinel 清單**：建立 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
 
 ---
 

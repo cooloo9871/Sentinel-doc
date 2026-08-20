@@ -68,8 +68,8 @@ Policy Templates 是預先定義好的 TracingPolicy 範本庫，包含內建的
 | 欄位 | 必填 | 說明 |
 |---|---|---|
 | **Name** | ✅ | 範本的顯示名稱，建議使用有意義的描述性名稱 |
-| **Tags** | — | 以逗號分隔的標籤，用於分類與快速識別（例如 `namespace, process`） |
-| **Description** | — | 說明此範本的用途，幫助團隊成員了解適用場景 |
+| **Tags** | - | 以逗號分隔的標籤，用於分類與快速識別（例如 `namespace, process`） |
+| **Description** | - | 說明此範本的用途，幫助團隊成員了解適用場景 |
 | **YAML** | ✅ | 完整的 TracingPolicy YAML 定義，需符合 `cilium.io/v1alpha1` Schema |
 
 填寫完成後點擊「**Apply**」儲存。自訂範本建立後會出現在範本列表中，供後續重複使用。

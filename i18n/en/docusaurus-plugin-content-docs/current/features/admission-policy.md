@@ -16,8 +16,8 @@ Admission Policy provides a visual builder for Kubernetes **ValidatingAdmissionP
 
 The Admission Policy page has two tabs:
 
-- **Policies** — lists all `ValidatingAdmissionPolicy` resources in the cluster
-- **Bindings** — lists all `ValidatingAdmissionPolicyBinding` resources that associate Policies with specific Namespaces or resources
+- **Policies** - lists all `ValidatingAdmissionPolicy` resources in the cluster
+- **Bindings** - lists all `ValidatingAdmissionPolicyBinding` resources that associate Policies with specific Namespaces or resources
 
 ![Admission Policy list](/img/features/admission-policy/list.png)
 
@@ -47,7 +47,7 @@ Sentinel provides seven built-in rule types covering the most common Kubernetes 
 
 | Field | Description |
 |---|---|
-| **Policy Name** | The `ValidatingAdmissionPolicy` resource name — must follow Kubernetes naming conventions |
+| **Policy Name** | The `ValidatingAdmissionPolicy` resource name - must follow Kubernetes naming conventions |
 | **Rule Type** | Select one of the seven rule types above |
 | **Apply To** | Choose which resource types this policy applies to (Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob, or all) |
 | **Rule details** | Fields specific to the selected rule type appear below |

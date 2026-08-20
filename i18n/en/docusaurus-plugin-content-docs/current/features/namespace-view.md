@@ -49,6 +49,6 @@ Tetragon is deployed as a **DaemonSet**, meaning every Node must have a function
 
 If a Node's Tetragon Agent Pod is in an **Unhealthy** state:
 - Security events from all Pods on that node **cannot be detected**
-- TracingPolicy Protect mode will be **ineffective** for that node's Pods — creating a security gap
+- TracingPolicy Protect mode will be **ineffective** for that node's Pods - creating a security gap
 
 Check this page regularly to ensure all Agents remain Healthy.

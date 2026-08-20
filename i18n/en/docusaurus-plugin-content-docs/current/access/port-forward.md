@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## When to Use
 
-Local development, quick testing — no need to configure Ingress or a LoadBalancer. Ideal for developers to connect directly to the Sentinel service inside the cluster from their local machine.
+Local development, quick testing - no need to configure Ingress or a LoadBalancer. Ideal for developers to connect directly to the Sentinel service inside the cluster from their local machine.
 
 ## Step 1: Run Port-Forward
 
@@ -16,7 +16,7 @@ Map the in-cluster Service to a local port:
 kubectl port-forward -n sentinel-system svc/sentinel-svc 8080:8080
 ```
 
-**Why:** `kubectl port-forward` creates a tunnel on your local machine that forwards packets through the Kubernetes API Server to the Pod. The command occupies the terminal for the duration of the connection — close the terminal or press `Ctrl+C` to disconnect.
+**Why:** `kubectl port-forward` creates a tunnel on your local machine that forwards packets through the Kubernetes API Server to the Pod. The command occupies the terminal for the duration of the connection - close the terminal or press `Ctrl+C` to disconnect.
 
 ## Step 2: Open in Browser
 

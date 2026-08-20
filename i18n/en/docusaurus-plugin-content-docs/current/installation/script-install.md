@@ -47,9 +47,9 @@ chmod +x install.sh
 
 **The script executes the following flow:**
 
-1. **Install Helm** — If `helm` is not found locally, the script automatically downloads and installs the latest stable Helm
-2. **Install Tetragon via Helm** — Deploys Tetragon to the cluster using the official Cilium Helm Chart
-3. **kubectl apply Sentinel manifests** — Creates the required ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service resources
+1. **Install Helm** - If `helm` is not found locally, the script automatically downloads and installs the latest stable Helm
+2. **Install Tetragon via Helm** - Deploys Tetragon to the cluster using the official Cilium Helm Chart
+3. **kubectl apply Sentinel manifests** - Creates the required ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service resources
 
 ---
 

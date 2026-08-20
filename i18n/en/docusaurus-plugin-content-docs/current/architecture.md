@@ -56,7 +56,7 @@ sequenceDiagram
 
 Sentinel uses a **single binary deployment** model that greatly simplifies the installation process.
 
-The Go backend embeds the frontend React SPA's static files (HTML, JavaScript, CSS) at compile time using `embed.go`. Deployment requires only copying and running a single executable — no additional web server or static file service needed.
+The Go backend embeds the frontend React SPA's static files (HTML, JavaScript, CSS) at compile time using `embed.go`. Deployment requires only copying and running a single executable - no additional web server or static file service needed.
 
 Persistent data is stored at the following paths:
 

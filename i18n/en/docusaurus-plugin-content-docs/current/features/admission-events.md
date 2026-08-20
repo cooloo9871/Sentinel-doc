@@ -46,7 +46,7 @@ Navigate to **"Admission Events"** to see the list of captured admission violati
 
 ## Configuring Kubernetes Audit Log
 
-Complete violation coverage (including requests rejected straight from `kubectl apply`) requires configuring the kube-apiserver's Audit Policy and Webhook on every control plane node — and protecting the webhook endpoint with a token is recommended. See [Wiring Up the API Server Audit Log](../installation/audit-webhook.md) in the Installation section for the full setup.
+Complete violation coverage (including requests rejected straight from `kubectl apply`) requires configuring the kube-apiserver's Audit Policy and Webhook on every control plane node - and protecting the webhook endpoint with a token is recommended. See [Wiring Up the API Server Audit Log](../installation/audit-webhook.md) in the Installation section for the full setup.
 
 If this page shows no events from the `audit` source, the audit webhook is most likely not configured, misconfigured, or the tokens do not match (see the troubleshooting section on the setup page).
 

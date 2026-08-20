@@ -8,14 +8,14 @@ sidebar_position: 3
 
 ## Overview
 
-The form editor provides a graphical interface for configuring the three sections of a TracingPolicy — Pod Selector, Process Rules, and File Rules — without writing YAML by hand. The **Generated YAML** panel on the right updates live as you edit the form, so you can verify the resulting TracingPolicy at any time.
+The form editor provides a graphical interface for configuring the three sections of a TracingPolicy - Pod Selector, Process Rules, and File Rules - without writing YAML by hand. The **Generated YAML** panel on the right updates live as you edit the form, so you can verify the resulting TracingPolicy at any time.
 
 Click "**+ New Policy**" on the Tracing Policy list page to open the form editor; click "**Edit**" on an existing policy to edit it in form mode. If you prefer writing YAML directly, use "**+ New YAML**" instead (see [YAML Editor](./yaml-editor.md)).
 
 ![TracingPolicy form editor](/img/features/policy/create.png)
 
 :::note
-Pod **network access rules** have been removed from the TracingPolicy form — they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy).
+Pod **network access rules** have been removed from the TracingPolicy form - they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy).
 :::
 
 ---
@@ -47,7 +47,7 @@ The Pod Selector section narrows the policy to specific Pods instead of every Po
 3. Leave the selector empty to apply the policy to every Pod in the namespace (or the whole cluster for a cluster-wide policy)
 
 :::tip Live selector preview (v0.40+)
-While editing the Pod Selector, the form shows which pods the selector matches **right now**. It turns red when nothing matches (usually a label typo) and amber when an empty selector is about to govern every pod — catching a mis-aimed selector before Apply.
+While editing the Pod Selector, the form shows which pods the selector matches **right now**. It turns red when nothing matches (usually a label typo) and amber when an empty selector is about to govern every pod - catching a mis-aimed selector before Apply.
 :::
 
 ---
@@ -70,7 +70,7 @@ Process Rules control which programs (binaries) may run inside the Pods.
 3. Add as many paths as needed
 
 :::caution
-Paths are **absolute and matched exactly** — a program name on its own (e.g. `curl`) is not accepted.
+Paths are **absolute and matched exactly** - a program name on its own (e.g. `curl`) is not accepted.
 :::
 
 **How it works:** Tetragon hooks the `sys_execve` kprobe in the kernel to intercept every exec syscall. Whitelist mode matches with the `NotEqual` operator (anything not in the list is a violation); Blacklist mode uses `Equal` (anything in the list is a violation). Monitoring mode records violations; Protect mode blocks the execution.

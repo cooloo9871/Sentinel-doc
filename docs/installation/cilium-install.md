@@ -59,7 +59,7 @@ cilium install \
 | `rollOutCiliumPods=true` / `operator.rollOutPods=true` | 與 Sentinel 無關，但建議加上：設定變更時自動滾動重啟 agent 與 operator，`cilium upgrade` 不需手動 rollout |
 
 :::note Hubble UI 不需要安裝
-Sentinel 本身就是 UI——**Relay 必要，但 Hubble UI 不需要**。除 correlation 參數外的 `hubble.metrics` 也不需要，Sentinel 不抓取 Hubble metrics。
+Sentinel 本身就是 UI：**Relay 必要，但 Hubble UI 不需要**。除 correlation 參數外的 `hubble.metrics` 也不需要，Sentinel 不抓取 Hubble metrics。
 :::
 
 **建議加上的參數：**
@@ -68,7 +68,7 @@ Sentinel 本身就是 UI——**Relay 必要，但 Hubble UI 不需要**。除 c
   --set hubble.metrics.enableNetworkPolicyCorrelation=true
 ```
 
-啟用後，Hubble 在回報被拒絕的流量時會直接標明是**哪一條** Policy 擋下的（`egress_denied_by` / `ingress_denied_by`）。非必要——未啟用時 Sentinel 會改以「哪些 Policy 管轄該 Pod 該方向」推論——但 correlation 是權威答案，推論可能列出多個候選。注意其限制：correlation 只對**明確的** `ingressDeny` / `egressDeny` 規則有效；Whitelist 是以「缺少 allow 規則」達成拒絕，沒有規則可回報，一律走推論。若你的 Policy 以 Whitelist 為主，此參數幫助有限。
+啟用後，Hubble 在回報被拒絕的流量時會直接標明是**哪一條** Policy 擋下的（`egress_denied_by` / `ingress_denied_by`）。非必要（未啟用時 Sentinel 會改以「哪些 Policy 管轄該 Pod 該方向」推論），但 correlation 是權威答案，推論可能列出多個候選。注意其限制：correlation 只對**明確的** `ingressDeny` / `egressDeny` 規則有效；Whitelist 是以「缺少 allow 規則」達成拒絕，沒有規則可回報，一律走推論。若你的 Policy 以 Whitelist 為主，此參數幫助有限。
 
 :::note
 若叢集已安裝 Cilium 但缺少上述設定（最常見的是升級 Sentinel v0.43+ 時需補開 Hubble Relay），可用 `cilium upgrade --set <參數>` 或 Helm 補上：

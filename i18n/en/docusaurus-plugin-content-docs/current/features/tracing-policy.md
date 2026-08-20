@@ -36,7 +36,7 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 |---|---|
 | **Name** | The resource name of the TracingPolicy |
 | **Scope** | Scope: `cluster` (cluster-level) or `namespaced` (Namespace-level) |
-| **Mode** | Execution mode dropdown — click to switch between `Monitoring` and `Protect` directly in the list |
+| **Mode** | Execution mode dropdown - click to switch between `Monitoring` and `Protect` directly in the list |
 | **Namespace** | The Namespace a Namespace-scoped Policy belongs to; blank for Cluster-scoped |
 | **Created By** | The user account that created this Policy; policies created with `kubectl apply` show `k8s-apply` |
 | **Created Time** | The creation timestamp of the Policy |
@@ -44,7 +44,7 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 
 :::note How Edit opens (v0.39.6+)
 - **Policies created in Sentinel**: open in the form editor when the form can represent them, otherwise in the YAML editor
-- **Policies applied with `kubectl`** (Created By is `k8s-apply`): always open directly in the **YAML editor**, showing the YAML as its author wrote it — a save from the form would rewrite field order, quoting and comments, leaving the file in git no longer matching the cluster
+- **Policies applied with `kubectl`** (Created By is `k8s-apply`): always open directly in the **YAML editor**, showing the YAML as its author wrote it - a save from the form would rewrite field order, quoting and comments, leaving the file in git no longer matching the cluster
 :::
 
 ---
@@ -78,12 +78,12 @@ The top of the TracingPolicy page contains a **Global Protect Mode** banner that
 
 | State | Banner Text | Effect |
 |---|---|---|
-| **OFF (default)** | "Protect mode is off — monitoring only, no blocking" | All Policies record events only; no blocking |
-| **ON** | "Protect mode is on — all policies are enforcing" | All Policies simultaneously switch to Protect mode |
+| **OFF (default)** | "Protect mode is off - monitoring only, no blocking" | All Policies record events only; no blocking |
+| **ON** | "Protect mode is on - all policies are enforcing" | All Policies simultaneously switch to Protect mode |
 
-Click **"Turn On"** — Sentinel batch-updates the `mode` field of all TracingPolicies to `Protect`. The Tetragon Agent takes effect immediately.
+Click **"Turn On"** - Sentinel batch-updates the `mode` field of all TracingPolicies to `Protect`. The Tetragon Agent takes effect immediately.
 
-Click **"Turn Off"** — Sentinel batch-reverts all Policy `mode` fields to `Monitoring`, restoring record-only mode.
+Click **"Turn Off"** - Sentinel batch-reverts all Policy `mode` fields to `Monitoring`, restoring record-only mode.
 
 :::warning
 Before enabling Global Protect Mode, make sure all TracingPolicies have been thoroughly validated. If a Whitelist is missing required executable paths, switching to Protect mode may block legitimate services. Switch Policies one by one first to confirm no issues before using the global switch.

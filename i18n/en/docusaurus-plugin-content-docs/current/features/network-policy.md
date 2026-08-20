@@ -8,7 +8,7 @@ sidebar_position: 17
 
 ## Overview
 
-The Network Policy page provides visual management of **Cilium Network Policies**. You can define Ingress and Egress network access rules between Pods through a graphical form — no hand-written YAML required. Sentinel automatically generates the corresponding `CiliumNetworkPolicy` resource from the form and applies it to the cluster.
+The Network Policy page provides visual management of **Cilium Network Policies**. You can define Ingress and Egress network access rules between Pods through a graphical form - no hand-written YAML required. Sentinel automatically generates the corresponding `CiliumNetworkPolicy` resource from the form and applies it to the cluster.
 
 As of this version, Pod-level network access control is handled by Cilium Network Policy (the Network Rules section has been removed from the TracingPolicy form): TracingPolicy focuses on process- and file-level security, while network-level allow/deny rules are managed here.
 
@@ -39,7 +39,7 @@ The toolbar at the top provides a "**Search by name...**" box and an "**All name
 
 ## Creating a Policy (Form)
 
-Click "**+ New Policy**" to open the graphical builder — the form is on the left, with a live **Generated YAML** preview on the right.
+Click "**+ New Policy**" to open the graphical builder - the form is on the left, with a live **Generated YAML** preview on the right.
 
 ![New Network Policy form](/img/features/network-policy/new-form.png)
 
@@ -50,11 +50,11 @@ Click "**+ New Policy**" to open the graphical builder — the form is on the le
 | **Name** | ✅ | Policy resource name, must follow Kubernetes naming rules |
 | **Scope** | ✅ | `Namespaced` (the selector only matches pods in that namespace, generates `CiliumNetworkPolicy`) or `Cluster-wide` (generates `CiliumClusterwideNetworkPolicy`) |
 | **Namespace** | Required when namespaced | The namespace the policy belongs to |
-| **Comment** | — | Free-form note to help your team understand the policy's purpose |
+| **Comment** | - | Free-form note to help your team understand the policy's purpose |
 | **Applies to** | ✅ | key=value labels selecting the target Pods this policy governs (`endpointSelector`); at least one label is required |
 
 :::tip Live selector preview (v0.40+)
-While editing **Applies to**, the form shows which pods the selector matches **right now** (e.g. `Selects 3 pods in demo: web-1, web-2, db-1`). It turns **red** when the selector matches nothing (usually a label typo) and **amber** when an empty selector is about to govern every pod — catching the most damaging policy mistake before Apply.
+While editing **Applies to**, the form shows which pods the selector matches **right now** (e.g. `Selects 3 pods in demo: web-1, web-2, db-1`). It turns **red** when the selector matches nothing (usually a label typo) and **amber** when an empty selector is about to govern every pod - catching the most damaging policy mistake before Apply.
 :::
 
 ### Ingress / Egress rules
@@ -72,15 +72,15 @@ The Ingress and Egress sections are configured independently and share the same 
 
 | Field | Description |
 |---|---|
-| **From / To — kind** | Peer type: `Labels` (select peers by Pod label), `Entity` (a reserved Cilium identity), `IP / CIDR` (v0.40+), or `FQDN` (v0.40+, egress whitelist only) |
+| **From / To - kind** | Peer type: `Labels` (select peers by Pod label), `Entity` (a reserved Cilium identity), `IP / CIDR` (v0.40+), or `FQDN` (v0.40+, egress whitelist only) |
 | **From / To** | Labels: one or more key=value labels; Entity: choose from `world`, `cluster`, `host`, `remote-node`, `all`, `init`, `health`, `unmanaged`; IP / CIDR: an address or subnet (a bare IP is written as a single-host CIDR); FQDN: a domain name, wildcards supported (`github.com`, `*.github.com`) |
 | **Peer namespace** | (Optional, Labels only) restrict peers to a specific namespace |
 | **Ports** | Optional; click "**+ Add Port**" to add a port and protocol (TCP / UDP). Leave empty for no port restriction |
-| **L7 — HTTP rules** | Optional; click "**+ Add HTTP rule**" to filter by HTTP method and path. An HTTP rule requires at least one port |
+| **L7 - HTTP rules** | Optional; click "**+ Add HTTP rule**" to filter by HTTP method and path. An HTTP rule requires at least one port |
 
 :::note FQDN limits and the DNS rule
-- **FQDN exists on the egress allow (whitelist) side only**: Cilium learns a name's addresses from the DNS answers the pod receives, so there is nothing to match on ingress or in a deny rule — the form says so instead of generating a rule that cannot fire.
-- When an FQDN peer is used, the **DNS visibility rule** the matching depends on rides along automatically — a whitelist egress section would otherwise block DNS itself and the names would never resolve. It is folded out of the form on read and re-emitted on save; hand-written variants open as YAML rather than being rewritten.
+- **FQDN exists on the egress allow (whitelist) side only**: Cilium learns a name's addresses from the DNS answers the pod receives, so there is nothing to match on ingress or in a deny rule - the form says so instead of generating a rule that cannot fire.
+- When an FQDN peer is used, the **DNS visibility rule** the matching depends on rides along automatically - a whitelist egress section would otherwise block DNS itself and the names would never resolve. It is folded out of the form on read and re-emitted on save; hand-written variants open as YAML rather than being rewritten.
 :::
 
 A validation checklist below the form lists anything still missing; the "**Apply**" button is enabled once everything passes. Clicking Apply creates the policy and applies it to the cluster.
@@ -93,7 +93,7 @@ A validation checklist below the form lists anything still missing; the "**Apply
 
 Click "**+ New YAML**" to switch to a full-screen YAML editor and write or paste a complete Cilium Network Policy manifest.
 
-Scope is determined by the manifest kind — `CiliumNetworkPolicy` is namespaced, `CiliumClusterwideNetworkPolicy` is not. Click "**Apply**" when done.
+Scope is determined by the manifest kind - `CiliumNetworkPolicy` is namespaced, `CiliumClusterwideNetworkPolicy` is not. Click "**Apply**" when done.
 
 ---
 

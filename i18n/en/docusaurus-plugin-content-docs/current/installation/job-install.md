@@ -10,7 +10,7 @@ sidebar_position: 2
 
 Sentinel uses a Kubernetes Job to run the installation script, automatically creating the required ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service. The entire installation flow uses Kustomize to manage YAML resources, ensuring consistency and reproducibility.
 
-The key advantage of the Job method is that the installation runs entirely inside the cluster, without depending on the local environment — ideal for CI/CD pipelines or environments where running local bash scripts is not practical.
+The key advantage of the Job method is that the installation runs entirely inside the cluster, without depending on the local environment - ideal for CI/CD pipelines or environments where running local bash scripts is not practical.
 
 ---
 

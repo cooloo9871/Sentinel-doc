@@ -28,7 +28,7 @@ kubectl get pods -n kube-system -l k8s-app=cilium
 
 All Pods should display `Running` status with a fully ready `READY` column (e.g., `1/1`).
 
-**Why:** Cilium is deployed as a DaemonSet on every node in the cluster and is responsible for loading eBPF programs into the Linux kernel. Confirming that Pods are `READY` means the eBPF programs on the corresponding node have loaded successfully — a prerequisite for Tetragon to function.
+**Why:** Cilium is deployed as a DaemonSet on every node in the cluster and is responsible for loading eBPF programs into the Linux kernel. Confirming that Pods are `READY` means the eBPF programs on the corresponding node have loaded successfully - a prerequisite for Tetragon to function.
 
 ## Verify Tetragon Installation
 

@@ -18,7 +18,7 @@ Quarantine 提供事件應變（Incident Response）時的一鍵 Pod 網路隔�
 
 Quarantine 的運作方式如下：
 
-- **除 kubelet 健康檢查外，所有進出流量一律封鎖**。保留健康檢查是刻意的設計——若健康檢查也被擋下，kubelet 會重啟 Pod 並以全新（未被隔離）的副本取代，反而讓證據消失、威脅重新取得網路。
+- **除 kubelet 健康檢查外，所有進出流量一律封鎖**。保留健康檢查是刻意的設計：若健康檢查也被擋下，kubelet 會重啟 Pod 並以全新（未被隔離）的副本取代，反而讓證據消失、威脅重新取得網路。
 - **隔離狀態記錄在 Pod 的 `sentinel.io/quarantine=true` Label 上**，因此即使 Sentinel 重啟，隔離狀態依然存在。
 - 隔離由一條叢集層級的 Cilium Policy **`sentinel-quarantine`** 實現，它以上述 Label 選取目標 Pod。此 Policy 會在第一次執行隔離時自動建立。
 - **若 Pod 被刪除重建，新 Pod 不會帶有隔離 Label**，也就不再受隔離限制。若威脅可能隨工作負載重建復發，請搭配其他 Policy 進行防護。

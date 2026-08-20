@@ -21,9 +21,9 @@ Each TracingPolicy in Sentinel supports two execution modes that can be switched
 
 The quickest way to switch modes: on the **Tracing Policy list page**, click the **Mode** column dropdown directly and select `Monitoring` or `Protect`.
 
-![Tracing Policy list — Mode column dropdown](/img/features/policy/list.png)
+![Tracing Policy list - Mode column dropdown](/img/features/policy/list.png)
 
-The Tetragon Agent applies the new mode within seconds — no need to open the edit page or restart any service.
+The Tetragon Agent applies the new mode within seconds - no need to open the edit page or restart any service.
 
 ---
 
@@ -31,7 +31,7 @@ The Tetragon Agent applies the new mode within seconds — no need to open the e
 
 When creating a new Policy or clicking **"Edit"** from the list, the **Mode** dropdown in the top-right corner of the page sets the execution mode for that Policy.
 
-![Create Policy page — Mode dropdown](/img/features/policy/create.png)
+![Create Policy page - Mode dropdown](/img/features/policy/create.png)
 
 After changing the mode, click **"Apply"**. The Tetragon Agent applies the change immediately.
 
@@ -47,14 +47,14 @@ The Global Protect Mode toggle banner is located at the **top of the TracingPoli
 
 | State | Banner Text |
 |---|---|
-| **OFF (default)** | "Protect mode is off — monitoring only, no blocking" |
-| **ON** | "Protect mode is on — all policies are enforcing" |
+| **OFF (default)** | "Protect mode is off - monitoring only, no blocking" |
+| **ON** | "Protect mode is on - all policies are enforcing" |
 
 ### Enable Global Protect Mode
 
 **Action:** Click the **"Turn On"** button on the banner.
 
-**How it works:** The Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules — no Agent restart required.
+**How it works:** The Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules - no Agent restart required.
 
 ### Disable Global Protect Mode
 

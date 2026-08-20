@@ -169,7 +169,7 @@ eff3881e1f2fc       c3994bc6961024...   3 seconds ago       Running   kube-apise
 
 *此功能需 Sentinel v0.39.1 以上；Token 放入 URL 的方式需 v0.39.4 以上。*
 
-Webhook 端點在未設定 Token 時是開放的寫入路徑——叢集內任何工作負載都可以偽造 admission 事件，而事件保留機制會先淘汰最舊的資料，灌入假事件就能把真實事件擠掉。建議以共用 Token 保護端點。
+Webhook 端點在未設定 Token 時是開放的寫入路徑：叢集內任何工作負載都可以偽造 admission 事件，而事件保留機制會先淘汰最舊的資料，灌入假事件就能把真實事件擠掉。建議以共用 Token 保護端點。
 
 ### 1. 建立 Token Secret
 
@@ -205,7 +205,7 @@ clusters:
 ```
 
 :::caution 務必放在 URL，不要放 kubeconfig 的 `user.token`
-client-go 對 **plain HTTP** 的伺服器會**靜默拒送 bearer token**——雙方都不會報錯，apiserver 只是不帶 Token 送出，所有請求都被 401 拒絕。URL 會原樣送達，因此 Token 一定到得了；Sentinel 會在寫入 access log **之前**先剝除 URL 中的 Token，不會洩漏到自己的日誌。（若 Sentinel 以 TLS 提供服務，`user.token` 的 bearer 方式也可用。）
+client-go 對 **plain HTTP** 的伺服器會**靜默拒送 bearer token**：雙方都不會報錯，apiserver 只是不帶 Token 送出，所有請求都被 401 拒絕。URL 會原樣送達，因此 Token 一定到得了；Sentinel 會在寫入 access log **之前**先剝除 URL 中的 Token，不會洩漏到自己的日誌。（若 Sentinel 以 TLS 提供服務，`user.token` 的 bearer 方式也可用。）
 :::
 
 ### 4. 重啟 kube-apiserver
@@ -221,13 +221,13 @@ sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/ && sleep 5 && \
 
 ## Token 不一致時的排查
 
-Sentinel 設定了 Token 但 apiserver 的 kubeconfig 缺少（或值不同）時，audit 事件會被拒絕並**無聲地停止出現**——Admission Events 頁面單純不再有來自 `audit` 來源的新事件。兩個地方可以看到原因：
+Sentinel 設定了 Token 但 apiserver 的 kubeconfig 缺少（或值不同）時，audit 事件會被拒絕並**無聲地停止出現**：Admission Events 頁面單純不再有來自 `audit` 來源的新事件。兩個地方可以看到原因：
 
 **Sentinel 端**（最多每分鐘印一行）：
 
 ```bash
 kubectl -n sentinel-system logs deploy/sentinel | grep audit-webhook
-# audit-webhook: rejected a request whose bearer token is missing or wrong — ...
+# audit-webhook: rejected a request whose bearer token is missing or wrong ...
 # its audit events are NOT being recorded
 ```
 
@@ -239,4 +239,4 @@ kubectl -n kube-system logs kube-apiserver-<node> | grep -i audit
 # provide credentials
 ```
 
-修正 `/etc/kubernetes/audit-webhook.yaml` 中的 Token 後，依上方方式重啟 kube-apiserver 即生效。最常見的錯誤原因是把 Token 放在 kubeconfig 的 `user.token` 而非 URL——在 plain HTTP 下 client-go 會靜默丟棄 bearer token，apiserver 完全不帶 Token 送出，且任何一端都不會有錯誤訊息。
+修正 `/etc/kubernetes/audit-webhook.yaml` 中的 Token 後，依上方方式重啟 kube-apiserver 即生效。最常見的錯誤原因是把 Token 放在 kubeconfig 的 `user.token` 而非 URL：在 plain HTTP 下 client-go 會靜默丟棄 bearer token，apiserver 完全不帶 Token 送出，且任何一端都不會有錯誤訊息。

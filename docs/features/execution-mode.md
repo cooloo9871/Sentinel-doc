@@ -21,7 +21,7 @@ Sentinel 的每條 TracingPolicy 皆支援兩種執行模式，可依照部署�
 
 **最快速**的切換方式：在 Tracing Policy 列表頁的 **Mode** 欄位，直接點擊下拉選單選擇 `Monitoring` 或 `Protect`。
 
-![Tracing Policy 列表 — Mode 欄位下拉](/img/features/policy/list.png)
+![Tracing Policy 列表（Mode 欄位下拉）](/img/features/policy/list.png)
 
 Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重啟任何服務。
 
@@ -31,7 +31,7 @@ Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重�
 
 建立新 Policy 或點擊列表中的「**Edit**」進入編輯頁面時，頁面右上角的 **Mode** 下拉選單可設定該 Policy 的執行模式。
 
-![建立 Policy 頁面 — Mode 下拉](/img/features/policy/create.png)
+![建立 Policy 頁面（Mode 下拉）](/img/features/policy/create.png)
 
 修改後點擊「**Apply**」套用，Tetragon Agent 立即生效。
 

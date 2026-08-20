@@ -44,7 +44,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 :::note Edit 的開啟方式（v0.39.6+）
 - **Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
-- **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML——避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
+- **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML，避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
 :::
 
 :::tip
@@ -82,8 +82,8 @@ TracingPolicy 頁面頂部包含一個 **Global Protect Mode** banner，可一�
 
 | 狀態 | Banner 文字 | 說明 |
 |---|---|---|
-| **OFF（預設）** | "Protect mode is off — monitoring only, no blocking" | 所有 Policy 僅記錄事件，不阻擋行為 |
-| **ON** | "Protect mode is on — all policies are enforcing" | 所有 Policy 同時進入 Protect 模式 |
+| **OFF（預設）** | "Protect mode is off - monitoring only, no blocking" | 所有 Policy 僅記錄事件，不阻擋行為 |
+| **ON** | "Protect mode is on - all policies are enforcing" | 所有 Policy 同時進入 Protect 模式 |
 
 點擊「**Turn On**」後，Sentinel 後端批次更新叢集內所有 TracingPolicy 的 `mode` 欄位為 `Protect`；再次點擊「**Turn Off**」則批次還原為 `Monitoring`。
 

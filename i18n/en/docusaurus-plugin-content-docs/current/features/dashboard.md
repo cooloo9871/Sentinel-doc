@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## About This Page
 
-The Dashboard is the home page after logging in to Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode — letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, and the current Quarantine state.
+The Dashboard is the home page after logging in to Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode - letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, and the current Quarantine state.
 
 ---
 
