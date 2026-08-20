@@ -11,7 +11,7 @@ sidebar_position: 12
 The Admission Events page records and displays violation events from Kubernetes **ValidatingAdmissionPolicy**. Events come from two sources:
 
 - **Kubernetes Warning Events** (default): works without any setup, but only covers violations that raise a Warning Event
-- **Audit Webhook** (recommended): pointing the kube-apiserver audit webhook at Sentinel gives complete coverage, including requests rejected straight from `kubectl apply`
+- **Audit Webhook** (recommended): pointing the kube-apiserver audit webhook at K8s Sentinel gives complete coverage, including requests rejected straight from `kubectl apply`
 
 The **Source** filter on the page shows which pipeline each event came from.
 

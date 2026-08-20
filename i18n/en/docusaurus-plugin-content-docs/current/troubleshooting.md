@@ -44,7 +44,7 @@ flowchart TD
 
 ## Reset Admin Password
 
-If the admin password has been forgotten, delete `users.json` to let Sentinel recreate the default account (`admin` / `admin`):
+If the admin password has been forgotten, delete `users.json` to let K8s Sentinel recreate the default account (`admin` / `admin`):
 
 ```bash
 # Find the sentinel pod name
@@ -68,7 +68,7 @@ kubectl logs -n kube-system -l app.kubernetes.io/name=tetragon --tail=50
 
 Confirm all Tetragon Pods are in `Running` state and there are no `ERROR` or `FATAL` messages in the logs. If the DaemonSet Pod count is insufficient (not covering all nodes), check node taints and tolerations.
 
-## View Sentinel Logs
+## View K8s Sentinel Logs
 
 ```bash
 # View the last 100 lines of logs

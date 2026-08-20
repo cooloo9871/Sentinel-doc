@@ -8,7 +8,7 @@ sidebar_position: 4
 
 ## 功能說明
 
-除了圖形化表單外，Sentinel 提供兩種與 YAML 相關的操作方式，適合不同使用情境：
+除了圖形化表單外，K8s Sentinel 提供兩種與 YAML 相關的操作方式，適合不同使用情境：
 
 - **(a) 直接 YAML 編輯**：點擊 Tracing Policy 列表頁的「**+ New YAML**」，在全螢幕編輯器中直接撰寫或貼上完整的 TracingPolicy YAML
 - **(b) Generated YAML 即時預覽**：在表單編輯器右側面板，隨表單欄位變更即時顯示對應的 YAML 結構，方便確認規則設定正確
@@ -28,7 +28,7 @@ sidebar_position: 4
 - 頁面右上角的 **Mode** 下拉選單設定此 Policy 的執行模式（`Monitoring` / `Protect`）
 - 完成後點擊「**Apply**」套用
 
-**執行原理：** Sentinel 後端接收 YAML 後，會先針對 `cilium.io/v1alpha1` Schema 進行結構驗證，確認欄位格式與必要欄位皆正確無誤，驗證通過後才透過 Kubernetes API Server 建立或更新 TracingPolicy 資源。若 YAML 格式有誤，頁面會顯示錯誤訊息指出問題所在。
+**執行原理：** K8s Sentinel 後端接收 YAML 後，會先針對 `cilium.io/v1alpha1` Schema 進行結構驗證，確認欄位格式與必要欄位皆正確無誤，驗證通過後才透過 Kubernetes API Server 建立或更新 TracingPolicy 資源。若 YAML 格式有誤，頁面會顯示錯誤訊息指出問題所在。
 
 ---
 

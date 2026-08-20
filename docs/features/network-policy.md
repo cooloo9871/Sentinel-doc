@@ -8,7 +8,7 @@ sidebar_position: 17
 
 ## 功能說明
 
-Network Policy 頁面提供 **Cilium Network Policy** 的視覺化管理功能。透過圖形化表單即可定義 Pod 之間的 Ingress（入站）與 Egress（出站）網路存取規則，無需手寫 YAML；Sentinel 會依表單內容自動產生對應的 `CiliumNetworkPolicy` 資源並套用至叢集。
+Network Policy 頁面提供 **Cilium Network Policy** 的視覺化管理功能。透過圖形化表單即可定義 Pod 之間的 Ingress（入站）與 Egress（出站）網路存取規則，無需手寫 YAML；K8s Sentinel 會依表單內容自動產生對應的 `CiliumNetworkPolicy` 資源並套用至叢集。
 
 自此版本起，Pod 的網路存取控制由 Cilium Network Policy 負責（原 TracingPolicy 表單中的 Network Rules 區段已移除）：TracingPolicy 專注於行程與檔案層級的安全控管，網路層級的允許/封鎖規則統一在本頁面管理。
 
@@ -85,7 +85,7 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 
 表單下方會即時列出未完成的必填項目清單，全部通過驗證後「**Apply**」按鈕才會啟用。點擊 Apply 即建立 Policy 並套用至叢集。
 
-**執行原理：** Sentinel 依表單內容產生 `CiliumNetworkPolicy`（或 `CiliumClusterwideNetworkPolicy`）YAML，透過 Kubernetes API Server 建立資源，由叢集內的 Cilium CNI 於資料平面即時強制執行。L7 HTTP 規則由 Cilium 的 Envoy 代理處理。
+**執行原理：** K8s Sentinel 依表單內容產生 `CiliumNetworkPolicy`（或 `CiliumClusterwideNetworkPolicy`）YAML，透過 Kubernetes API Server 建立資源，由叢集內的 Cilium CNI 於資料平面即時強制執行。L7 HTTP 規則由 Cilium 的 Envoy 代理處理。
 
 ---
 
@@ -98,7 +98,7 @@ Policy 的作用範圍由 manifest 的 `kind` 決定：`CiliumNetworkPolicy` 為
 ---
 
 :::info
-Network Policy 需要叢集使用 **Cilium** 作為 CNI。若叢集透過 Sentinel 的安裝腳本部署，Cilium 已內建於安裝流程中。
+Network Policy 需要叢集使用 **Cilium** 作為 CNI。若叢集透過 K8s Sentinel 的安裝腳本部署，Cilium 已內建於安裝流程中。
 :::
 
 :::tip

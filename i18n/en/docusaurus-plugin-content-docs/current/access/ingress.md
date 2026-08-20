@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## When to Use
 
-Production environments and multi-user shared access requiring a fixed URL. Ingress allows team members to open the Sentinel management UI directly in a browser without running `kubectl`.
+Production environments and multi-user shared access requiring a fixed URL. Ingress allows team members to open the K8s Sentinel management UI directly in a browser without running `kubectl`.
 
 ## Prerequisites
 

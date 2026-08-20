@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## 適用場景
 
-本機開發、快速測試，不需要設定 Ingress 或 LoadBalancer。適合開發人員在本地端直接連線至叢集內的 Sentinel 服務進行功能驗證。
+本機開發、快速測試，不需要設定 Ingress 或 LoadBalancer。適合開發人員在本地端直接連線至叢集內的 K8s Sentinel 服務進行功能驗證。
 
 ## 步驟一：執行 port-forward
 
@@ -41,7 +41,7 @@ http://localhost:8080
 
 輸入 Username 與 Password 後點擊 **Sign in** 按鈕完成登入。
 
-**原理：** Sentinel 使用 JWT（JSON Web Token）進行認證。登入成功後，token 會存於瀏覽器的 `localStorage`，後續每次請求均自動帶入 Authorization header 進行身份驗證。
+**原理：** K8s Sentinel 使用 JWT（JSON Web Token）進行認證。登入成功後，token 會存於瀏覽器的 `localStorage`，後續每次請求均自動帶入 Authorization header 進行身份驗證。
 
 ## 背景執行建議
 

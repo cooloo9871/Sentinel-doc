@@ -42,7 +42,7 @@ Event Retention 頁面提供 Security Events 與 Admission Events 的資料保�
 
 ## 清除機制說明
 
-Sentinel 後端以兩種條件觸發自動清除：
+K8s Sentinel 後端以兩種條件觸發自動清除：
 
 1. **超過數量上限**：當同一嚴重性等級的事件數量超過設定的最大值時，從最舊的事件開始刪除
 2. **超過 TTL**：定期掃描資料庫，刪除所有建立時間超過 TTL 設定天數的事件

@@ -7,9 +7,9 @@ slug: /
 
 # 專案簡介
 
-## Sentinel 是什麼
+## K8s Sentinel 是什麼
 
-Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 所設計的圖形化管理介面，讓 DevSecOps 工程師與 Platform 團隊能夠透過直覺化的網頁操作介面，完整管理安全監控策略的生命週期，徹底免去繁瑣的手動 kubectl 操作，大幅降低策略部署與維護的門檻。
+K8s Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 所設計的圖形化管理介面，讓 DevSecOps 工程師與 Platform 團隊能夠透過直覺化的網頁操作介面，完整管理安全監控策略的生命週期，徹底免去繁瑣的手動 kubectl 操作，大幅降低策略部署與維護的門檻。
 
 ## 核心功能一覽
 
@@ -37,7 +37,7 @@ Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 所�
 
 ## 閱讀指引
 
-建議依照以下順序閱讀本份文件，以最快速地完成 Sentinel 的部署與上手：
+建議依照以下順序閱讀本份文件，以最快速地完成 K8s Sentinel 的部署與上手：
 
 ```mermaid
 flowchart LR

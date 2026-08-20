@@ -6,10 +6,10 @@ sidebar_position: 6
 
 # Wiring Up the API Server Audit Log
 
-Sentinel's "**Admission Events**" feature receives audit events from the API Server through a **Kubernetes Audit Webhook**, recording ValidatingAdmissionPolicy violations. This page shows how to configure the Audit Policy and Webhook on a kubeadm-deployed cluster so the API Server forwards events to Sentinel in real time.
+K8s Sentinel's "**Admission Events**" feature receives audit events from the API Server through a **Kubernetes Audit Webhook**, recording ValidatingAdmissionPolicy violations. This page shows how to configure the Audit Policy and Webhook on a kubeadm-deployed cluster so the API Server forwards events to K8s Sentinel in real time.
 
 :::note
-The following steps must be performed on **every control plane node**. Install Sentinel first - the configuration needs the ClusterIP of the Sentinel Service.
+The following steps must be performed on **every control plane node**. Install K8s Sentinel first - the configuration needs the ClusterIP of the K8s Sentinel Service.
 :::
 
 ---
@@ -34,7 +34,7 @@ This policy records only the metadata of mutating requests (no full request/resp
 
 ## Step 2: Create the Audit Webhook config file
 
-First look up the Sentinel Service ClusterIP:
+First look up the K8s Sentinel Service ClusterIP:
 
 ```bash
 kubectl get svc -n sentinel-system sentinel
@@ -52,7 +52,7 @@ kind: Config
 clusters:
   - name: sentinel
     cluster:
-      # Replace with your Sentinel service ClusterIP
+      # Replace with your K8s Sentinel service ClusterIP
       server: http://<sentinel-clusterip>/api/admission-events/webhook
 users:
   - name: sentinel
@@ -112,8 +112,8 @@ data:
 | Flag | Description |
 |---|---|
 | `audit-policy-file` | The Audit Policy from Step 1 - decides which requests get recorded |
-| `audit-webhook-config-file` | The webhook config from Step 2 - points at Sentinel's receiving endpoint |
-| `audit-webhook-batch-max-wait` | Maximum wait before an event batch is sent; `5s` gets events into Sentinel within seconds |
+| `audit-webhook-config-file` | The webhook config from Step 2 - points at K8s Sentinel's receiving endpoint |
+| `audit-webhook-batch-max-wait` | Maximum wait before an event batch is sent; `5s` gets events into K8s Sentinel within seconds |
 | `audit-log-path` etc. | Also keeps a local audit log file (optional - useful for debugging and compliance) |
 
 ## Step 4: Apply the configuration to the kube-apiserver static pod
@@ -157,7 +157,7 @@ A `CREATED` time of a few seconds ago confirms the restart was successful.
 
 ## Step 6: Verify the integration
 
-Trigger an Admission Policy violation (e.g. create a resource that violates a bound policy). Within seconds the event should appear on Sentinel's "**Notifications → Admission Events**" page. Use the **Source** filter on that page to confirm events are arriving from the Audit Log - proof the webhook pipeline is active.
+Trigger an Admission Policy violation (e.g. create a resource that violates a bound policy). Within seconds the event should appear on K8s Sentinel's "**Notifications → Admission Events**" page. Use the **Source** filter on that page to confirm events are arriving from the Audit Log - proof the webhook pipeline is active.
 
 :::info
 If no events show up, check in order: (1) the ClusterIP in `audit-webhook.yaml` is correct; (2) the control plane nodes can reach that ClusterIP (`curl -s -o /dev/null -w "%{http_code}" http://<clusterip>/api/admission-events/webhook` should not be a connection error); (3) the kube-apiserver log for audit-webhook errors; (4) if a token is configured, see "[When the Tokens Do Not Match](#when-the-tokens-do-not-match)" below.
@@ -167,7 +167,7 @@ If no events show up, check in order: (1) the ClusterIP in `audit-webhook.yaml` 
 
 ## Protecting the Endpoint (Recommended)
 
-*Requires Sentinel v0.39.1+; the token-in-URL scheme requires v0.39.4+.*
+*Requires K8s Sentinel v0.39.1+; the token-in-URL scheme requires v0.39.4+.*
 
 Without a token the webhook endpoint is an open write path - anything in the cluster could forge admission events, and since retention evicts the oldest first, flooding fakes pushes the real ones out. Protect it with a shared token.
 
@@ -178,7 +178,7 @@ kubectl -n sentinel-system create secret generic sentinel-audit-webhook \
   --from-literal=token="$(openssl rand -hex 24)"
 ```
 
-### 2. Give Sentinel the token
+### 2. Give K8s Sentinel the token
 
 Add the environment variable to the container spec in `deploy/sentinel.yaml`:
 
@@ -191,7 +191,7 @@ Add the environment variable to the container spec in `deploy/sentinel.yaml`:
               key: token
 ```
 
-After re-applying, Sentinel's webhook endpoint requires the token on every request (compared in constant time). **With `AUDIT_WEBHOOK_TOKEN` unset the endpoint stays open**, so existing setups keep working.
+After re-applying, K8s Sentinel's webhook endpoint requires the token on every request (compared in constant time). **With `AUDIT_WEBHOOK_TOKEN` unset the endpoint stays open**, so existing setups keep working.
 
 ### 3. Append the same token to the webhook URL
 
@@ -205,7 +205,7 @@ clusters:
 ```
 
 :::caution In the URL - not as a kubeconfig `user.token`
-client-go **silently refuses to send bearer tokens to a plain-HTTP server** - no error is raised anywhere; the apiserver just posts without the token and every delivery is rejected with 401. The URL is sent as-is, so the token always arrives; Sentinel strips it **before** access logging, so it never appears in its own logs. (A `user.token` does work if Sentinel is served over TLS - the endpoint accepts it as a bearer token too.)
+client-go **silently refuses to send bearer tokens to a plain-HTTP server** - no error is raised anywhere; the apiserver just posts without the token and every delivery is rejected with 401. The URL is sent as-is, so the token always arrives; K8s Sentinel strips it **before** access logging, so it never appears in its own logs. (A `user.token` does work if K8s Sentinel is served over TLS - the endpoint accepts it as a bearer token too.)
 :::
 
 ### 4. Restart the kube-apiserver
@@ -221,9 +221,9 @@ sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/ && sleep 5 && \
 
 ## When the Tokens Do Not Match
 
-If Sentinel has the token but the apiserver's kubeconfig is missing it (or carries a different value), audit events are rejected and **silently stop appearing** - the Admission Events page just shows nothing new from the `audit` source. Two places say why:
+If K8s Sentinel has the token but the apiserver's kubeconfig is missing it (or carries a different value), audit events are rejected and **silently stop appearing** - the Admission Events page just shows nothing new from the `audit` source. Two places say why:
 
-**On the Sentinel side** (printed at most once a minute):
+**On the K8s Sentinel side** (printed at most once a minute):
 
 ```bash
 kubectl -n sentinel-system logs deploy/sentinel | grep audit-webhook

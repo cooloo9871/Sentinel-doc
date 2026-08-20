@@ -73,9 +73,9 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 ## 運作原理
 
-Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。Sentinel 後端（v0.43+）透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
+Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。K8s Sentinel 後端（v0.43+）透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
 
-因此本功能需要 Cilium 啟用 `hubble.enabled=true`（流量觀測）**與** `hubble.relay.enabled=true`（Sentinel 讀取的 `hubble-relay` 服務），詳見 [安裝與設定 Cilium](../installation/cilium-install.md)。
+因此本功能需要 Cilium 啟用 `hubble.enabled=true`（流量觀測）**與** `hubble.relay.enabled=true`（K8s Sentinel 讀取的 `hubble-relay` 服務），詳見 [安裝與設定 Cilium](../installation/cilium-install.md)。
 
 :::tip
 建議讓工作負載正常運行一段時間、累積足夠的網路觀測資料後，再依拓撲圖上實際觀察到的連線（來源、目標與 Port）制定 Network Policy 的 Whitelist 規則，可有效避免遺漏必要連線。

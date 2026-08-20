@@ -8,7 +8,7 @@ sidebar_position: 5
 
 ## Two Execution Modes
 
-Each TracingPolicy in Sentinel supports two execution modes that can be switched flexibly based on deployment stage and validation progress:
+Each TracingPolicy in K8s Sentinel supports two execution modes that can be switched flexibly based on deployment stage and validation progress:
 
 | Mode | Description | When to Use |
 |---|---|---|
@@ -39,7 +39,7 @@ After changing the mode, click **"Apply"**. The Tetragon Agent applies the chang
 
 ## Method 3: Global Protect Mode (Bulk Switch)
 
-In addition to switching individual Policy modes one by one, Sentinel provides a **Global Protect Mode** feature that switches all TracingPolicies in the cluster to the same execution mode with one click.
+In addition to switching individual Policy modes one by one, K8s Sentinel provides a **Global Protect Mode** feature that switches all TracingPolicies in the cluster to the same execution mode with one click.
 
 The Global Protect Mode toggle banner is located at the **top of the TracingPolicy list page**.
 
@@ -54,13 +54,13 @@ The Global Protect Mode toggle banner is located at the **top of the TracingPoli
 
 **Action:** Click the **"Turn On"** button on the banner.
 
-**How it works:** The Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules - no Agent restart required.
+**How it works:** The K8s Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules - no Agent restart required.
 
 ### Disable Global Protect Mode
 
 **Action:** Click the **"Turn Off"** button on the banner.
 
-**How it works:** Sentinel batch-reverts all TracingPolicy `mode` fields in the cluster to `Monitoring`. After the Tetragon Agent receives the update, it immediately switches back to record-only mode and stops blocking all behavior.
+**How it works:** K8s Sentinel batch-reverts all TracingPolicy `mode` fields in the cluster to `Monitoring`. After the Tetragon Agent receives the update, it immediately switches back to record-only mode and stops blocking all behavior.
 
 ---
 

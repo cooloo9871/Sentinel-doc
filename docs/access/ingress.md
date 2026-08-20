@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## 適用場景
 
-正式環境、多人共用，需要固定網址存取。透過 Ingress 可讓團隊成員無須執行 `kubectl` 指令即可直接以瀏覽器開啟 Sentinel 管理介面。
+正式環境、多人共用，需要固定網址存取。透過 Ingress 可讓團隊成員無須執行 `kubectl` 指令即可直接以瀏覽器開啟 K8s Sentinel 管理介面。
 
 ## 前置需求
 

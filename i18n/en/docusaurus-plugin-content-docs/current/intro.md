@@ -7,9 +7,9 @@ slug: /
 
 # Project Overview
 
-## What is Sentinel
+## What is K8s Sentinel
 
-Sentinel is a graphical management console for Cilium Tetragon TracingPolicy within Kubernetes clusters. It enables DevSecOps engineers and Platform teams to manage the full lifecycle of security monitoring policies through an intuitive web interface - eliminating tedious manual `kubectl` operations and dramatically lowering the barrier to policy deployment and maintenance.
+K8s Sentinel is a graphical management console for Cilium Tetragon TracingPolicy within Kubernetes clusters. It enables DevSecOps engineers and Platform teams to manage the full lifecycle of security monitoring policies through an intuitive web interface - eliminating tedious manual `kubectl` operations and dramatically lowering the barrier to policy deployment and maintenance.
 
 ## Core Features
 
@@ -37,7 +37,7 @@ Sentinel is a graphical management console for Cilium Tetragon TracingPolicy wit
 
 ## Reading Guide
 
-We recommend reading this documentation in the following order for the fastest path to deploying and using Sentinel:
+We recommend reading this documentation in the following order for the fastest path to deploying and using K8s Sentinel:
 
 ```mermaid
 flowchart LR

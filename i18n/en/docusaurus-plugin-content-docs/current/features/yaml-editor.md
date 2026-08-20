@@ -8,7 +8,7 @@ sidebar_position: 4
 
 ## Overview
 
-Besides the graphical form, Sentinel offers two YAML-oriented workflows for different situations:
+Besides the graphical form, K8s Sentinel offers two YAML-oriented workflows for different situations:
 
 - **(a) Direct YAML editing**: click "**+ New YAML**" on the Tracing Policy list page and write or paste a complete TracingPolicy manifest in a full-screen editor
 - **(b) Generated YAML live preview**: the panel on the right side of the form editor shows the YAML produced from the form fields in real time
@@ -28,7 +28,7 @@ Clicking "**+ New YAML**" on the list page opens a full-screen dark-themed YAML 
 - The **Mode** dropdown in the top-right corner sets the policy's execution mode (`Monitoring` / `Protect`)
 - Click "**Apply**" when done
 
-**How it works:** the Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema - checking field structure and required fields - before creating or updating the TracingPolicy resource through the Kubernetes API Server. If the YAML is invalid, the page shows an error message pointing at the problem.
+**How it works:** the K8s Sentinel backend validates the YAML against the `cilium.io/v1alpha1` schema - checking field structure and required fields - before creating or updating the TracingPolicy resource through the Kubernetes API Server. If the YAML is invalid, the page shows an error message pointing at the problem.
 
 ---
 

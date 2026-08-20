@@ -8,7 +8,7 @@ sidebar_position: 17
 
 ## Overview
 
-The Network Policy page provides visual management of **Cilium Network Policies**. You can define Ingress and Egress network access rules between Pods through a graphical form - no hand-written YAML required. Sentinel automatically generates the corresponding `CiliumNetworkPolicy` resource from the form and applies it to the cluster.
+The Network Policy page provides visual management of **Cilium Network Policies**. You can define Ingress and Egress network access rules between Pods through a graphical form - no hand-written YAML required. K8s Sentinel automatically generates the corresponding `CiliumNetworkPolicy` resource from the form and applies it to the cluster.
 
 As of this version, Pod-level network access control is handled by Cilium Network Policy (the Network Rules section has been removed from the TracingPolicy form): TracingPolicy focuses on process- and file-level security, while network-level allow/deny rules are managed here.
 
@@ -85,7 +85,7 @@ The Ingress and Egress sections are configured independently and share the same 
 
 A validation checklist below the form lists anything still missing; the "**Apply**" button is enabled once everything passes. Clicking Apply creates the policy and applies it to the cluster.
 
-**How it works:** Sentinel generates the `CiliumNetworkPolicy` (or `CiliumClusterwideNetworkPolicy`) YAML from the form and creates the resource through the Kubernetes API Server. The Cilium CNI enforces it in the data plane immediately; L7 HTTP rules are handled by Cilium's Envoy proxy.
+**How it works:** K8s Sentinel generates the `CiliumNetworkPolicy` (or `CiliumClusterwideNetworkPolicy`) YAML from the form and creates the resource through the Kubernetes API Server. The Cilium CNI enforces it in the data plane immediately; L7 HTTP rules are handled by Cilium's Envoy proxy.
 
 ---
 
@@ -98,7 +98,7 @@ Scope is determined by the manifest kind - `CiliumNetworkPolicy` is namespaced, 
 ---
 
 :::info
-Network Policy requires **Cilium** as the cluster CNI. If the cluster was deployed with Sentinel's install script, Cilium is already included.
+Network Policy requires **Cilium** as the cluster CNI. If the cluster was deployed with K8s Sentinel's install script, Cilium is already included.
 :::
 
 :::tip

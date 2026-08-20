@@ -6,7 +6,7 @@ sidebar_position: 3
 
 # Installing Tetragon
 
-**Tetragon** is the eBPF-based security observability and enforcement component of the Cilium ecosystem. It runs as a DaemonSet on every node and captures process executions and file access at the kernel level. Sentinel's core features - TracingPolicy management, Security Events, and Behavior Discovery - are all built on Tetragon.
+**Tetragon** is the eBPF-based security observability and enforcement component of the Cilium ecosystem. It runs as a DaemonSet on every node and captures process executions and file access at the kernel level. K8s Sentinel's core features - TracingPolicy management, Security Events, and Behavior Discovery - are all built on Tetragon.
 
 :::note
 Complete the [Cilium installation and configuration](./cilium-install.md) before installing Tetragon.
@@ -23,7 +23,7 @@ helm install tetragon cilium/tetragon -n kube-system \
   --set tetragon.grpc.address=0.0.0.0:54321
 ```
 
-The one required custom setting is **`tetragon.grpc.address=0.0.0.0:54321`**: Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321` - reachable only from inside the pod. Binding it to the pod network lets Sentinel connect. Everything else can stay at defaults - the Kubernetes metadata enrichment Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default.
+The one required custom setting is **`tetragon.grpc.address=0.0.0.0:54321`**: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321` - reachable only from inside the pod. Binding it to the pod network lets K8s Sentinel connect. Everything else can stay at defaults - the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default.
 
 :::note Upgrading an existing Tetragon?
 The installer skips Tetragon when its DaemonSet is already present, so it will not reconfigure one installed before gRPC collection. Set the address on the running config and restart:
@@ -36,7 +36,7 @@ kubectl -n kube-system rollout restart ds/tetragon
 :::
 
 :::tip
-Sentinel assumes Tetragon is installed in the `kube-system` namespace by default. If you install it elsewhere (e.g. `-n tetragon`), set the `TETRAGON_NAMESPACE` environment variable accordingly when deploying Sentinel.
+K8s Sentinel assumes Tetragon is installed in the `kube-system` namespace by default. If you install it elsewhere (e.g. `-n tetragon`), set the `TETRAGON_NAMESPACE` environment variable accordingly when deploying K8s Sentinel.
 :::
 
 ---
@@ -71,14 +71,14 @@ A continuous stream of process events from the cluster means Tetragon is capturi
 
 ---
 
-## Integration with Sentinel
+## Integration with K8s Sentinel
 
-Once Sentinel is deployed:
+Once K8s Sentinel is deployed:
 
 - The "**Cluster → Tetragon Agents**" page shows each node agent's health and restart count
 - "**Behavior Discovery**" immediately starts accumulating workload behavior observations via the Tetragon base sensor
 - Policies created in "**Tracing Policy**" are loaded by the Tetragon Agents within seconds
 
 :::info
-Upgrade Tetragon with `helm upgrade tetragon cilium/tetragon -n kube-system`. Agents roll node by node during the upgrade; a briefly offline node may temporarily show as Unhealthy on Sentinel's Tetragon Agents page - this is expected.
+Upgrade Tetragon with `helm upgrade tetragon cilium/tetragon -n kube-system`. Agents roll node by node during the upgrade; a briefly offline node may temporarily show as Unhealthy on K8s Sentinel's Tetragon Agents page - this is expected.
 :::

@@ -8,13 +8,13 @@ sidebar_position: 6
 
 ## About This Feature
 
-Behavior Discovery is Sentinel's automated learning feature. Without creating any TracingPolicy in advance, it automatically collects and analyzes the actual execution behavior (process calls) of each Pod in the cluster - letting you build precise security policies based on real workload behavior rather than manually guessing which programs should be allowed.
+Behavior Discovery is K8s Sentinel's automated learning feature. Without creating any TracingPolicy in advance, it automatically collects and analyzes the actual execution behavior (process calls) of each Pod in the cluster - letting you build precise security policies based on real workload behavior rather than manually guessing which programs should be allowed.
 
 ---
 
 ## How It Works
 
-After Tetragon is installed, its **base sensor** starts by default and records process events for all Pods in the cluster, including each process's execution path, parent process, and associated Namespace and Pod information. Sentinel continuously collects these raw events, groups and aggregates them by workload (Deployment / DaemonSet / Pod), and presents a readable behavior summary for review.
+After Tetragon is installed, its **base sensor** starts by default and records process events for all Pods in the cluster, including each process's execution path, parent process, and associated Namespace and Pod information. K8s Sentinel continuously collects these raw events, groups and aggregates them by workload (Deployment / DaemonSet / Pod), and presents a readable behavior summary for review.
 
 This feature requires no pre-existing TracingPolicy - it continuously accumulates observation data in the background.
 
@@ -58,10 +58,10 @@ After confirming that the workload behavior summary matches expectations, you ca
 
 1. Find the target workload card in the grid
 2. Click the **"Create Policy"** button on the card
-3. Sentinel generates a TracingPolicy draft and opens it in the form editor: the Policy Name and Namespace are pre-filled, the Pod Selector carries the workload's labels, and the Process Rules list every observed executable path in **Whitelist** mode
+3. K8s Sentinel generates a TracingPolicy draft and opens it in the form editor: the Policy Name and Namespace are pre-filled, the Pod Selector carries the workload's labels, and the Process Rules list every observed executable path in **Whitelist** mode
 4. Review and adjust the rules as needed, then click **"Apply"**
 
-**How it works:** Based on all unique process execution paths recorded during the observation period, Sentinel automatically generates **Whitelist**-mode Process Rules, allowing only those paths that were observed and deemed normal. Any program that did not appear during the observation period will be blocked once the Policy switches to Protect mode.
+**How it works:** Based on all unique process execution paths recorded during the observation period, K8s Sentinel automatically generates **Whitelist**-mode Process Rules, allowing only those paths that were observed and deemed normal. Any program that did not appear during the observation period will be blocked once the Policy switches to Protect mode.
 
 ---
 

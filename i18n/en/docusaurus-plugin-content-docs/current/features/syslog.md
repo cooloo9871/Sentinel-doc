@@ -8,7 +8,7 @@ sidebar_position: 15
 
 ## About This Feature
 
-The Syslog page lets you configure forwarding of Security Events and Admission Events to external **syslog servers** (rsyslog / syslog-ng), supporting both UDP and TCP transport. Syslog integration feeds Sentinel security events into your existing enterprise logging infrastructure (e.g., a SIEM), enabling centralized security event management and long-term archiving.
+The Syslog page lets you configure forwarding of Security Events and Admission Events to external **syslog servers** (rsyslog / syslog-ng), supporting both UDP and TCP transport. Syslog integration feeds K8s Sentinel security events into your existing enterprise logging infrastructure (e.g., a SIEM), enabling centralized security event management and long-term archiving.
 
 ---
 

@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ## 功能說明
 
-TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD），用於描述應套用至 Pod 的安全規則。Sentinel 提供完整的 TracingPolicy 生命週期管理，支援兩種作用範圍：
+TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD），用於描述應套用至 Pod 的安全規則。K8s Sentinel 提供完整的 TracingPolicy 生命週期管理，支援兩種作用範圍：
 
 - **Cluster-scoped**：套用至整個叢集的所有 Pod
 - **Namespace-scoped**（TracingPolicyNamespaced）：僅套用至指定 Namespace 內的 Pod
@@ -43,7 +43,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 | **Actions** | `Edit`（進入編輯頁面）與 `Delete`（刪除）按鈕 |
 
 :::note Edit 的開啟方式（v0.39.6+）
-- **Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
+- **K8s Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
 - **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML，避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
 :::
 
@@ -55,7 +55,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 ## 建立新 Policy
 
-Sentinel 提供兩種建立方式：
+K8s Sentinel 提供兩種建立方式：
 
 - 「**+ New Policy**」：圖形化表單編輯器，左側填寫規則、右側 **Generated YAML** 即時預覽（詳見[表單編輯器](./form-editor.md)）
 - 「**+ New YAML**」：全螢幕 YAML 編輯器，直接撰寫完整的 TracingPolicy 定義（詳見 [YAML 編輯器](./yaml-editor.md)）
@@ -70,7 +70,7 @@ Sentinel 提供兩種建立方式：
 
 填寫完成後，點擊「**Apply**」套用。
 
-**建立原理：** Sentinel 根據表單內容自動產生對應的 TracingPolicy YAML，並透過 Kubernetes API Server 將資源建立至叢集，Tetragon Agent 會在數秒內套用新策略。
+**建立原理：** K8s Sentinel 根據表單內容自動產生對應的 TracingPolicy YAML，並透過 Kubernetes API Server 將資源建立至叢集，Tetragon Agent 會在數秒內套用新策略。
 
 ---
 
@@ -85,7 +85,7 @@ TracingPolicy 頁面頂部包含一個 **Global Protect Mode** banner，可一�
 | **OFF（預設）** | "Protect mode is off - monitoring only, no blocking" | 所有 Policy 僅記錄事件，不阻擋行為 |
 | **ON** | "Protect mode is on - all policies are enforcing" | 所有 Policy 同時進入 Protect 模式 |
 
-點擊「**Turn On**」後，Sentinel 後端批次更新叢集內所有 TracingPolicy 的 `mode` 欄位為 `Protect`；再次點擊「**Turn Off**」則批次還原為 `Monitoring`。
+點擊「**Turn On**」後，K8s Sentinel 後端批次更新叢集內所有 TracingPolicy 的 `mode` 欄位為 `Protect`；再次點擊「**Turn Off**」則批次還原為 `Monitoring`。
 
 :::warning
 開啟 Global Protect Mode 前，請確認所有 Policy 規則已充分驗證。若 Whitelist 遺漏必要的執行路徑，切換後可能導致正常服務被阻擋。建議先逐條 Policy 切換確認無誤，再啟用全域切換。

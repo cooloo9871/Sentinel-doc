@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## 功能說明
 
-Dashboard 是登入 Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy 與 Quarantine 隔離狀態。
+Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy 與 Quarantine 隔離狀態。
 
 ---
 

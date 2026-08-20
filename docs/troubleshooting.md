@@ -44,7 +44,7 @@ flowchart TD
 
 ## 重置管理員密碼
 
-若忘記管理員密碼，可刪除 `users.json` 讓 Sentinel 重建預設帳號（`admin` / `admin`）：
+若忘記管理員密碼，可刪除 `users.json` 讓 K8s Sentinel 重建預設帳號（`admin` / `admin`）：
 
 ```bash
 # 找到 sentinel pod 名稱
@@ -68,7 +68,7 @@ kubectl logs -n kube-system -l app.kubernetes.io/name=tetragon --tail=50
 
 確認所有 tetragon Pod 均處於 `Running` 狀態，且 log 中無 `ERROR` 或 `FATAL` 訊息。若 DaemonSet Pod 數量不足（未覆蓋所有節點），請檢查節點 taints 與 tolerations 設定。
 
-## 查看 Sentinel 日誌
+## 查看 K8s Sentinel 日誌
 
 ```bash
 # 查看最近 100 行日誌

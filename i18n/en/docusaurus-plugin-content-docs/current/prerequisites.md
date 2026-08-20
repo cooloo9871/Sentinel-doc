@@ -6,7 +6,7 @@ sidebar_position: 3
 
 # Prerequisites
 
-Before deploying Sentinel, confirm your environment meets all of the following requirements.
+Before deploying K8s Sentinel, confirm your environment meets all of the following requirements.
 
 ## Environment Requirements
 
@@ -16,7 +16,7 @@ Before deploying Sentinel, confirm your environment meets all of the following r
 | Cilium | 1.14+ | The cluster CNI; **kube-proxy replacement**, **Hubble** and **Hubble Relay** must be enabled (see [Installing and Configuring Cilium](./installation/cilium-install.md)) |
 | Tetragon | 1.0+ | Deployed as a DaemonSet, with **gRPC bound to the pod network** (`0.0.0.0:54321`, see [Installing Tetragon](./installation/tetragon-install.md)) |
 | kubectl | 1.32+ | For local cluster operations; a valid kubeconfig must be configured |
-| Access | cluster-admin or TracingPolicy RBAC | Sufficient cluster permissions required for installing Sentinel and operating TracingPolicy CRDs |
+| Access | cluster-admin or TracingPolicy RBAC | Sufficient cluster permissions required for installing K8s Sentinel and operating TracingPolicy CRDs |
 
 ## Verify Cilium Installation
 
@@ -42,7 +42,7 @@ kubectl get pods -n tetragon -l app.kubernetes.io/name=tetragon
 
 Each node should have a corresponding Tetragon Pod in `Running` state.
 
-**Why:** The Tetragon DaemonSet deploys one Agent per node, responsible for capturing kprobe security events (syscalls, network connections, file access) via eBPF hooks and forwarding event data to the Sentinel backend for aggregation.
+**Why:** The Tetragon DaemonSet deploys one Agent per node, responsible for capturing kprobe security events (syscalls, network connections, file access) via eBPF hooks and forwarding event data to the K8s Sentinel backend for aggregation.
 
 ## Verify kubectl Connectivity
 

@@ -8,13 +8,13 @@ sidebar_position: 6
 
 ## 功能說明
 
-Behavior Discovery 是 Sentinel 的自動化學習功能，能夠在不預先建立任何 TracingPolicy 的情況下，自動收集並分析叢集中各 Pod 的實際執行行為（process 呼叫），讓您基於真實的工作負載行為來建立精準的安全策略，而非靠人工猜測應該允許哪些程式。
+Behavior Discovery 是 K8s Sentinel 的自動化學習功能，能夠在不預先建立任何 TracingPolicy 的情況下，自動收集並分析叢集中各 Pod 的實際執行行為（process 呼叫），讓您基於真實的工作負載行為來建立精準的安全策略，而非靠人工猜測應該允許哪些程式。
 
 ---
 
 ## 運作原理
 
-Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並記錄叢集內所有 Pod 的 process 事件，包含每個 process 的執行路徑、呼叫的父程序以及所屬的 Namespace 與 Pod 資訊。Sentinel 持續收集這些原始事件，並依工作負載（Deployment / DaemonSet / Pod）進行分組與統計。
+Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並記錄叢集內所有 Pod 的 process 事件，包含每個 process 的執行路徑、呼叫的父程序以及所屬的 Namespace 與 Pod 資訊。K8s Sentinel 持續收集這些原始事件，並依工作負載（Deployment / DaemonSet / Pod）進行分組與統計。
 
 此功能不需要事先建立 TracingPolicy，即可在背景持續累積觀察資料。
 
@@ -58,10 +58,10 @@ Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並�
 
 1. 在卡片網格中找到目標工作負載卡片
 2. 點擊卡片右上角的「**Create Policy**」按鈕
-3. Sentinel 自動產生一份 TracingPolicy 草稿並帶入表單編輯器：Policy Name 與 Namespace 已預先填妥，Pod Selector 自動帶入該工作負載的 Label，Process Rules 以 **Whitelist** 模式列出所有觀察到的執行檔路徑
+3. K8s Sentinel 自動產生一份 TracingPolicy 草稿並帶入表單編輯器：Policy Name 與 Namespace 已預先填妥，Pod Selector 自動帶入該工作負載的 Label，Process Rules 以 **Whitelist** 模式列出所有觀察到的執行檔路徑
 4. 審閱並視需要調整規則後，點擊「**Apply**」套用
 
-**執行原理：** Sentinel 根據觀察期間記錄到的所有不重複 process 執行路徑，自動產生一條 **Whitelist（白名單）** 模式的 Process Rules，僅允許這些已被觀察且認定為正常的執行路徑。任何未曾出現的程式，在切換至 Protect 模式後都將被阻擋執行。
+**執行原理：** K8s Sentinel 根據觀察期間記錄到的所有不重複 process 執行路徑，自動產生一條 **Whitelist（白名單）** 模式的 Process Rules，僅允許這些已被觀察且認定為正常的執行路徑。任何未曾出現的程式，在切換至 Protect 模式後都將被阻擋執行。
 
 ---
 

@@ -8,7 +8,7 @@ sidebar_position: 5
 
 ## 為什麼需要
 
-Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的是 **`emptyDir`**：
+K8s Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的是 **`emptyDir`**：
 
 ```yaml
       volumes:
@@ -27,7 +27,7 @@ Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的是 
 正式環境請務必將 `/data/sentinel` 改掛 **PersistentVolume**。
 
 :::info 權限需求
-Sentinel 以非 root 身分執行（`runAsUser: 10001`），Deployment 已設定 `fsGroup: 10001`。只要儲存後端支援 Kubernetes 的 fsGroup 權限調整（多數 CSI 驅動、local、hostPath 皆支援），掛載時會自動將卷的群組改為 10001，無需手動處理；**NFS 為例外**，見下方說明。
+K8s Sentinel 以非 root 身分執行（`runAsUser: 10001`），Deployment 已設定 `fsGroup: 10001`。只要儲存後端支援 Kubernetes 的 fsGroup 權限調整（多數 CSI 驅動、local、hostPath 皆支援），掛載時會自動將卷的群組改為 10001，無需手動處理；**NFS 為例外**，見下方說明。
 :::
 
 ---
@@ -119,7 +119,7 @@ kubectl apply -f sentinel-data-local.yaml
 ```
 
 :::caution
-`local` PV 透過 `nodeAffinity` 將 Sentinel Pod 綁定在該節點上。若該節點故障，Pod 將無法在其他節點重新調度。正式環境建議改用方式一的網路儲存。
+`local` PV 透過 `nodeAffinity` 將 K8s Sentinel Pod 綁定在該節點上。若該節點故障，Pod 將無法在其他節點重新調度。正式環境建議改用方式一的網路儲存。
 :::
 
 ---
@@ -163,12 +163,12 @@ NFS 不支援 Kubernetes 的 fsGroup 自動調整，請在 NFS 伺服器上手�
 sudo chown -R 10001:10001 /export/sentinel-data
 ```
 
-否則 Sentinel 會因無法寫入資料庫而啟動失敗。
+否則 K8s Sentinel 會因無法寫入資料庫而啟動失敗。
 :::
 
 ---
 
-## 將 PVC 掛載至 Sentinel Deployment
+## 將 PVC 掛載至 K8s Sentinel Deployment
 
 PVC 建立完成後（`kubectl get pvc -n sentinel-system` 顯示 `Bound`，使用 `WaitForFirstConsumer` 時會停在 `Pending` 直到 Pod 掛載，屬正常現象），將 Deployment 的 `data` volume 從 `emptyDir` 改為 PVC：
 
@@ -218,7 +218,7 @@ kubectl get pods,pvc -n sentinel-system
 kubectl -n sentinel-system exec deploy/sentinel -- ls -la /data/sentinel
 ```
 
-最後做一次實際測試：登入 Sentinel 修改任意設定（例如變更 admin 密碼或新增一條 Alert 規則），接著重啟 Pod：
+最後做一次實際測試：登入 K8s Sentinel 修改任意設定（例如變更 admin 密碼或新增一條 Alert 規則），接著重啟 Pod：
 
 ```bash
 kubectl -n sentinel-system rollout restart deployment sentinel
@@ -227,5 +227,5 @@ kubectl -n sentinel-system rollout restart deployment sentinel
 Pod 重啟後重新登入，若剛才的變更仍然存在，代表永久儲存設定成功。
 
 :::warning
-掛上 PVC 的當下，先前存在 `emptyDir` 中的資料**不會**自動搬移，Sentinel 會以全新狀態啟動（帳號回到 `admin`/`admin`）。建議在完成初始設定（修改密碼、建立使用者與告警規則）**之前**就先設定好永久儲存。
+掛上 PVC 的當下，先前存在 `emptyDir` 中的資料**不會**自動搬移，K8s Sentinel 會以全新狀態啟動（帳號回到 `admin`/`admin`）。建議在完成初始設定（修改密碼、建立使用者與告警規則）**之前**就先設定好永久儲存。
 :::

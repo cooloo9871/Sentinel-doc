@@ -5,10 +5,10 @@ sidebar_position: 17
 ---
 
 :::warning
-Uninstalling Sentinel will delete all Sentinel resources, including user accounts and the JWT secret. However, **TracingPolicies that have been created will NOT be automatically deleted**, to avoid disrupting existing cluster security policies. Make sure to back up any necessary data before proceeding.
+Uninstalling K8s Sentinel will delete all K8s Sentinel resources, including user accounts and the JWT secret. However, **TracingPolicies that have been created will NOT be automatically deleted**, to avoid disrupting existing cluster security policies. Make sure to back up any necessary data before proceeding.
 :::
 
-## Step 1: Delete the Sentinel Deployment and Service
+## Step 1: Delete the K8s Sentinel Deployment and Service
 
 Delete the Deployment and Service individually:
 
@@ -42,7 +42,7 @@ kubectl delete clusterrolebinding sentinel-rolebinding
 
 ## Step 4: Clear Persistent Data (Optional)
 
-If Sentinel used a PersistentVolume for data storage, clear it separately:
+If K8s Sentinel used a PersistentVolume for data storage, clear it separately:
 
 ```bash
 kubectl delete pvc -n sentinel-system --all
@@ -55,7 +55,7 @@ sudo rm -rf /data/sentinel/
 ## Retaining TracingPolicies
 
 :::info
-TracingPolicy CRD resources created by Sentinel are not automatically deleted on uninstall. These Policies will continue to be enforced by Tetragon after uninstallation. If you no longer need them, clean them up manually:
+TracingPolicy CRD resources created by K8s Sentinel are not automatically deleted on uninstall. These Policies will continue to be enforced by Tetragon after uninstallation. If you no longer need them, clean them up manually:
 
 ```bash
 # List all TracingPolicy resources

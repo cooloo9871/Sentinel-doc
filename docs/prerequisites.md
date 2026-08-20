@@ -6,7 +6,7 @@ sidebar_position: 3
 
 # 前置需求
 
-在部署 Sentinel 之前，請確認您的環境已符合以下所有需求。
+在部署 K8s Sentinel 之前，請確認您的環境已符合以下所有需求。
 
 ## 環境需求
 
@@ -16,7 +16,7 @@ sidebar_position: 3
 | Cilium | 1.14+ | 作為叢集 CNI，需啟用 **kube-proxy replacement**、**Hubble** 與 **Hubble Relay**（安裝方式見 [安裝與設定 Cilium](./installation/cilium-install.md)） |
 | Tetragon | 1.0+ | 以 DaemonSet 形式部署，需將 **gRPC 綁定至 Pod 網路**（`0.0.0.0:54321`，安裝方式見 [安裝 Tetragon](./installation/tetragon-install.md)） |
 | kubectl | 1.32+ | 用於本機操作叢集，需已設定有效的 kubeconfig |
-| 存取權限 | cluster-admin 或具 TracingPolicy RBAC | 安裝 Sentinel 及操作 TracingPolicy CRD 均需要足夠的叢集權限 |
+| 存取權限 | cluster-admin 或具 TracingPolicy RBAC | 安裝 K8s Sentinel 及操作 TracingPolicy CRD 均需要足夠的叢集權限 |
 
 ## 確認 Cilium 安裝
 
@@ -42,7 +42,7 @@ kubectl get pods -n tetragon -l app.kubernetes.io/name=tetragon
 
 預期輸出中每個 Node 均有對應的 Tetragon Pod，且狀態為 `Running`。
 
-**原理**：Tetragon DaemonSet 在每個 Node 上部署一個 Agent，負責透過 eBPF hook 捕捉 kprobe 安全事件（如系統呼叫、網路連線、檔案存取），並將事件資料轉發至 Sentinel 後端進行彙整與呈現。
+**原理**：Tetragon DaemonSet 在每個 Node 上部署一個 Agent，負責透過 eBPF hook 捕捉 kprobe 安全事件（如系統呼叫、網路連線、檔案存取），並將事件資料轉發至 K8s Sentinel 後端進行彙整與呈現。
 
 ## 確認 kubectl 連線
 

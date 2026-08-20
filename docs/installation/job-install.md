@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ## 安裝原理說明
 
-Sentinel 透過 Kubernetes Job 執行安裝腳本，自動建立所需的 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service。整個安裝流程使用 Kustomize 管理 YAML 資源，確保資源定義的一致性與可重現性。
+K8s Sentinel 透過 Kubernetes Job 執行安裝腳本，自動建立所需的 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service。整個安裝流程使用 Kustomize 管理 YAML 資源，確保資源定義的一致性與可重現性。
 
 Job 方式的核心優勢在於安裝程序完全在叢集內部執行，不依賴本機環境，適合在 CI/CD Pipeline 或無法直接操作本機 bash 環境的情境下使用。
 
@@ -19,8 +19,8 @@ Job 方式的核心優勢在於安裝程序完全在叢集內部執行，不依�
 **操作**：取得部署設定檔
 
 ```bash
-git clone https://github.com/cooloo9871/Sentinel.git
-cd Sentinel
+git clone https://github.com/cooloo9871/K8s_Sentinel.git
+cd K8s_Sentinel
 ```
 
 **原理**：`deploy/` 目錄包含所有 Kubernetes 部署清單與安裝 Job 的定義檔案，包括 `install-job.yaml` 與 Kustomize 管理的各類資源 YAML。

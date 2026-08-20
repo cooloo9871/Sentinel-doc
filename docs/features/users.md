@@ -8,7 +8,7 @@ sidebar_position: 13
 
 ## 功能說明
 
-使用者管理頁面提供 Sentinel 儀表板的本地帳號管理功能，包含建立使用者、變更密碼，以及設定 Session 逾時時間。Sentinel 採用 JWT（JSON Web Token）進行身份驗證，所有帳號資料儲存於本地資料庫中。
+使用者管理頁面提供 K8s Sentinel 儀表板的本地帳號管理功能，包含建立使用者、變更密碼，以及設定 Session 逾時時間。K8s Sentinel 採用 JWT（JSON Web Token）進行身份驗證，所有帳號資料儲存於本地資料庫中。
 
 ---
 

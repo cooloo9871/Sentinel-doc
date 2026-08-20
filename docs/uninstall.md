@@ -5,10 +5,10 @@ sidebar_position: 17
 ---
 
 :::warning
-解除安裝將刪除所有 Sentinel 資源，包含使用者帳號與 JWT secret。但**不會**自動刪除已建立的 TracingPolicy，以避免影響叢集既有的安全策略。請在執行前確認已備份必要資料。
+解除安裝將刪除所有 K8s Sentinel 資源，包含使用者帳號與 JWT secret。但**不會**自動刪除已建立的 TracingPolicy，以避免影響叢集既有的安全策略。請在執行前確認已備份必要資料。
 :::
 
-## 步驟一：刪除 Sentinel Deployment 與 Service
+## 步驟一：刪除 K8s Sentinel Deployment 與 Service
 
 逐一刪除 Deployment 與 Service：
 
@@ -42,7 +42,7 @@ kubectl delete clusterrolebinding sentinel-rolebinding
 
 ## 步驟四：清除持久化資料（選用）
 
-若 Sentinel 使用了 PersistentVolume 儲存資料，需另行清除：
+若 K8s Sentinel 使用了 PersistentVolume 儲存資料，需另行清除：
 
 ```bash
 kubectl delete pvc -n sentinel-system --all
@@ -55,7 +55,7 @@ sudo rm -rf /data/sentinel/
 ## 保留 TracingPolicy
 
 :::info
-Sentinel 建立的 TracingPolicy CRD 資源不會被自動刪除，解除安裝後這些 Policy 仍會繼續由 Tetragon 執行。若確認不再需要，可手動清除：
+K8s Sentinel 建立的 TracingPolicy CRD 資源不會被自動刪除，解除安裝後這些 Policy 仍會繼續由 Tetragon 執行。若確認不再需要，可手動清除：
 
 ```bash
 # 列出所有 TracingPolicy 資源

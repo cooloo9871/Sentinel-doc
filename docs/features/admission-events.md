@@ -11,7 +11,7 @@ sidebar_position: 12
 Admission Events 頁面記錄並呈現 Kubernetes **ValidatingAdmissionPolicy** 的違規事件。事件有兩種來源：
 
 - **Kubernetes Warning Events**（預設）：未做任何設定即可使用，但僅涵蓋會產生 Warning Event 的違規
-- **Audit Webhook**（建議設定）：將 kube-apiserver 的 audit webhook 指向 Sentinel 後可完整涵蓋所有違規，包含 `kubectl apply` 當下直接被拒絕的請求
+- **Audit Webhook**（建議設定）：將 kube-apiserver 的 audit webhook 指向 K8s Sentinel 後可完整涵蓋所有違規，包含 `kubectl apply` 當下直接被拒絕的請求
 
 頁面上的 **Source** 過濾器可辨別每筆事件來自哪個管線。
 

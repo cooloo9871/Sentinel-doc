@@ -8,7 +8,7 @@ sidebar_position: 15
 
 ## 功能說明
 
-Syslog 頁面允許使用者設定將 Security Events 與 Admission Events 轉送至外部 **Syslog 伺服器**（rsyslog / syslog-ng）的規則，支援 UDP 與 TCP 兩種傳輸協定。透過 Syslog 整合，可將 Sentinel 的安全事件匯入現有的企業日誌基礎設施（如 SIEM 系統），實現集中化的安全事件管理與長期存檔。
+Syslog 頁面允許使用者設定將 Security Events 與 Admission Events 轉送至外部 **Syslog 伺服器**（rsyslog / syslog-ng）的規則，支援 UDP 與 TCP 兩種傳輸協定。透過 Syslog 整合，可將 K8s Sentinel 的安全事件匯入現有的企業日誌基礎設施（如 SIEM 系統），實現集中化的安全事件管理與長期存檔。
 
 ---
 

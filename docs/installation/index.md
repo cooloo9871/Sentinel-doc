@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # 安裝概覽
 
-Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適合的方法。
+K8s Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最適合的方法。
 
 ## 兩種安裝方式比較
 
@@ -31,7 +31,7 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 
 1. **Tetragon 開啟 gRPC**：`kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` 後 `rollout restart ds/tetragon`（詳見 [安裝 Tetragon](./tetragon-install.md)）
 2. **Cilium 啟用 Hubble Relay**：`--set hubble.relay.enabled=true`（詳見 [安裝與設定 Cilium](./cilium-install.md)）
-3. **重新套用 ClusterRole**：`kubectl apply -f deploy/sentinel.yaml`，新版移除了 `pods/exec` 權限（Sentinel 持有的最大權限），並新增了 exposure 偵測所需資源的讀取權
+3. **重新套用 ClusterRole**：`kubectl apply -f deploy/sentinel.yaml`，新版移除了 `pods/exec` 權限（K8s Sentinel 持有的最大權限），並新增了 exposure 偵測所需資源的讀取權
 
 全新安裝（install-job / install.sh）會自動處理，無需手動操作。
 :::

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## When to Use
 
-Local development, quick testing - no need to configure Ingress or a LoadBalancer. Ideal for developers to connect directly to the Sentinel service inside the cluster from their local machine.
+Local development, quick testing - no need to configure Ingress or a LoadBalancer. Ideal for developers to connect directly to the K8s Sentinel service inside the cluster from their local machine.
 
 ## Step 1: Run Port-Forward
 
@@ -41,7 +41,7 @@ Default credentials:
 
 Enter your Username and Password, then click **Sign in** to complete login.
 
-**Why:** Sentinel uses JWT (JSON Web Token) for authentication. After a successful login, the token is stored in the browser's `localStorage` and automatically included in the Authorization header for all subsequent requests.
+**Why:** K8s Sentinel uses JWT (JSON Web Token) for authentication. After a successful login, the token is stored in the browser's `localStorage` and automatically included in the Authorization header for all subsequent requests.
 
 ## Running in Background
 

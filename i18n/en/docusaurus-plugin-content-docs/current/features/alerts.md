@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## About This Feature
 
-The Alerts page lets you configure **webhook alert rules** that trigger when Security Events or Admission Events match specified conditions. Sentinel sends an HTTP POST to the configured webhook URL, supporting Slack, Microsoft Teams, Discord, and any compatible webhook service.
+The Alerts page lets you configure **webhook alert rules** that trigger when Security Events or Admission Events match specified conditions. K8s Sentinel sends an HTTP POST to the configured webhook URL, supporting Slack, Microsoft Teams, Discord, and any compatible webhook service.
 
 ---
 

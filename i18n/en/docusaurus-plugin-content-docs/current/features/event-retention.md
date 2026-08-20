@@ -42,7 +42,7 @@ Switch to the **"Admission Events"** tab to configure the same retention setting
 
 ## How Cleanup Works
 
-The Sentinel backend triggers automatic cleanup on two independent conditions:
+The K8s Sentinel backend triggers automatic cleanup on two independent conditions:
 
 1. **Count exceeded** - when the number of events at a given severity exceeds the configured maximum, the oldest events are deleted first
 2. **TTL expired** - the backend periodically scans the database and removes all events older than the configured TTL

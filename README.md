@@ -1,6 +1,6 @@
-# Sentinel 文件站
+# K8s Sentinel 文件站
 
-[Sentinel](https://github.com/cooloo9871/Sentinel) 的官方技術文件，涵蓋安裝部署、功能操作教學與故障排除。
+[K8s Sentinel](https://github.com/cooloo9871/K8s_Sentinel) 的官方技術文件，涵蓋安裝部署、功能操作教學與故障排除。
 
 使用 [Docusaurus](https://docusaurus.io/) 建置，支援繁體中文 / English 雙語切換。
 

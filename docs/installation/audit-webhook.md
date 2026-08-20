@@ -6,10 +6,10 @@ sidebar_position: 6
 
 # 串接 API Server Audit Log
 
-Sentinel 的「**Admission Events**」功能透過 **Kubernetes Audit Webhook** 接收 API Server 的稽核事件，藉此記錄 ValidatingAdmissionPolicy 的違規情況。本頁說明如何在 kubeadm 部署的叢集上設定 Audit Policy 與 Webhook，讓 API Server 將事件即時轉送至 Sentinel。
+K8s Sentinel 的「**Admission Events**」功能透過 **Kubernetes Audit Webhook** 接收 API Server 的稽核事件，藉此記錄 ValidatingAdmissionPolicy 的違規情況。本頁說明如何在 kubeadm 部署的叢集上設定 Audit Policy 與 Webhook，讓 API Server 將事件即時轉送至 K8s Sentinel。
 
 :::note
-以下步驟需在**每台 control plane 節點**上執行。請先完成 Sentinel 的安裝，因為設定中需要填入 Sentinel Service 的 ClusterIP。
+以下步驟需在**每台 control plane 節點**上執行。請先完成 K8s Sentinel 的安裝，因為設定中需要填入 K8s Sentinel Service 的 ClusterIP。
 :::
 
 ---
@@ -34,7 +34,7 @@ rules:
 
 ## 步驟二：建立 Audit Webhook 設定檔
 
-先查詢 Sentinel Service 的 ClusterIP：
+先查詢 K8s Sentinel Service 的 ClusterIP：
 
 ```bash
 kubectl get svc -n sentinel-system sentinel
@@ -52,7 +52,7 @@ kind: Config
 clusters:
   - name: sentinel
     cluster:
-      # 替換為你的 Sentinel service ClusterIP
+      # 替換為你的 K8s Sentinel service ClusterIP
       server: http://<sentinel-clusterip>/api/admission-events/webhook
 users:
   - name: sentinel
@@ -112,8 +112,8 @@ data:
 | 參數 | 說明 |
 |---|---|
 | `audit-policy-file` | 步驟一建立的 Audit Policy，決定哪些請求會被記錄 |
-| `audit-webhook-config-file` | 步驟二建立的 Webhook 設定，指向 Sentinel 的接收端點 |
-| `audit-webhook-batch-max-wait` | 事件批次送出的最大等待時間；`5s` 可確保事件在數秒內抵達 Sentinel |
+| `audit-webhook-config-file` | 步驟二建立的 Webhook 設定，指向 K8s Sentinel 的接收端點 |
+| `audit-webhook-batch-max-wait` | 事件批次送出的最大等待時間；`5s` 可確保事件在數秒內抵達 K8s Sentinel |
 | `audit-log-path` 等 | 同時在本機保留一份稽核日誌檔（選用，方便除錯與合規存查） |
 
 ## 步驟四：套用設定至 kube-apiserver static pod
@@ -157,7 +157,7 @@ eff3881e1f2fc       c3994bc6961024...   3 seconds ago       Running   kube-apise
 
 ## 步驟六：驗證串接
 
-觸發一次 Admission Policy 違規（例如建立一個違反已綁定 Policy 的資源），數秒內事件應出現在 Sentinel 的「**Notifications → Admission Events**」頁面。可利用頁面上的 **Source** 過濾器確認事件來源為 Audit Log，代表 Webhook 管線已正常運作。
+觸發一次 Admission Policy 違規（例如建立一個違反已綁定 Policy 的資源），數秒內事件應出現在 K8s Sentinel 的「**Notifications → Admission Events**」頁面。可利用頁面上的 **Source** 過濾器確認事件來源為 Audit Log，代表 Webhook 管線已正常運作。
 
 :::info
 若事件未出現，依序檢查：(1) `audit-webhook.yaml` 中的 ClusterIP 是否正確、(2) control plane 節點能否連通該 ClusterIP（`curl -s -o /dev/null -w "%{http_code}" http://<clusterip>/api/admission-events/webhook` 應回應非連線錯誤）、(3) kube-apiserver log 中是否有 audit webhook 相關錯誤、(4) 若有設定 Token，見下方「[Token 不一致時的排查](#token-不一致時的排查)」。
@@ -167,7 +167,7 @@ eff3881e1f2fc       c3994bc6961024...   3 seconds ago       Running   kube-apise
 
 ## 保護 Webhook 端點（建議）
 
-*此功能需 Sentinel v0.39.1 以上；Token 放入 URL 的方式需 v0.39.4 以上。*
+*此功能需 K8s Sentinel v0.39.1 以上；Token 放入 URL 的方式需 v0.39.4 以上。*
 
 Webhook 端點在未設定 Token 時是開放的寫入路徑：叢集內任何工作負載都可以偽造 admission 事件，而事件保留機制會先淘汰最舊的資料，灌入假事件就能把真實事件擠掉。建議以共用 Token 保護端點。
 
@@ -178,7 +178,7 @@ kubectl -n sentinel-system create secret generic sentinel-audit-webhook \
   --from-literal=token="$(openssl rand -hex 24)"
 ```
 
-### 2. 將 Token 交給 Sentinel
+### 2. 將 Token 交給 K8s Sentinel
 
 在 `deploy/sentinel.yaml` 的 container spec 中加入環境變數：
 
@@ -191,7 +191,7 @@ kubectl -n sentinel-system create secret generic sentinel-audit-webhook \
               key: token
 ```
 
-重新 apply 後，Sentinel 的 webhook 端點即要求所有請求附上此 Token（以常數時間比對）。**未設定 `AUDIT_WEBHOOK_TOKEN` 時端點維持開放**，既有環境不受影響。
+重新 apply 後，K8s Sentinel 的 webhook 端點即要求所有請求附上此 Token（以常數時間比對）。**未設定 `AUDIT_WEBHOOK_TOKEN` 時端點維持開放**，既有環境不受影響。
 
 ### 3. 將同一個 Token 加到 Webhook URL 尾端
 
@@ -205,7 +205,7 @@ clusters:
 ```
 
 :::caution 務必放在 URL，不要放 kubeconfig 的 `user.token`
-client-go 對 **plain HTTP** 的伺服器會**靜默拒送 bearer token**：雙方都不會報錯，apiserver 只是不帶 Token 送出，所有請求都被 401 拒絕。URL 會原樣送達，因此 Token 一定到得了；Sentinel 會在寫入 access log **之前**先剝除 URL 中的 Token，不會洩漏到自己的日誌。（若 Sentinel 以 TLS 提供服務，`user.token` 的 bearer 方式也可用。）
+client-go 對 **plain HTTP** 的伺服器會**靜默拒送 bearer token**：雙方都不會報錯，apiserver 只是不帶 Token 送出，所有請求都被 401 拒絕。URL 會原樣送達，因此 Token 一定到得了；K8s Sentinel 會在寫入 access log **之前**先剝除 URL 中的 Token，不會洩漏到自己的日誌。（若 K8s Sentinel 以 TLS 提供服務，`user.token` 的 bearer 方式也可用。）
 :::
 
 ### 4. 重啟 kube-apiserver
@@ -221,9 +221,9 @@ sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/ && sleep 5 && \
 
 ## Token 不一致時的排查
 
-Sentinel 設定了 Token 但 apiserver 的 kubeconfig 缺少（或值不同）時，audit 事件會被拒絕並**無聲地停止出現**：Admission Events 頁面單純不再有來自 `audit` 來源的新事件。兩個地方可以看到原因：
+K8s Sentinel 設定了 Token 但 apiserver 的 kubeconfig 缺少（或值不同）時，audit 事件會被拒絕並**無聲地停止出現**：Admission Events 頁面單純不再有來自 `audit` 來源的新事件。兩個地方可以看到原因：
 
-**Sentinel 端**（最多每分鐘印一行）：
+**K8s Sentinel 端**（最多每分鐘印一行）：
 
 ```bash
 kubectl -n sentinel-system logs deploy/sentinel | grep audit-webhook

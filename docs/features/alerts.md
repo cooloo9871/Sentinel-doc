@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## 功能說明
 
-Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Events 或 Admission Events 中出現符合條件的事件時，Sentinel 會自動透過 HTTP POST 將告警訊息推送至指定的 Webhook URL，支援 Slack、Microsoft Teams、Discord 及任何相容的 Webhook 服務。
+Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Events 或 Admission Events 中出現符合條件的事件時，K8s Sentinel 會自動透過 HTTP POST 將告警訊息推送至指定的 Webhook URL，支援 Slack、Microsoft Teams、Discord 及任何相容的 Webhook 服務。
 
 ---
 
@@ -44,7 +44,7 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ## 告警推送原理
 
-當新的安全事件進入 Sentinel 且符合告警規則條件時，後端會：
+當新的安全事件進入 K8s Sentinel 且符合告警規則條件時，後端會：
 
 1. 比對事件的 Namespace、Policy 名稱與嚴重性是否符合規則設定
 2. 檢查是否在 Cooldown 期間內（避免重複推送）
@@ -54,7 +54,7 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ## 支援的 Webhook 平台
 
-Sentinel 的 Webhook 告警格式相容於以下主流平台：
+K8s Sentinel 的 Webhook 告警格式相容於以下主流平台：
 
 | 平台 | 說明 |
 |---|---|

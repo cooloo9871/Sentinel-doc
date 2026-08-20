@@ -12,7 +12,7 @@ sidebar_position: 3
 
 1. 偵測並安裝 Helm（若本機尚未安裝）
 2. 使用 Helm 安裝 Tetragon 至叢集（若叢集尚未部署）
-3. 透過 `kubectl apply` 將 Sentinel 部署至 `sentinel-system` namespace
+3. 透過 `kubectl apply` 將 K8s Sentinel 部署至 `sentinel-system` namespace
 
 整個安裝流程在本機執行，每個步驟均會輸出進度訊息，方便直接觀察安裝狀態，適合快速試用或開發測試環境。
 
@@ -21,8 +21,8 @@ sidebar_position: 3
 ## 步驟一：Clone 原始碼
 
 ```bash
-git clone https://github.com/cooloo9871/Sentinel.git
-cd Sentinel/deploy
+git clone https://github.com/cooloo9871/K8s_Sentinel.git
+cd K8s_Sentinel/deploy
 ```
 
 取得原始碼後，進入 `deploy/` 目錄，安裝腳本 `install.sh` 即位於此目錄下。
@@ -49,7 +49,7 @@ chmod +x install.sh
 
 1. **安裝 Helm**：若本機未偵測到 `helm` 指令，腳本會自動下載並安裝最新穩定版 Helm
 2. **使用 Helm 安裝 Tetragon**：透過 Cilium 官方 Helm Chart 將 Tetragon 部署至叢集
-3. **kubectl apply 部署 Sentinel 清單**：建立 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
+3. **kubectl apply 部署 K8s Sentinel 清單**：建立 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
 
 ---
 
@@ -62,7 +62,7 @@ chmod +x install.sh
 | `[INFO] Checking Helm...` | 偵測本機是否已安裝 Helm |
 | `[INFO] Installing Helm...` | 下載並安裝 Helm（僅在未安裝時出現） |
 | `[INFO] Installing Tetragon via Helm...` | 使用 Helm 部署 Tetragon 至叢集 |
-| `[INFO] Deploying Sentinel...` | 套用 Sentinel 相關 Kubernetes 資源 |
+| `[INFO] Deploying Sentinel...` | 套用 K8s Sentinel 相關 Kubernetes 資源 |
 | `[INFO] Installation complete.` | 所有資源建立完成 |
 
 安裝完成後，腳本最後會顯示建議的 port-forward 指令，例如：
@@ -71,7 +71,7 @@ chmod +x install.sh
 kubectl port-forward svc/sentinel-svc -n sentinel-system 8080:8080
 ```
 
-可複製此指令並在本機執行，即可透過瀏覽器開啟 Sentinel 管理介面。
+可複製此指令並在本機執行，即可透過瀏覽器開啟 K8s Sentinel 管理介面。
 
 ---
 

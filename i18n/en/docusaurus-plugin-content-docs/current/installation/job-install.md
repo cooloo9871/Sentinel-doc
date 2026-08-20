@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ## How It Works
 
-Sentinel uses a Kubernetes Job to run the installation script, automatically creating the required ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service. The entire installation flow uses Kustomize to manage YAML resources, ensuring consistency and reproducibility.
+K8s Sentinel uses a Kubernetes Job to run the installation script, automatically creating the required ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service. The entire installation flow uses Kustomize to manage YAML resources, ensuring consistency and reproducibility.
 
 The key advantage of the Job method is that the installation runs entirely inside the cluster, without depending on the local environment - ideal for CI/CD pipelines or environments where running local bash scripts is not practical.
 
@@ -19,8 +19,8 @@ The key advantage of the Job method is that the installation runs entirely insid
 **Action:** Get the deployment configuration files
 
 ```bash
-git clone https://github.com/cooloo9871/Sentinel.git
-cd Sentinel
+git clone https://github.com/cooloo9871/K8s_Sentinel.git
+cd K8s_Sentinel
 ```
 
 **Why:** The `deploy/` directory contains all Kubernetes deployment manifests and the installation Job definition, including `install-job.yaml` and Kustomize-managed resource YAMLs.

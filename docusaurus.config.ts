@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Sentinel',
+  title: 'K8s Sentinel',
   tagline: 'Kubernetes Cilium Tetragon TracingPolicy 管理平台',
   favicon: 'img/favicon.svg',
 
@@ -60,9 +60,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Sentinel',
+      title: 'K8s Sentinel',
       logo: {
-        alt: 'Sentinel',
+        alt: 'K8s Sentinel',
         src: 'img/sentinel-icon.svg',
         srcDark: 'img/sentinel-icon-dark.svg',
       },
@@ -78,7 +78,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/cooloo9871/Sentinel',
+          href: 'https://github.com/cooloo9871/K8s_Sentinel',
           label: 'GitHub',
           position: 'right',
         },
@@ -98,12 +98,12 @@ const config: Config = {
         {
           title: '相關連結',
           items: [
-            {label: 'GitHub', href: 'https://github.com/cooloo9871/Sentinel'},
+            {label: 'GitHub', href: 'https://github.com/cooloo9871/K8s_Sentinel'},
             {label: 'Cilium Tetragon', href: 'https://tetragon.io/'},
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Sentinel. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} K8s Sentinel. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

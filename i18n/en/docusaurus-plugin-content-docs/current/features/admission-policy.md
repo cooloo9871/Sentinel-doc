@@ -8,7 +8,7 @@ sidebar_position: 11
 
 ## About This Feature
 
-Admission Policy provides a visual builder for Kubernetes **ValidatingAdmissionPolicy (VAP)**. Users can create resource admission rules through a graphical form without writing CEL expressions by hand. All policies created via Sentinel are applied directly to the Kubernetes API Server, which validates resources in real time when they are created or updated.
+Admission Policy provides a visual builder for Kubernetes **ValidatingAdmissionPolicy (VAP)**. Users can create resource admission rules through a graphical form without writing CEL expressions by hand. All policies created via K8s Sentinel are applied directly to the Kubernetes API Server, which validates resources in real time when they are created or updated.
 
 ---
 
@@ -31,7 +31,7 @@ Click **"+ New Policy"** in the top-right corner to open the visual builder.
 
 ### Supported Rule Types
 
-Sentinel provides seven built-in rule types covering the most common Kubernetes admission validation needs:
+K8s Sentinel provides seven built-in rule types covering the most common Kubernetes admission validation needs:
 
 | Rule Type | Description |
 |---|---|
@@ -76,7 +76,7 @@ Switch to the **"Bindings"** tab to manage `ValidatingAdmissionPolicyBinding` re
 
 A Binding associates an existing ValidatingAdmissionPolicy with specific Namespaces or resources and configures the action on violation (Deny / Warn / Audit).
 
-**How it works:** Sentinel creates `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding` resources via the Kubernetes API Server. For each resource request matching `matchConstraints`, the API Server evaluates the CEL expression and, based on `failurePolicy`, either rejects or warns.
+**How it works:** K8s Sentinel creates `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding` resources via the Kubernetes API Server. For each resource request matching `matchConstraints`, the API Server evaluates the CEL expression and, based on `failurePolicy`, either rejects or warns.
 
 :::info
 Admission Policy requires Kubernetes 1.26+ with the `ValidatingAdmissionPolicy` feature gate enabled (enabled by default in Kubernetes 1.28+).

@@ -43,7 +43,7 @@ Policy Templates 是預先定義好的 TracingPolicy 範本庫，包含內建的
 2. 可自行修改 Policy Name，需符合 Kubernetes 命名規範（小寫英文、數字與連字號）
 3. 點擊「**Create**」即完成建立
 
-**執行原理：** Sentinel 以範本的 YAML 結構為基礎，將 `metadata.name` 替換為您輸入的 Policy Name，並透過 Kubernetes API Server 在叢集中建立對應的 TracingPolicy 資源。建立完成後可在 TracingPolicy 列表頁查看新建立的 Policy。
+**執行原理：** K8s Sentinel 以範本的 YAML 結構為基礎，將 `metadata.name` 替換為您輸入的 Policy Name，並透過 Kubernetes API Server 在叢集中建立對應的 TracingPolicy 資源。建立完成後可在 TracingPolicy 列表頁查看新建立的 Policy。
 
 ---
 

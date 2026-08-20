@@ -8,7 +8,7 @@ sidebar_position: 5
 
 ## 兩種執行模式說明
 
-Sentinel 的每條 TracingPolicy 皆支援兩種執行模式，可依照部署階段與驗證進度彈性切換：
+K8s Sentinel 的每條 TracingPolicy 皆支援兩種執行模式，可依照部署階段與驗證進度彈性切換：
 
 | 模式 | 說明 | 適用時機 |
 |---|---|---|
@@ -39,7 +39,7 @@ Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重�
 
 ## 方法三：Global Protect Mode（全域切換）
 
-除了逐一切換個別 Policy 的模式外，Sentinel 提供 **Global Protect Mode** 功能，可一鍵將叢集內所有 TracingPolicy 同時切換執行模式。
+除了逐一切換個別 Policy 的模式外，K8s Sentinel 提供 **Global Protect Mode** 功能，可一鍵將叢集內所有 TracingPolicy 同時切換執行模式。
 
 Global Protect Mode 的切換 banner 位於 **Tracing Policy 列表頁頂部**。
 
@@ -49,13 +49,13 @@ Global Protect Mode 的切換 banner 位於 **Tracing Policy 列表頁頂部**�
 
 點擊 banner 右側的「**Turn On**」按鈕。
 
-Sentinel 後端會查詢叢集內所有 TracingPolicy 與 TracingPolicyNamespaced 資源，並批次將每一條 Policy 的 `mode` 欄位更新為 `Protect`。Tetragon Agent 監聽到 CRD 變更後立即重新載入規則並生效，無需重啟 Agent。
+K8s Sentinel 後端會查詢叢集內所有 TracingPolicy 與 TracingPolicyNamespaced 資源，並批次將每一條 Policy 的 `mode` 欄位更新為 `Protect`。Tetragon Agent 監聽到 CRD 變更後立即重新載入規則並生效，無需重啟 Agent。
 
 ### 關閉 Global Protect Mode
 
 點擊 banner 右側的「**Turn Off**」按鈕。
 
-Sentinel 後端批次將所有 TracingPolicy 的 `mode` 欄位還原為 `Monitoring`，Tetragon Agent 立即切回僅記錄模式，停止阻擋任何行為。
+K8s Sentinel 後端批次將所有 TracingPolicy 的 `mode` 欄位還原為 `Monitoring`，Tetragon Agent 立即切回僅記錄模式，停止阻擋任何行為。
 
 :::warning
 開啟 Global Protect Mode 之前，請務必確認叢集內所有 TracingPolicy 的規則已充分驗證。若規則設定有誤（例如 Whitelist 遺漏了必要的執行檔路徑），切換至 Protect 模式後可能導致正常的業務流量或關鍵服務被阻擋，造成服務中斷。建議先在測試環境驗證，或使用方法一逐條 Policy 切換確認無誤後，再啟用全域切換。

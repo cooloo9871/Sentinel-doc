@@ -8,7 +8,7 @@ sidebar_position: 13
 
 ## About This Feature
 
-The User Management page provides administration for Sentinel dashboard local accounts, including creating users, changing passwords, and configuring session timeout. Sentinel uses JWT (JSON Web Token) for authentication, and all account data is stored in the local database.
+The User Management page provides administration for K8s Sentinel dashboard local accounts, including creating users, changing passwords, and configuring session timeout. K8s Sentinel uses JWT (JSON Web Token) for authentication, and all account data is stored in the local database.
 
 ---
 

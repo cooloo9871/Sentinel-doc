@@ -43,7 +43,7 @@ Click the **"Use Template"** button on a template card to open a confirmation di
 2. Optionally edit the Policy Name - must follow Kubernetes naming conventions (lowercase letters, numbers, and hyphens)
 3. Click **"Create"** to complete
 
-**How it works:** Sentinel uses the template's YAML structure as a base, replaces `metadata.name` with the Policy Name you entered, and creates the corresponding TracingPolicy resource in the cluster via the Kubernetes API Server. The newly created Policy will appear on the TracingPolicy list page.
+**How it works:** K8s Sentinel uses the template's YAML structure as a base, replaces `metadata.name` with the Policy Name you entered, and creates the corresponding TracingPolicy resource in the cluster via the Kubernetes API Server. The newly created Policy will appear on the TracingPolicy list page.
 
 ---
 

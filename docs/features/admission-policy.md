@@ -8,7 +8,7 @@ sidebar_position: 11
 
 ## 功能說明
 
-Admission Policy 提供視覺化的 Kubernetes **ValidatingAdmissionPolicy（VAP）** 建立工具，讓使用者不需要手動撰寫 CEL 表達式，即可透過圖形化表單建立資源准入規則。所有透過 Sentinel 建立的 ValidatingAdmissionPolicy 會直接套用於 Kubernetes API Server，在資源被建立或更新時即時進行驗證攔截。
+Admission Policy 提供視覺化的 Kubernetes **ValidatingAdmissionPolicy（VAP）** 建立工具，讓使用者不需要手動撰寫 CEL 表達式，即可透過圖形化表單建立資源准入規則。所有透過 K8s Sentinel 建立的 ValidatingAdmissionPolicy 會直接套用於 Kubernetes API Server，在資源被建立或更新時即時進行驗證攔截。
 
 ---
 
@@ -31,7 +31,7 @@ Admission Policy 頁面分為兩個標籤頁：
 
 ### 支援的規則類型
 
-Sentinel 提供七種內建規則類型，可涵蓋常見的 Kubernetes 資源准入驗證需求：
+K8s Sentinel 提供七種內建規則類型，可涵蓋常見的 Kubernetes 資源准入驗證需求：
 
 | 規則類型 | 說明 |
 |---|---|
@@ -76,7 +76,7 @@ Sentinel 提供七種內建規則類型，可涵蓋常見的 Kubernetes 資源�
 
 Binding 用於將已建立的 ValidatingAdmissionPolicy 綁定至特定的 Namespace 或資源，並設定違規時的行為（Deny / Warn / Audit）。
 
-**執行原理：** Sentinel 透過 Kubernetes API Server 建立 `ValidatingAdmissionPolicy` 與 `ValidatingAdmissionPolicyBinding` 資源。API Server 在處理每個符合 `matchConstraints` 的資源請求時，會自動評估 CEL 表達式，驗證不通過時依 `failurePolicy` 設定決定拒絕或警告。
+**執行原理：** K8s Sentinel 透過 Kubernetes API Server 建立 `ValidatingAdmissionPolicy` 與 `ValidatingAdmissionPolicyBinding` 資源。API Server 在處理每個符合 `matchConstraints` 的資源請求時，會自動評估 CEL 表達式，驗證不通過時依 `failurePolicy` 設定決定拒絕或警告。
 
 :::info
 Admission Policy 需要 Kubernetes 1.26+ 並已啟用 `ValidatingAdmissionPolicy` feature gate（Kubernetes 1.28+ 預設啟用）。

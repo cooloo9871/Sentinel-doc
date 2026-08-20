@@ -14,7 +14,7 @@ The Security Events page displays kprobe events detected by Tetragon in a real-t
 
 ## Real-Time Streaming
 
-The Sentinel backend (v0.43+) collects runtime events from each node's Tetragon Agent over its **gRPC `GetEvents` stream** (which is why Tetragon must bind its gRPC to the pod network - see [Installing Tetragon](../installation/tetragon-install.md)), then uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing new events to the frontend - no polling required, ensuring events appear with minimal latency.
+The K8s Sentinel backend (v0.43+) collects runtime events from each node's Tetragon Agent over its **gRPC `GetEvents` stream** (which is why Tetragon must bind its gRPC to the pod network - see [Installing Tetragon](../installation/tetragon-install.md)), then uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing new events to the frontend - no polling required, ensuring events appear with minimal latency.
 
 ---
 

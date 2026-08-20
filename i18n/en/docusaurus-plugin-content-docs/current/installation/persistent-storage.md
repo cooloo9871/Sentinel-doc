@@ -8,7 +8,7 @@ sidebar_position: 5
 
 ## Why You Need It
 
-In the official Sentinel manifest, the data directory `/data/sentinel` is mounted as an **`emptyDir`**:
+In the official K8s Sentinel manifest, the data directory `/data/sentinel` is mounted as an **`emptyDir`**:
 
 ```yaml
       volumes:
@@ -27,7 +27,7 @@ An `emptyDir` lives and dies with the Pod - **every restart or reschedule wipes 
 For production, mount `/data/sentinel` on a **PersistentVolume**.
 
 :::info Permissions
-Sentinel runs as a non-root user (`runAsUser: 10001`) and the Deployment sets `fsGroup: 10001`. As long as the storage backend supports Kubernetes fsGroup ownership management (most CSI drivers, local and hostPath volumes do), the volume's group is adjusted to 10001 automatically at mount time. **NFS is the exception** - see below.
+K8s Sentinel runs as a non-root user (`runAsUser: 10001`) and the Deployment sets `fsGroup: 10001`. As long as the storage backend supports Kubernetes fsGroup ownership management (most CSI drivers, local and hostPath volumes do), the volume's group is adjusted to 10001 automatically at mount time. **NFS is the exception** - see below.
 :::
 
 ---
@@ -119,7 +119,7 @@ kubectl apply -f sentinel-data-local.yaml
 ```
 
 :::caution
-A `local` PV pins the Sentinel Pod to that node via `nodeAffinity`. If the node fails, the Pod cannot be rescheduled elsewhere. Prefer Option 1 with network storage for production.
+A `local` PV pins the K8s Sentinel Pod to that node via `nodeAffinity`. If the node fails, the Pod cannot be rescheduled elsewhere. Prefer Option 1 with network storage for production.
 :::
 
 ---
@@ -163,12 +163,12 @@ NFS does not support Kubernetes fsGroup ownership management. Set the export's o
 sudo chown -R 10001:10001 /export/sentinel-data
 ```
 
-Otherwise Sentinel fails to start because it cannot write its database.
+Otherwise K8s Sentinel fails to start because it cannot write its database.
 :::
 
 ---
 
-## Mounting the PVC in the Sentinel Deployment
+## Mounting the PVC in the K8s Sentinel Deployment
 
 Once the PVC exists (`kubectl get pvc -n sentinel-system` shows `Bound`; with `WaitForFirstConsumer` it stays `Pending` until a Pod mounts it - that's expected), switch the Deployment's `data` volume from `emptyDir` to the PVC:
 
@@ -218,7 +218,7 @@ Confirm the database files are on the persistent volume:
 kubectl -n sentinel-system exec deploy/sentinel -- ls -la /data/sentinel
 ```
 
-Finally, do a real test: log in to Sentinel and change any setting (change the admin password or add an alert rule), then restart the Pod:
+Finally, do a real test: log in to K8s Sentinel and change any setting (change the admin password or add an alert rule), then restart the Pod:
 
 ```bash
 kubectl -n sentinel-system rollout restart deployment sentinel
@@ -227,5 +227,5 @@ kubectl -n sentinel-system rollout restart deployment sentinel
 Log in again after the restart - if your change survived, persistence is working.
 
 :::warning
-Data previously stored in the `emptyDir` is **not** migrated when you switch to the PVC - Sentinel starts fresh (credentials back to `admin`/`admin`). Set up persistent storage **before** doing your initial configuration (passwords, users, alert rules).
+Data previously stored in the `emptyDir` is **not** migrated when you switch to the PVC - K8s Sentinel starts fresh (credentials back to `admin`/`admin`). Set up persistent storage **before** doing your initial configuration (passwords, users, alert rules).
 :::

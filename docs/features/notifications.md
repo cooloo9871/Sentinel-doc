@@ -14,7 +14,7 @@ Security Events 頁面以即時串流方式顯示 Tetragon 偵測到的 kprobe �
 
 ## 即時串流原理
 
-Sentinel 後端（v0.43+）透過各節點 Tetragon Agent 的 **gRPC `GetEvents` 串流**收集執行期事件（因此 Tetragon 需將 gRPC 綁定至 Pod 網路，見 [安裝 Tetragon](../installation/tetragon-install.md)），再以 **Server-Sent Events（SSE）** 建立一條從伺服器到瀏覽器的單向持久連線，持續將新事件推送至前端頁面，無需定期輪詢（polling），確保事件以最低延遲呈現。
+K8s Sentinel 後端（v0.43+）透過各節點 Tetragon Agent 的 **gRPC `GetEvents` 串流**收集執行期事件（因此 Tetragon 需將 gRPC 綁定至 Pod 網路，見 [安裝 Tetragon](../installation/tetragon-install.md)），再以 **Server-Sent Events（SSE）** 建立一條從伺服器到瀏覽器的單向持久連線，持續將新事件推送至前端頁面，無需定期輪詢（polling），確保事件以最低延遲呈現。
 
 ---
 

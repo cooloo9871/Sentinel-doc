@@ -1,16 +1,16 @@
 ---
 id: login
-title: 登入 Sentinel
+title: 登入 K8s Sentinel
 sidebar_position: 5
 ---
 
-# 登入 Sentinel
+# 登入 K8s Sentinel
 
-完成安裝並取得存取網址後，使用瀏覽器開啟 Sentinel 管理介面，即會看到登入畫面。
+完成安裝並取得存取網址後，使用瀏覽器開啟 K8s Sentinel 管理介面，即會看到登入畫面。
 
 ## 登入畫面
 
-![Sentinel 登入畫面](/img/access/login.png)
+![K8s Sentinel 登入畫面](/img/access/login.png)
 
 ## 預設帳號密碼
 
@@ -31,4 +31,4 @@ sidebar_position: 5
 
 ## 登入原理
 
-Sentinel 使用 **JWT（JSON Web Token）** 進行認證。登入成功後，token 會存於瀏覽器的 `localStorage`，後續每次 API 請求均自動帶入 `Authorization` header 進行身份驗證。Token 逾期後（預設 Session Timeout 為 3600 秒）將自動登出，需重新登入。
+K8s Sentinel 使用 **JWT（JSON Web Token）** 進行認證。登入成功後，token 會存於瀏覽器的 `localStorage`，後續每次 API 請求均自動帶入 `Authorization` header 進行身份驗證。Token 逾期後（預設 Session Timeout 為 3600 秒）將自動登出，需重新登入。

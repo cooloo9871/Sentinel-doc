@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Installation Overview
 
-Sentinel offers two installation methods. Choose the one that best fits your use case.
+K8s Sentinel offers two installation methods. Choose the one that best fits your use case.
 
 ## Comparison
 
@@ -31,7 +31,7 @@ Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Ex
 
 1. **Expose Tetragon's gRPC**: `kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` then `rollout restart ds/tetragon` (see [Installing Tetragon](./tetragon-install.md))
 2. **Enable Hubble Relay on Cilium**: `--set hubble.relay.enabled=true` (see [Installing and Configuring Cilium](./cilium-install.md))
-3. **Re-apply the ClusterRole**: `kubectl apply -f deploy/sentinel.yaml` - the new version drops `pods/exec` (the largest privilege Sentinel held) and adds read access to the resources exposure detection needs
+3. **Re-apply the ClusterRole**: `kubectl apply -f deploy/sentinel.yaml` - the new version drops `pods/exec` (the largest privilege K8s Sentinel held) and adds read access to the resources exposure detection needs
 
 Fresh installs (install-job / install.sh) handle all of this automatically.
 :::

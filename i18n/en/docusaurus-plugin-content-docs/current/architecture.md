@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ## System Architecture Diagram
 
-The diagram below illustrates the deployment relationships and communication paths between Sentinel components:
+The diagram below illustrates the deployment relationships and communication paths between K8s Sentinel components:
 
 ```mermaid
 graph TD
@@ -27,14 +27,14 @@ graph TD
 |---|---|---|
 | Frontend | TypeScript + React + Vite + shadcn/ui | Web UI delivered as an SPA, providing TracingPolicy management, event viewing, and cluster monitoring |
 | Backend | Go 1.x + HTTP Server (port 8080) | RESTful API service with a built-in Kubernetes client, handling cluster communication and user authentication |
-| Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and file access at the kernel layer via eBPF; Sentinel collects events per node over gRPC (`GetEvents`) |
-| Hubble Relay | Cilium component | Aggregates every node's network flows behind one gRPC endpoint; Sentinel reads its `GetFlows` stream as the data source for Network Topology |
+| Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and file access at the kernel layer via eBPF; K8s Sentinel collects events per node over gRPC (`GetEvents`) |
+| Hubble Relay | Cilium component | Aggregates every node's network flows behind one gRPC endpoint; K8s Sentinel reads its `GetFlows` stream as the data source for Network Topology |
 | TracingPolicy | Kubernetes CRD (cilium.io/v1alpha1) | Custom Resource Definition that defines the kprobe rules and security policies Tetragon should enforce |
 | Persistent Storage | /data/sentinel/ | Local persistence path for user accounts (`users.json`) and JWT signing key (`.jwt-secret`) |
 
 ## Data Flow
 
-The sequence diagram below shows the complete flow when a user creates a new TracingPolicy through Sentinel:
+The sequence diagram below shows the complete flow when a user creates a new TracingPolicy through K8s Sentinel:
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## Deployment Architecture
 
-Sentinel uses a **single binary deployment** model that greatly simplifies the installation process.
+K8s Sentinel uses a **single binary deployment** model that greatly simplifies the installation process.
 
 The Go backend embeds the frontend React SPA's static files (HTML, JavaScript, CSS) at compile time using `embed.go`. Deployment requires only copying and running a single executable - no additional web server or static file service needed.
 
