@@ -9,7 +9,15 @@ slug: /
 
 ## What is K8s Sentinel
 
-K8s Sentinel is a graphical management console for Cilium Tetragon TracingPolicy within Kubernetes clusters. It enables DevSecOps engineers and Platform teams to manage the full lifecycle of security monitoring policies through an intuitive web interface - eliminating tedious manual `kubectl` operations and dramatically lowering the barrier to policy deployment and maintenance.
+K8s Sentinel is a Kubernetes security management platform built on **Cilium and Tetragon (eBPF)**, bringing the capabilities a cluster's security posture needs into one graphical console:
+
+- **Runtime security**: monitor and block process executions and file access with TracingPolicy (Monitoring / Protect modes)
+- **Network security**: manage Pod Ingress / Egress access with Cilium Network Policy, with Network Topology showing actual traffic and the external exposure surface
+- **Admission control**: intercept non-compliant configuration at creation time with ValidatingAdmissionPolicy
+- **Incident response**: a live security event stream, one-click Pod network isolation (Quarantine), webhook alerts and Syslog forwarding
+- **Auditability**: every operation and sign-in recorded in the Audit Log
+
+DevSecOps engineers and Platform teams manage the full lifecycle of security policies and see the cluster's security state in real time, without hand-writing YAML or driving everything through `kubectl`, dramatically lowering the barrier to operating Kubernetes security.
 
 ## Core Features
 

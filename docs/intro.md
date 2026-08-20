@@ -9,7 +9,15 @@ slug: /
 
 ## K8s Sentinel 是什麼
 
-K8s Sentinel 是一套針對 Kubernetes 叢集內 Cilium Tetragon TracingPolicy 所設計的圖形化管理介面，讓 DevSecOps 工程師與 Platform 團隊能夠透過直覺化的網頁操作介面，完整管理安全監控策略的生命週期，徹底免去繁瑣的手動 kubectl 操作，大幅降低策略部署與維護的門檻。
+K8s Sentinel 是一套以 **Cilium 與 Tetragon（eBPF）** 為基礎的 Kubernetes 安全管理平台，將叢集安全防護所需的能力整合在同一套圖形化介面中：
+
+- **執行期安全**：以 TracingPolicy 監控與阻擋行程執行、檔案存取（Monitoring / Protect 模式）
+- **網路安全**：以 Cilium Network Policy 管理 Pod 的 Ingress / Egress 存取，搭配 Network Topology 呈現實際流量與對外暴露面
+- **資源准入**：以 ValidatingAdmissionPolicy 在資源建立當下即攔截違規設定
+- **事件應變**：即時安全事件串流、一鍵 Pod 網路隔離（Quarantine）、Webhook 告警與 Syslog 轉送
+- **可稽核性**：所有操作與登入行為完整記錄於 Audit Log
+
+DevSecOps 工程師與 Platform 團隊不需手寫 YAML 或逐一 kubectl 操作，即可管理安全策略的完整生命週期、即時掌握叢集安全狀態，大幅降低 Kubernetes 安全防護的落地與維運門檻。
 
 ## 核心功能一覽
 

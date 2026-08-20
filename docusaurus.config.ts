@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'K8s Sentinel',
-  tagline: 'Kubernetes Cilium Tetragon TracingPolicy 管理平台',
+  tagline: '以 Cilium 與 Tetragon 打造的 Kubernetes 安全管理平台：執行期防護、網路策略、准入控制與事件應變',
   favicon: 'img/favicon.svg',
 
   future: {
