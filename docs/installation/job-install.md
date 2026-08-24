@@ -8,56 +8,60 @@ sidebar_position: 2
 
 ## 安裝原理說明
 
-K8s Sentinel 透過 Kubernetes Job 執行安裝腳本，自動建立所需的 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service。整個安裝流程使用 Kustomize 管理 YAML 資源，確保資源定義的一致性與可重現性。
+以一個 Kubernetes Job（`sentinel-installer`，位於 **`kube-system`**）在叢集內部完成安裝，本機不需要 git、helm 或任何工具，只需要 `kubectl`。Job 依序執行兩個步驟：
 
-Job 方式的核心優勢在於安裝程序完全在叢集內部執行，不依賴本機環境，適合在 CI/CD Pipeline 或無法直接操作本機 bash 環境的情境下使用。
+1. **Tetragon**：若叢集已存在 `tetragon` DaemonSet 則跳過；否則以 Helm 安裝，並設定 `tetragon.grpc.address=0.0.0.0:54321`（K8s Sentinel 收集事件所需），等待 DaemonSet 就緒
+2. **K8s Sentinel**：直接從 GitHub 套用 `deploy/sentinel.yaml`（Namespace、RBAC、Deployment、Service 一個檔案全部包含，不使用 Kustomize），等待 Deployment 就緒
 
----
+安裝程序完全在叢集內部執行，不依賴本機環境，適合 CI/CD Pipeline 或無法在本機執行 bash 的情境。
 
-## 步驟一：Clone 原始碼
-
-**操作**：取得部署設定檔
-
-```bash
-git clone https://github.com/cooloo9871/K8s_Sentinel.git
-cd K8s_Sentinel
-```
-
-**原理**：`deploy/` 目錄包含所有 Kubernetes 部署清單與安裝 Job 的定義檔案，包括 `install-job.yaml` 與 Kustomize 管理的各類資源 YAML。
+:::note 前置需求
+- Job 在叢集內執行，需要能對外連線至 `helm.cilium.io` 與 `raw.githubusercontent.com`
+- 安裝 Job 以 `cluster-admin` 權限執行（建立 Namespace 與 ClusterRole 所需）；Job 的 ServiceAccount 位於 `kube-system`
+:::
 
 ---
 
-## 步驟二：套用 install-job.yaml
+## 步驟一：套用 install-job.yaml
 
-**操作**：建立安裝 Job
+**操作**：直接以來源 URL 建立安裝 Job，不需要事先 clone 專案
 
 ```bash
-kubectl apply -f deploy/install-job.yaml
+kubectl apply -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml
 ```
 
-**原理**：此命令向叢集提交一個 Kubernetes Job 資源。Job 會在叢集內部啟動一個 Pod 並執行安裝腳本，相比本機腳本，可確保網路環境一致性，避免因本機防火牆或 proxy 設定造成的問題。
+**原理**：此命令建立三個資源，全部位於 **`kube-system`**：ServiceAccount `sentinel-installer`、綁定 `cluster-admin` 的 ClusterRoleBinding，以及 Job `sentinel-installer`。Job 啟動一個 Pod 在叢集內執行安裝，網路環境一致，不受本機防火牆或 proxy 影響。
 
 ---
 
-## 步驟三：確認 Job 完成
+## 步驟二：追蹤安裝進度並確認完成
 
 ```bash
-kubectl get jobs -n sentinel-system
-kubectl logs -n sentinel-system job/sentinel-install
+# 即時追蹤安裝日誌
+kubectl logs -n kube-system job/sentinel-installer -f
+
+# 確認 Job 完成
+kubectl get jobs -n kube-system
 ```
 
-**原理**：Job 成功完成後，`COMPLETIONS` 欄位會顯示 `1/1`，代表所有 Kubernetes 資源已建立完成。透過 `kubectl logs` 可檢視安裝腳本的詳細輸出，確認每個資源是否正確建立。
+**原理**：Job 成功完成後 `COMPLETIONS` 顯示 `1/1`。日誌會依序輸出 `[1/2] Tetragon` 與 `[2/2] Deploying K8s Sentinel` 兩階段的進度。
 
 預期輸出範例：
 
 ```
-NAME               COMPLETIONS   DURATION   AGE
-sentinel-install   1/1           30s        2m
+NAME                 COMPLETIONS   DURATION   AGE
+sentinel-installer   1/1           45s        2m
 ```
+
+:::note
+Job 的 Pod 設有 `ttlSecondsAfterFinished: 600`，完成 10 分鐘後會自動刪除，屆時將無法再查看日誌，屬正常現象。
+:::
 
 ---
 
-## 步驟四：確認 Pod 就緒
+## 步驟三：確認 K8s Sentinel 就緒
+
+K8s Sentinel 本體安裝於 **`sentinel-system`** Namespace（安裝 Job 則在 `kube-system`）：
 
 ```bash
 kubectl get pods -n sentinel-system
@@ -81,17 +85,16 @@ sentinel        ClusterIP   10.96.123.45    <none>        80/TCP     3m
 
 ---
 
-## 持久化儲存（選用）
+## 清理安裝 Job（選用）
 
-:::info 關於持久化儲存
-若需要在 Pod 重啟後保留使用者設定與 TracingPolicy 資料，可在部署前設定 PersistentVolume，並將其掛載至容器的 `/data/sentinel/` 路徑。
-
-請在執行 `kubectl apply -f deploy/install-job.yaml` 之前，先建立並確認 PV/PVC 設定：
+安裝完成後，可移除安裝 Job 及其 ServiceAccount 與 ClusterRoleBinding（不影響已安裝的 K8s Sentinel）：
 
 ```bash
-# 確認 PV 設定（可選）
-kubectl get pv,pvc -n sentinel-system
+kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml
 ```
 
-詳細的 PersistentVolume 設定方式請參考 [Kubernetes 官方文件](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)。
+---
+
+:::info 持久化儲存
+預設部署使用 `emptyDir`，Pod 重啟後帳號、規則與事件資料會全部重置。正式環境請接著完成[設定永久儲存（PV / PVC）](./persistent-storage.md)。
 :::

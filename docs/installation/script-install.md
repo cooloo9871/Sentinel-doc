@@ -47,9 +47,9 @@ chmod +x install.sh
 
 **原理**：腳本依序執行以下流程：
 
-1. **安裝 Helm**：若本機未偵測到 `helm` 指令，腳本會自動下載並安裝最新穩定版 Helm
-2. **使用 Helm 安裝 Tetragon**：透過 Cilium 官方 Helm Chart 將 Tetragon 部署至叢集
-3. **kubectl apply 部署 K8s Sentinel 清單**：建立 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
+1. **準備 Helm**：若本機未偵測到 `helm` 指令，腳本會自動下載最新穩定版到暫存目錄使用（不會安裝到系統，結束後自動清除）
+2. **部署 Tetragon**：叢集已有 `tetragon` DaemonSet 時跳過；否則以 Cilium 官方 Helm Chart 產生 manifest 套用（`helm template | kubectl apply`），並設定 `tetragon.grpc.address=0.0.0.0:54321`
+3. **kubectl apply 部署 K8s Sentinel 清單**：建立 Namespace、ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
 
 ---
 
