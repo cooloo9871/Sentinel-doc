@@ -10,7 +10,7 @@ sidebar_position: 19
 
 The Audit Log (v0.45+) records **every operation performed through K8s Sentinel**, answering who did what, when, and to which target: quarantine and release, Global Protect Mode, create/update/delete across all three policy types, user management, alert and syslog config, retention changes, plus every sign-in attempt and password change.
 
-Open "**Settings → Audit Log**" to view it (admin role only):
+Open "**Notifications → Audit Log**" to view it (moved from Settings to the Notifications menu in v0.50.2; admin role only, and the menu item is hidden from viewers):
 
 ![Audit Log page](/img/features/audit/list.png)
 

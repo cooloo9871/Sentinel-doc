@@ -81,6 +81,7 @@ const sidebars: SidebarsConfig = {
           items: [
             'features/notifications',
             'features/admission-events',
+            'features/audit-log',
           ],
         },
         {
@@ -100,7 +101,6 @@ const sidebars: SidebarsConfig = {
             'features/alerts',
             'features/syslog',
             'features/event-retention',
-            'features/audit-log',
           ],
         },
       ],
