@@ -58,7 +58,7 @@ cilium install \
 | `k8sServiceHost` / `k8sServicePort` | Required *by Cilium* once kube-proxy is gone: the agents can no longer reach the API server through a Service VIP (kubeadm default port `6443`) |
 | `rollOutCiliumPods=true` / `operator.rollOutPods=true` | Nothing to do with K8s Sentinel, but worth having: they restart the agent and operator on a config change, so a `cilium upgrade` takes effect without a manual rollout |
 
-:::note No Hubble UI needed
+:::note[No Hubble UI needed]
 K8s Sentinel is the only UI - **Relay is required, the Hubble UI is not**. Neither are `hubble.metrics` beyond the correlation flag below; K8s Sentinel does not scrape Hubble metrics.
 :::
 

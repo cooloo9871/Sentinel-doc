@@ -204,7 +204,7 @@ clusters:
       server: http://<sentinel-clusterip>/api/admission-events/webhook/<token>
 ```
 
-:::caution In the URL - not as a kubeconfig `user.token`
+:::caution[In the URL - not as a kubeconfig `user.token`]
 client-go **silently refuses to send bearer tokens to a plain-HTTP server** - no error is raised anywhere; the apiserver just posts without the token and every delivery is rejected with 401. The URL is sent as-is, so the token always arrives; K8s Sentinel strips it **before** access logging, so it never appears in its own logs. (A `user.token` does work if K8s Sentinel is served over TLS - the endpoint accepts it as a bearer token too.)
 :::
 

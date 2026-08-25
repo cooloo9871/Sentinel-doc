@@ -52,7 +52,7 @@ Quarantine 的運作方式如下：
 kubectl label pod <pod-name> -n <namespace> sentinel.io/quarantine-
 ```
 
-:::note 只支援手動隔離
+:::note[只支援手動隔離]
 「違規即自動隔離」是**刻意不提供**的功能：TracingPolicy 表單預設為 Whitelist 模式，任何**未列入**清單的行為都會觸發事件，一條範圍設錯的 Policy 可能在數秒內把整個 Deployment 全部隔離。
 :::
 

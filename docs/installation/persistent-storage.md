@@ -26,7 +26,7 @@ K8s Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的
 
 正式環境請務必將 `/data/sentinel` 改掛 **PersistentVolume**。
 
-:::info 權限需求
+:::info[權限需求]
 K8s Sentinel 以非 root 身分執行（`runAsUser: 10001`），Deployment 已設定 `fsGroup: 10001`。只要儲存後端支援 Kubernetes 的 fsGroup 權限調整（多數 CSI 驅動、local、hostPath 皆支援），掛載時會自動將卷的群組改為 10001，無需手動處理；**NFS 為例外**，見下方說明。
 :::
 
@@ -156,7 +156,7 @@ spec:
       storage: 2Gi
 ```
 
-:::caution NFS 權限注意
+:::caution[NFS 權限注意]
 NFS 不支援 Kubernetes 的 fsGroup 自動調整，請在 NFS 伺服器上手動將匯出目錄的擁有者設為 UID 10001：
 
 ```bash

@@ -204,7 +204,7 @@ clusters:
       server: http://<sentinel-clusterip>/api/admission-events/webhook/<token>
 ```
 
-:::caution 務必放在 URL，不要放 kubeconfig 的 `user.token`
+:::caution[務必放在 URL，不要放 kubeconfig 的 `user.token`]
 client-go 對 **plain HTTP** 的伺服器會**靜默拒送 bearer token**：雙方都不會報錯，apiserver 只是不帶 Token 送出，所有請求都被 401 拒絕。URL 會原樣送達，因此 Token 一定到得了；K8s Sentinel 會在寫入 access log **之前**先剝除 URL 中的 Token，不會洩漏到自己的日誌。（若 K8s Sentinel 以 TLS 提供服務，`user.token` 的 bearer 方式也可用。）
 :::
 

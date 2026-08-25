@@ -26,7 +26,7 @@ Regardless of installation method, confirm the following before starting:
 
 Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
 
-:::caution Upgrading from before v0.43?
+:::caution[Upgrading from before v0.43?]
 Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Existing clusters need three things before upgrading:
 
 1. **Expose Tetragon's gRPC**: `kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` then `rollout restart ds/tetragon` (see [Installing Tetragon](./tetragon-install.md))
@@ -43,7 +43,7 @@ After installation:
 
 ## Recommendation
 
-:::tip Which method should I use?
+:::tip[Which method should I use?]
 - **Production environments**: Use [Kubernetes Job Installation](./job-install.md). The Job runs inside the cluster, ensuring network consistency and making it easy to audit and integrate with automation.
 - **Quick evaluation or development**: Use [Local Script Installation](./script-install.md). The script prints installation progress step by step, making it easy to observe and debug.
 :::

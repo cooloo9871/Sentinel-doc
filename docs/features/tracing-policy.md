@@ -42,7 +42,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 | **Created Time** | Policy 建立的完整時間戳記 |
 | **Actions** | `Edit`（進入編輯頁面）與 `Delete`（刪除）按鈕 |
 
-:::note Edit 的開啟方式（v0.39.6+）
+:::note[Edit 的開啟方式（v0.39.6+）]
 - **K8s Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
 - **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML，避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
 :::

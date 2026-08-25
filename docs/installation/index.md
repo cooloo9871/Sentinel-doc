@@ -26,7 +26,7 @@ K8s Sentinel 提供兩種安裝方式，可依據使用場景與需求選擇最�
 
 請先完成 [前置需求](../prerequisites.md) 頁面中的所有確認項目，再繼續進行安裝。
 
-:::caution 從 v0.42 以前的版本升級到 v0.43+
+:::caution[從 v0.42 以前的版本升級到 v0.43+]
 v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境升級前需完成三件事：
 
 1. **Tetragon 開啟 gRPC**：`kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` 後 `rollout restart ds/tetragon`（詳見 [安裝 Tetragon](./tetragon-install.md)）
@@ -43,7 +43,7 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 
 ## 選擇建議
 
-:::tip 如何選擇安裝方式？
+:::tip[如何選擇安裝方式？]
 - **正式環境**建議使用 [Kubernetes Job 安裝](./job-install.md) 方式。Job 在叢集內部執行，確保網路環境一致性，且易於審計與自動化整合。
 - **快速試用或開發測試**建議使用 [本機腳本安裝](./script-install.md) 方式。腳本會逐步輸出安裝進度，便於觀察與除錯。
 :::

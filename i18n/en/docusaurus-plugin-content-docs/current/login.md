@@ -51,6 +51,6 @@ Without [Persistent Storage (PV / PVC)](./installation/persistent-storage.md) co
 | **Login auditing** (v0.48+) | Every sign-in attempt (success, wrong credentials, rate-limited) is recorded in the [Audit Log](./features/audit-log.md) with the targeted account and the source IP; the password is never recorded |
 | **JWT authentication** | On success a token is stored in the browser's `localStorage` and sent as the `Authorization` header on every API request. When it expires (Session Timeout defaults to 3600 seconds) you are logged out automatically |
 
-:::note Behind a proxy or Ingress?
+:::note[Behind a proxy or Ingress?]
 The source IP for rate limiting and audit records is taken from the connection itself (`RemoteAddr`) by default. If K8s Sentinel runs behind a proxy or Ingress that sets `X-Forwarded-For`, set the environment variable **`TRUST_PROXY_HEADERS=true`** on the Sentinel container so the real client IP is used (v0.50+).
 :::

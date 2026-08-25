@@ -15,7 +15,7 @@ A Kubernetes Job (`sentinel-installer`, in **`kube-system`**) performs the insta
 
 The whole procedure runs inside the cluster with no dependency on the local machine, which suits CI/CD pipelines and environments where a local bash cannot be used.
 
-:::note Prerequisites
+:::note[Prerequisites]
 - The Job runs in-cluster and needs egress to `helm.cilium.io` and `raw.githubusercontent.com`
 - The installer runs with `cluster-admin` (needed to create the Namespace and ClusterRole); its ServiceAccount lives in `kube-system`
 :::
@@ -95,6 +95,6 @@ kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main
 
 ---
 
-:::info Persistent storage
+:::info[Persistent storage]
 The bundled deployment uses `emptyDir`, so accounts, rules and event data reset when the Pod restarts. For production, continue with [Persistent Storage (PV / PVC)](./persistent-storage.md).
 :::

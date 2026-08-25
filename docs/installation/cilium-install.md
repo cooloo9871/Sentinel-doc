@@ -58,7 +58,7 @@ cilium install \
 | `k8sServiceHost` / `k8sServicePort` | Cilium 自身需要：kube-proxy 移除後，agent 無法再透過 Service VIP 連 kube-apiserver，需直連（kubeadm 預設 `6443`） |
 | `rollOutCiliumPods=true` / `operator.rollOutPods=true` | 與 K8s Sentinel 無關，但建議加上：設定變更時自動滾動重啟 agent 與 operator，`cilium upgrade` 不需手動 rollout |
 
-:::note Hubble UI 不需要安裝
+:::note[Hubble UI 不需要安裝]
 K8s Sentinel 本身就是 UI：**Relay 必要，但 Hubble UI 不需要**。除 correlation 參數外的 `hubble.metrics` 也不需要，K8s Sentinel 不抓取 Hubble metrics。
 :::
 

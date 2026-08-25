@@ -26,7 +26,7 @@ An `emptyDir` lives and dies with the Pod - **every restart or reschedule wipes 
 
 For production, mount `/data/sentinel` on a **PersistentVolume**.
 
-:::info Permissions
+:::info[Permissions]
 K8s Sentinel runs as a non-root user (`runAsUser: 10001`) and the Deployment sets `fsGroup: 10001`. As long as the storage backend supports Kubernetes fsGroup ownership management (most CSI drivers, local and hostPath volumes do), the volume's group is adjusted to 10001 automatically at mount time. **NFS is the exception** - see below.
 :::
 
@@ -156,7 +156,7 @@ spec:
       storage: 2Gi
 ```
 
-:::caution NFS permissions
+:::caution[NFS permissions]
 NFS does not support Kubernetes fsGroup ownership management. Set the export's owner to UID 10001 on the NFS server yourself:
 
 ```bash

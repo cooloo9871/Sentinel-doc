@@ -15,7 +15,7 @@ sidebar_position: 2
 
 安裝程序完全在叢集內部執行，不依賴本機環境，適合 CI/CD Pipeline 或無法在本機執行 bash 的情境。
 
-:::note 前置需求
+:::note[前置需求]
 - Job 在叢集內執行，需要能對外連線至 `helm.cilium.io` 與 `raw.githubusercontent.com`
 - 安裝 Job 以 `cluster-admin` 權限執行（建立 Namespace 與 ClusterRole 所需）；Job 的 ServiceAccount 位於 `kube-system`
 :::
@@ -95,6 +95,6 @@ kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main
 
 ---
 
-:::info 持久化儲存
+:::info[持久化儲存]
 預設部署使用 `emptyDir`，Pod 重啟後帳號、規則與事件資料會全部重置。正式環境請接著完成[設定永久儲存（PV / PVC）](./persistent-storage.md)。
 :::

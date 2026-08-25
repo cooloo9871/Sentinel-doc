@@ -25,7 +25,7 @@ helm install tetragon cilium/tetragon -n kube-system \
 
 唯一必要的自訂參數是 **`tetragon.grpc.address=0.0.0.0:54321`**：K8s Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到；綁定到 Pod 網路後 K8s Sentinel 才能連線。其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。
 
-:::note 既有的 Tetragon 要升級設定？
+:::note[既有的 Tetragon 要升級設定？]
 安裝器偵測到 Tetragon DaemonSet 已存在時會跳過安裝，因此不會幫舊環境補上 gRPC 設定。直接修改運行中的設定並重啟：
 
 ```bash

@@ -52,7 +52,7 @@ Once the investigation is complete, **Release** the Pod from this page (which re
 kubectl label pod <pod-name> -n <namespace> sentinel.io/quarantine-
 ```
 
-:::note Manual only
+:::note[Manual only]
 Automatic quarantine on a policy violation is **deliberately not provided**: the Tracing Policy form defaults to whitelist mode, where anything *not* listed fires, so one mis-scoped policy could contain an entire Deployment in seconds.
 :::
 

@@ -62,7 +62,7 @@ K8s Sentinel 提供七種內建規則類型，可涵蓋常見的 Kubernetes 資�
 
 若需要更精細的控制，可點擊「**+ New YAML**」按鈕，直接貼上完整的 `ValidatingAdmissionPolicy` YAML 定義進行建立。
 
-:::note Edit 的開啟方式
+:::note[Edit 的開啟方式]
 以表單建立的 Policy，點擊 `Edit` 會重新以**表單**開啟（kube-apiserver 自動補上的預設欄位如 `matchPolicy: Equivalent` 不影響判定）；以 `kubectl apply` 建立、或包含表單無法呈現之非預設設定的 Policy，則以 **YAML 編輯器**開啟，避免表單儲存時抹掉這些設定。Bindings 的行為相同。
 :::
 

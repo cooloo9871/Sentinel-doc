@@ -75,6 +75,6 @@ For production, add an A Record in your DNS provider's control panel pointing `s
 For production environments, pair this with **cert-manager** to configure TLS, automatically requesting and renewing Let's Encrypt certificates for HTTPS. See the [cert-manager documentation](https://cert-manager.io/docs/) for setup instructions.
 :::
 
-:::note Source IPs and the login rate limit (v0.50+)
+:::note[Source IPs and the login rate limit (v0.50+)]
 Through an Ingress, the connection K8s Sentinel sees comes from the Ingress Controller, not the real client. Set the environment variable **`TRUST_PROXY_HEADERS=true`** on the Sentinel container so the login rate limit and Audit Log read the client address from `X-Forwarded-For`. When unset, the connection address is always used (the safe default: a forged XFF header cannot bypass the rate limit).
 :::

@@ -25,7 +25,7 @@ helm install tetragon cilium/tetragon -n kube-system \
 
 The one required custom setting is **`tetragon.grpc.address=0.0.0.0:54321`**: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321` - reachable only from inside the pod. Binding it to the pod network lets K8s Sentinel connect. Everything else can stay at defaults - the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default.
 
-:::note Upgrading an existing Tetragon?
+:::note[Upgrading an existing Tetragon?]
 The installer skips Tetragon when its DaemonSet is already present, so it will not reconfigure one installed before gRPC collection. Set the address on the running config and restart:
 
 ```bash
