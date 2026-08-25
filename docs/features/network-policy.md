@@ -85,15 +85,19 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 
 表單下方會即時列出未完成的必填項目清單，全部通過驗證後「**Apply**」按鈕才會啟用。點擊 Apply 即建立 Policy 並套用至叢集。
 
-:::caution[Whitelist 擋掉的比你列出的更多]
-Cilium 中只要某方向存在 allow 規則，該 Endpoint 在該方向就進入 default-deny。一條只允許 `app=frontend` 的 Ingress Whitelist **也會擋掉 kubelet 的 liveness / readiness 探測**（來自節點，不帶任何 Pod Label）與 Cilium 自身的健康檢查，導致 Pod 被反覆重啟。請在原本的規則之外，加上兩條 Entity 對象規則：
+### Whitelist 擋掉的比你列出的更多
+
+:::caution
+Whitelist 會讓該方向進入 default-deny，**連 kubelet 的探測與 Cilium 健康檢查也會被擋**，導致 Pod 被反覆重啟。
+:::
+
+Cilium 中只要某方向存在 allow 規則，該 Endpoint 在該方向就進入 default-deny。一條只允許 `app=frontend` 的 Ingress Whitelist 也會擋掉 kubelet 的 liveness / readiness 探測（來自節點，不帶任何 Pod Label）與 Cilium 自身的健康檢查。請在原本的規則之外，加上兩條 Entity 對象規則：
 
 | 規則 | 對象 | 用途 |
 |---|---|---|
 | 1 | Labels `app=frontend` | 你原本要允許的流量 |
 | 2 | Entity `host` | kubelet 探測 |
 | 3 | Entity `health` | Cilium 健康檢查 |
-:::
 
 被 Policy 拒絕的流量會成為 [Security Events](./notifications.md)、觸發 Alerts / Syslog，並在 [Network Topology](./network-topology.md) 上以紅色虛線呈現。
 

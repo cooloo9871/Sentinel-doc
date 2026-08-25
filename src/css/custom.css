@@ -34,3 +34,8 @@
 .alert {
   margin-bottom: 1.5rem;
 }
+
+/* 提示框（admonition）內的表格改用頁面底色，避免整片染色影響閱讀 */
+.theme-admonition table {
+  background-color: var(--ifm-background-color);
+}

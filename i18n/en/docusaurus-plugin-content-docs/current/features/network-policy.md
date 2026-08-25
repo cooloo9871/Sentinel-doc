@@ -85,15 +85,19 @@ The Ingress and Egress sections are configured independently and share the same 
 
 A validation checklist below the form lists anything still missing; the "**Apply**" button is enabled once everything passes. Clicking Apply creates the policy and applies it to the cluster.
 
-:::caution[A whitelist blocks more than it names]
-In Cilium, an allow section switches the selected endpoint to default-deny for that direction. An ingress whitelist permitting only `app=frontend` **also drops the kubelet's liveness / readiness probes** (they come from the node and match no Pod label) and Cilium's own health checks, so the Pod gets restarted repeatedly. Add two Entity rules alongside the one you wanted:
+### A Whitelist Blocks More Than It Names
+
+:::caution
+A whitelist switches that direction to default-deny, **which also drops the kubelet's probes and Cilium's health checks**, so the Pod gets restarted repeatedly.
+:::
+
+In Cilium, an allow section switches the selected endpoint to default-deny for that direction. An ingress whitelist permitting only `app=frontend` also drops the kubelet's liveness / readiness probes (they come from the node and match no Pod label) and Cilium's own health checks. Add two Entity rules alongside the one you wanted:
 
 | Rule | Peer | Why |
 |---|---|---|
 | 1 | Labels `app=frontend` | the traffic you wanted |
 | 2 | Entity `host` | kubelet probes |
 | 3 | Entity `health` | Cilium health checks |
-:::
 
 Traffic denied by a policy becomes a [Security Event](./notifications.md), fires Alerts / Syslog, and shows as a red dashed edge on the [Network Topology](./network-topology.md).
 
