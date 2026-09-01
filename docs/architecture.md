@@ -63,5 +63,5 @@ Go backend 在編譯時透過 `embed.go` 將前端 React SPA 的靜態檔案（H
 | 路徑 | 用途 |
 |---|---|
 | `/data/sentinel/users.json` | 使用者帳號與密碼雜湊 |
-| `/data/sentinel/.jwt-secret` | JWT Token 簽署金鑰，首次啟動時自動產生 |
+| `/data/sentinel/.jwt-secret` | JWT Token 簽署金鑰，首次啟動時自動產生；v0.53 起可被 `JWT_SECRET` 環境變數覆蓋 |
 | `/data/sentinel/`（其餘） | Alerts / Syslog 設定、自訂 Policy Templates、Security / Admission 事件歷史、Audit Log |

@@ -79,17 +79,36 @@ Process Rules 用於控制 Pod 內可以執行的程式（process/binary）。
 
 ## File Rules（檔案規則）
 
-File Rules 用於控制 Pod 對檔案系統的存取行為，採固定的 **Blacklist（黑名單）** 模式：只有列表中指定的路徑會被管制，其餘路徑皆可正常存取。
+File Rules 用於控制 Pod 對檔案系統的存取行為。自 v0.52 起與 Process Rules 一樣提供 **Mode** 切換：
 
-每條 File Rule 包含以下設定：
+| Mode | 說明 |
+|---|---|
+| **Blacklist**（預設） | 僅監控/阻擋列表中指定的路徑，其餘路徑不受影響 |
+| **Whitelist** | 僅排除列表中指定的路徑，**其餘所有檔案存取都被監控/阻擋** |
+
+兩種模式的表單長相不同：
+
+**Blacklist：每條路徑一則規則**，各自設定：
 
 | 欄位 | 說明 |
 |---|---|
-| **Path** | 要管制的檔案或目錄路徑（例如 `/etc/shadow`、`/root/.ssh`），採**前綴（Prefix）比對**，填目錄即涵蓋其下所有檔案 |
-| **Permission** | 管制的存取類型：`Deny Read & Write`（讀寫皆管制）、`Only Deny Read`（僅管制讀取）、`Only Deny Write`（僅管制寫入） |
-| **Exceptions** | 選填；列出可**繞過此規則**的行程執行檔路徑（例如允許備份程式讀取管制目錄）。可新增多筆 |
+| **Path** | 要管制的檔案或目錄路徑（例如 `/etc/shadow`、`/root/.ssh`），採**前綴（Prefix）比對**，填目錄即涵蓋其下所有檔案；**必須是絕對路徑** |
+| **Permission** | 管制的存取類型：`Read & Write` / `Read only` / `Write only` |
+| **Exceptions** | 選填；可**繞過此規則**的行程執行檔絕對路徑（例如允許備份程式讀取管制目錄），可多筆 |
 
-**執行原理：** Tetragon 掛載 `security_file_permission` kprobe（LSM hook）監控檔案存取，以 Prefix 運算子比對路徑；Exceptions 透過 `matchBinaries: NotIn` 實現，讓指定的行程不受此規則影響。
+**Whitelist：單一排除群組**（點「+ Add」展開），整組共用設定：
+
+| 欄位 | 說明 |
+|---|---|
+| **Excluded paths** | 不需監控的路徑清單，**其餘所有路徑都會被監控** |
+| **Monitored access** | 選擇監控哪種存取：`Read & Write` / `Read only` / `Write only`（選 Read only 代表寫入完全不監控，不是「只允許讀」） |
+| **Exception processes** | 選填；這些行程的檔案存取完全不受監控 |
+
+**執行原理：** Tetragon 掛載 `security_file_permission` kprobe（LSM hook）監控檔案存取。Blacklist 為每條路徑一個 `Prefix` selector（Tetragon 的 selector 之間為 OR）；Whitelist 則產生**單一** selector，以一個 `NotPrefix` 涵蓋所有排除路徑、一個 `matchBinaries: NotIn` 涵蓋所有例外行程（v0.52.1 起，多 selector 的 OR 語意會讓排除失效，故必須合併為一組）。
+
+:::note[表單無法呈現的 YAML 不會被改寫]
+手寫 YAML 若使用表單無法表達的形態（混用 `Prefix` / `NotPrefix`、`Mask` 運算子、多值 permission 等），編輯時會維持以 YAML 編輯器開啟，不會被表單儲存時改寫（v0.52.4）。
+:::
 
 ---
 

@@ -229,3 +229,27 @@ Pod 重啟後重新登入，若剛才的變更仍然存在，代表永久儲存�
 :::warning
 掛上 PVC 的當下，先前存在 `emptyDir` 中的資料**不會**自動搬移，K8s Sentinel 會以全新狀態啟動（帳號回到 `admin`/`admin`）。建議在完成初始設定（修改密碼、建立使用者與告警規則）**之前**就先設定好永久儲存。
 :::
+
+---
+
+## 只想讓 Session 不因重啟登出？（JWT_SECRET）
+
+Session 簽署金鑰預設存在 `/data/sentinel/.jwt-secret`。未掛 PV 時每次 Pod 重啟金鑰都會重生，**所有使用者被強制登出**。v0.53 起可改用 **`JWT_SECRET`** 環境變數（至少 32 字元）固定金鑰，從 Kubernetes Secret 注入：
+
+```bash
+kubectl -n sentinel-system create secret generic sentinel-jwt \
+  --from-literal=jwt-secret="$(openssl rand -hex 32)"
+```
+
+```yaml
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: sentinel-jwt
+              key: jwt-secret
+```
+
+- 值太短會**拒絕啟動**，不會默默弱化 Session 安全
+- 未設定則維持原本的 `.jwt-secret` 檔案行為；已掛 PV 的部署不需要此設定
+- 注意：`JWT_SECRET` 只解決 Session 存續，**帳號、規則與事件資料仍需 PV 才能保留**

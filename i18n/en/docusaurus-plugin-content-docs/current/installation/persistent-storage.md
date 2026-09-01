@@ -229,3 +229,27 @@ Log in again after the restart - if your change survived, persistence is working
 :::warning
 Data previously stored in the `emptyDir` is **not** migrated when you switch to the PVC - K8s Sentinel starts fresh (credentials back to `admin`/`admin`). Set up persistent storage **before** doing your initial configuration (passwords, users, alert rules).
 :::
+
+---
+
+## Only Want Sessions to Survive Restarts? (JWT_SECRET)
+
+The session-signing key lives in `/data/sentinel/.jwt-secret` by default. Without a PV it is regenerated on every Pod restart, **logging every user out**. Since v0.53 the **`JWT_SECRET`** environment variable (at least 32 characters) can pin the key, injected from a Kubernetes Secret:
+
+```bash
+kubectl -n sentinel-system create secret generic sentinel-jwt \
+  --from-literal=jwt-secret="$(openssl rand -hex 32)"
+```
+
+```yaml
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: sentinel-jwt
+              key: jwt-secret
+```
+
+- A too-short value **refuses to start** rather than silently weakening every session token
+- Unset keeps the existing `.jwt-secret` file behaviour; deployments with a PV need nothing
+- Note: `JWT_SECRET` only covers session survival; **accounts, rules and event data still need a PV**

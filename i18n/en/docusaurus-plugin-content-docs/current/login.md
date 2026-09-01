@@ -49,7 +49,7 @@ Without [Persistent Storage (PV / PVC)](./installation/persistent-storage.md) co
 |---|---|
 | **Login rate limit** (v0.47+) | Failed logins are throttled per source IP (5 per minute, then a brief block). Keyed on the source rather than the username, so an attacker cannot lock a real user out by deliberately failing their login |
 | **Login auditing** (v0.48+) | Every sign-in attempt (success, wrong credentials, rate-limited) is recorded in the [Audit Log](./features/audit-log.md) with the targeted account and the source IP; the password is never recorded |
-| **JWT authentication** | On success a token is stored in the browser's `localStorage` and sent as the `Authorization` header on every API request. When it expires (Session Timeout defaults to 3600 seconds) you are logged out automatically |
+| **JWT authentication** | On success a token is stored in the browser's `localStorage` and sent as the `Authorization` header on every API request. When it expires (Session Timeout defaults to 3600 seconds) you are logged out automatically. Since v0.53 the [`JWT_SECRET` environment variable](./installation/persistent-storage.md#only-want-sessions-to-survive-restarts-jwt_secret) can pin the signing key so a Pod restart no longer logs everyone out |
 
 :::note[Behind a proxy or Ingress?]
 The source IP for rate limiting and audit records is taken from the connection itself (`RemoteAddr`) by default. If K8s Sentinel runs behind a proxy or Ingress that sets `X-Forwarded-For`, set the environment variable **`TRUST_PROXY_HEADERS=true`** on the Sentinel container so the real client IP is used (v0.50+).

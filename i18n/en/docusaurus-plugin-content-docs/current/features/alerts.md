@@ -50,6 +50,17 @@ When a new security event arrives and matches a rule's conditions, the backend:
 2. Verifies the rule is not within its cooldown period
 3. Constructs an alert payload and sends it via HTTP POST to the webhook URL
 
+**Throttling and retries (v0.51+):** all event-driven alerts (Security and Admission) go through a bounded queue to a **single sender**, which:
+
+- Paces each webhook to about **one message per second**, so a burst of events no longer becomes a burst of concurrent POSTs that trips the receiver's rate limit
+- On **HTTP 429**, honours `Retry-After` with bounded backoff and retries a few times; **5xx** responses (usually transient) are also retried; plain 4xx (e.g. a deleted webhook) is not
+- Drops with a log entry when the queue is full instead of growing memory without bound
+- The manual "**Test**" button bypasses the queue and posts synchronously, so the UI gets an immediate success/failure result
+
+:::note[Slack rate limits are per app]
+Two rules pointing at different webhook URLs of the same Slack app share one quota. If the app is already inside a rate-limit window from earlier bursts, let it subside first.
+:::
+
 ---
 
 ## Supported Platforms

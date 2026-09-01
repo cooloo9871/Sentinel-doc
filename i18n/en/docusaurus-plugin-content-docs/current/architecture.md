@@ -63,5 +63,5 @@ Persistent data is stored at the following paths:
 | Path | Purpose |
 |---|---|
 | `/data/sentinel/users.json` | User accounts and password hashes |
-| `/data/sentinel/.jwt-secret` | The JWT token signing key, auto-generated on first startup |
+| `/data/sentinel/.jwt-secret` | The JWT token signing key, auto-generated on first startup; can be overridden by the `JWT_SECRET` environment variable since v0.53 |
 | `/data/sentinel/` (rest) | Alert / syslog configs, custom policy templates, Security / Admission event history and the Audit Log |

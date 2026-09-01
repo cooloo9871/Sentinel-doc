@@ -79,17 +79,36 @@ Paths are **absolute and matched exactly** - a program name on its own (e.g. `cu
 
 ## File Rules
 
-File Rules control filesystem access from the Pods and always operate in **Blacklist** mode: only the paths you list are restricted; everything else is allowed.
+File Rules control filesystem access from the Pods. Since v0.52 they have the same **Mode** switch as Process Rules:
 
-Each file rule has the following settings:
+| Mode | Description |
+|---|---|
+| **Blacklist** (default) | Only the paths you list are monitored/blocked; everything else is untouched |
+| **Whitelist** | Only the paths you list are excluded; **every other file access is monitored/blocked** |
+
+The two modes present different forms:
+
+**Blacklist: one rule per path**, each with:
 
 | Field | Description |
 |---|---|
-| **Path** | The file or directory path to restrict (e.g. `/etc/shadow`, `/root/.ssh`); matched by **prefix**, so a directory covers everything under it |
-| **Permission** | Which access to restrict: `Deny Read & Write`, `Only Deny Read`, or `Only Deny Write` |
-| **Exceptions** | Optional; executable paths of processes that **bypass this rule** (e.g. allow a backup agent to read a restricted directory). Multiple entries allowed |
+| **Path** | The file or directory to restrict (e.g. `/etc/shadow`, `/root/.ssh`); matched by **prefix**, so a directory covers everything under it; **must be absolute** |
+| **Permission** | Which access to restrict: `Read & Write` / `Read only` / `Write only` |
+| **Exceptions** | Optional; absolute executable paths of processes that **bypass this rule** (e.g. a backup agent reading a restricted directory) |
 
-**How it works:** Tetragon hooks the `security_file_permission` kprobe (an LSM hook) to monitor file access, matching paths with the Prefix operator. Exceptions are implemented with `matchBinaries: NotIn`, exempting the listed processes from the rule.
+**Whitelist: a single exclusion group** (opened with "+ Add"), shared by the whole set:
+
+| Field | Description |
+|---|---|
+| **Excluded paths** | Paths that are not monitored; **everything else is** |
+| **Monitored access** | Which access kind is monitored at all: `Read & Write` / `Read only` / `Write only` (Read only means writes are not monitored anywhere, not "reads allowed") |
+| **Exception processes** | Optional; these processes' file access is not monitored at all |
+
+**How it works:** Tetragon hooks the `security_file_permission` kprobe (an LSM hook). Blacklist emits one `Prefix` selector per path (Tetragon ORs selectors); Whitelist emits a **single** selector with one `NotPrefix` over all excluded paths and one `matchBinaries: NotIn` over all exception processes (since v0.52.1: multiple OR-ed selectors would make the exclusions silently ineffective, so they must be merged into one set).
+
+:::note[Hand-written YAML the form cannot represent is never rewritten]
+YAML using shapes the form cannot express (mixed `Prefix` / `NotPrefix`, the `Mask` operator, multi-value permissions, etc.) keeps opening in the YAML editor on edit, so a form save cannot rewrite it (v0.52.4).
+:::
 
 ---
 

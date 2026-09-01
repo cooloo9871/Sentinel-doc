@@ -50,6 +50,17 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 2. 檢查是否在 Cooldown 期間內（避免重複推送）
 3. 構建告警訊息 Payload 並以 HTTP POST 方式送出至 Webhook URL
 
+**推送節流與重試（v0.51+）：** 所有事件觸發的告警（Security 與 Admission）都會經過一個有界佇列，交由**單一送信程序**依序送出：
+
+- 每個 Webhook 約**每秒一則**，事件爆量不會變成大量並發 POST 而觸發對方的速率限制
+- 收到 **HTTP 429** 時依 `Retry-After` 退避並重試數次；**5xx** 也會重試（通常是暫時性錯誤）；4xx（例如 Webhook 已被刪除）不重試
+- 佇列滿時丟棄並記錄 log，不會無限占用記憶體
+- 手動的「**Test**」按鈕不經佇列、同步送出，UI 能立即得到成功/失敗結果
+
+:::note[Slack 的速率限制是以 App 為單位]
+兩條規則指向同一個 Slack App 的不同 Webhook URL，仍共用同一個限額。若先前已因爆量進入限流視窗，需等其自然消退。
+:::
+
 ---
 
 ## 支援的 Webhook 平台
