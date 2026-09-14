@@ -38,7 +38,7 @@ Click "**Change Password**" on an account row to open the dialog:
 Password security rules (v0.47+):
 
 - **New passwords must be at least 8 characters** (enforced server-side)
-- **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out
+- **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out (one exception: the forced first-login change screen skips it, v0.58.1)
 - An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same
 - Every password change, including an attempt rejected for a wrong current password, is recorded in the [Audit Log](./audit-log.md)
 

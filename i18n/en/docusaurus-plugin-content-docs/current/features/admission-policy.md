@@ -31,26 +31,32 @@ Click **"+ New Policy"** in the top-right corner to open the visual builder.
 
 ### Supported Rule Types
 
-K8s Sentinel provides seven built-in rule types covering the most common Kubernetes admission validation needs:
+K8s Sentinel provides nine built-in rule types (ConfigMap Size added in v0.55, Secret Size in v0.57) covering the most common Kubernetes admission validation needs:
 
 | Rule Type | Description |
 |---|---|
-| **Label Check** | Require or deny resources with a specific label key=value |
-| **Annotation Check** | Require or deny resources with a specific annotation |
-| **Image Policy** | Control which container image registries or image names are allowed |
-| **Replica Limit** | Enforce a maximum or minimum replica count on Deployments / StatefulSets |
-| **Resource Limits** | Require containers to define CPU / Memory requests and limits |
-| **Security Context** | Enforce or deny specific Pod Security Context settings (e.g., forbid `runAsRoot`) |
-| **Host Access** | Restrict Pod usage of hostPID, hostNetwork, hostIPC, and similar host-sharing options |
+| **Label Check** | Require or forbid specific label key=value pairs; multiple rules supported |
+| **Annotation Check** | Require or forbid specific annotation key=value pairs |
+| **Image Policy** | Forbid the `:latest` tag and require images from named registries. Since v0.59 it covers **initContainers and ephemeral (debug) containers**, the registry prefix compares case-insensitively, and an untagged image with a registry port (`myreg:5000/app`) is correctly refused |
+| **Replica Limit** | Cap replicas on Deployments / StatefulSets. Since v0.59 **`kubectl scale` and HPA via the scale subresource are capped too** |
+| **Resource Limits** | Require CPU / Memory limits, covering every workload type and initContainers |
+| **Security Context** | Forbid privileged containers and require runAsNonRoot (honouring pod- and container-level inheritance). Covers ephemeral (debug) containers since v0.59 |
+| **Host Access** | Forbid hostNetwork, hostPID and hostIPC host-sharing options |
+| **ConfigMap Size** (v0.55+) | Cap a ConfigMap's **total size** (KB; `data` plus `binaryData`, key names included). A new object must fit the cap; an existing oversized one may stay or shrink but **not grow** |
+| **Secret Size** (v0.57+) | The same total-size cap for Secrets, with `data` measured base64-**decoded**; managed types (`kubernetes.io/service-account-token`, `bootstrap.kubernetes.io/token`, `helm.sh/release.v1`) are exempt |
 
 ### Form Fields
 
 | Field | Description |
 |---|---|
 | **Policy Name** | The `ValidatingAdmissionPolicy` resource name - must follow Kubernetes naming conventions |
-| **Rule Type** | Select one of the seven rule types above |
-| **Apply To** | Choose which resource types this policy applies to (Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob, or all) |
-| **Rule details** | Fields specific to the selected rule type appear below |
+| **Rule Type** | Select one of the nine rule types above |
+| **Apply To** | Choose which resource types this policy applies to (All Workloads, Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob, and since v0.59 Namespaces); workload rules also match ReplicationControllers |
+| **Rule details** | Fields specific to the selected rule type appear below; a blank Violation Message uses a concrete default (previewed live as the field placeholder) |
+
+:::note[Known coverage limits]
+The size rules skip objects with more than 200 keys (a cost-budget guard, so a huge object can never become permanently unwritable under `failurePolicy: Fail`); the Security Context rule does not cover `capabilities`-based privilege; Host Access does not cover `hostPort`.
+:::
 
 ### Live YAML Preview
 
@@ -74,7 +80,19 @@ Switch to the **"Bindings"** tab to manage `ValidatingAdmissionPolicyBinding` re
 
 ![Bindings tab](/img/features/admission-policy/bindings.png)
 
-A Binding associates an existing ValidatingAdmissionPolicy with specific Namespaces or resources and configures the action on violation (Deny / Warn / Audit).
+A Binding associates an existing ValidatingAdmissionPolicy with a scope and configures the action on violation (Deny / Audit / Warn).
+
+The **namespace scope** (v0.54+) offers three modes, all multi-selectable:
+
+| Mode | Description |
+|---|---|
+| **All namespaces** | No filter, cluster-wide (the hint notes this includes `kube-system`) |
+| **Only these namespaces** | Applies only in the selected namespaces (`matchExpressions` with `In`) |
+| **All except these namespaces** | Applies everywhere but the selected ones (`NotIn`), e.g. the classic cluster-wide guardrail excluding `kube-system` / `kube-public` / `kube-node-lease` |
+
+:::tip
+Pair the ConfigMap / Secret Size rules with an "All except" binding that excludes `kube-system` and friends, so kubelet and controller writes are never blocked.
+:::
 
 **How it works:** K8s Sentinel creates `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding` resources via the Kubernetes API Server. For each resource request matching `matchConstraints`, the API Server evaluates the CEL expression and, based on `failurePolicy`, either rejects or warns.
 

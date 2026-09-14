@@ -31,11 +31,12 @@ On the first sign-in with the default `admin` / `admin`, the console **forces yo
 
 | Field | Description |
 |---|---|
-| **Current password** | The current password (`admin` on first login) |
 | **New password** | The new password, **at least 8 characters** |
 | **Confirm new password** | Repeat the new password |
 
 Click "**Set password and continue**" to enter the console.
+
+Since v0.58.1 this screen **no longer asks for the current password**: it only appears seconds after signing in with the public bootstrap password, so asking again proved nothing. The skip applies **only while the forced-change flag is set**; once it clears, changing your own password requires the current one as before (protecting against a hijacked session).
 
 This gate is **enforced server-side**: while the flag is set, the backend only allows reading your own account info and changing your own password; there is no way around it. The flag clears once the password changes.
 
