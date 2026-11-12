@@ -20,20 +20,43 @@ Complete the [Cilium installation and configuration](./cilium-install.md) before
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm install tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
   --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-The one required custom setting is **`tetragon.grpc.address=0.0.0.0:54321`**: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321` - reachable only from inside the pod. Binding it to the pod network lets K8s Sentinel connect. Everything else can stay at defaults - the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default.
+- **`tetragon.grpc.address=0.0.0.0:54321`** is required: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321`, reachable only from inside the pod
+- **`hostNetwork=false` and the NetworkPolicy** (how it is installed since v0.64.1) are what keep that API to K8s Sentinel. Tetragon's gRPC server has **no authentication and no TLS**: whoever can connect reads every process started on the node, command line included, and can list, disable or delete tracing policies. On the host network, which is the chart's default, the port is open on every node's address to every pod in the cluster, and a NetworkPolicy does not apply to a hostNetwork pod; off the host network it is an ordinary pod port, and `deploy/tetragon-grpc-policy.yaml` (NetworkPolicy `tetragon-grpc`) admits only the K8s Sentinel pod. Edit the namespaces in that file if Tetragon or K8s Sentinel is installed elsewhere
 
-:::note[Upgrading an existing Tetragon?]
-The installer skips Tetragon when its DaemonSet is already present, so it will not reconfigure one installed before gRPC collection. Set the address on the running config and restart:
+Everything else can stay at defaults: the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default. `deploy/install-job.yaml` and `deploy/install.sh` do all of this for you.
+
+:::note
+Off the host network Tetragon starts once the node's CNI is up, so the first seconds of a node's boot are not observed.
+:::
+
+### Moving an existing Tetragon off the host network
+
+The installers skip Tetragon when its DaemonSet is already present, so one installed earlier is still on the host network with its gRPC port open to the cluster.
+
+Installed as a Helm release (`helm list -n kube-system` shows `tetragon`):
 
 ```bash
-kubectl -n kube-system patch cm tetragon-config --type merge \
-  -p '{"data":{"server-address":"0.0.0.0:54321"}}'
-kubectl -n kube-system rollout restart ds/tetragon
+helm upgrade tetragon cilium/tetragon -n kube-system --reuse-values \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
-:::
+
+Installed by a `deploy/install.sh` from v0.64.0 or earlier (which applied rendered templates and left no release):
+
+```bash
+helm template tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321 | kubectl apply -f -
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
+```
+
+K8s Sentinel finds the agents at their new addresses by itself within half a minute. To check, from any other pod: `nc -zv <tetragon pod IP> 54321` must time out.
 
 :::tip
 K8s Sentinel assumes Tetragon is installed in the `kube-system` namespace by default. If you install it elsewhere (e.g. `-n tetragon`), set the `TETRAGON_NAMESPACE` environment variable accordingly when deploying K8s Sentinel.

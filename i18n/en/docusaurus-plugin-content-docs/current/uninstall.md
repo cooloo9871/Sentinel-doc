@@ -5,81 +5,55 @@ sidebar_position: 17
 ---
 
 :::warning
-Uninstalling K8s Sentinel will delete all K8s Sentinel resources, including user accounts and the JWT secret. However, **TracingPolicies that have been created will NOT be automatically deleted**, to avoid disrupting existing cluster security policies. Make sure to back up any necessary data before proceeding.
+Uninstalling deletes everything in the `sentinel-system` namespace, including settings, user accounts and stored events. Make sure to back up any necessary data before proceeding.
 :::
 
-## Step 1: Delete the K8s Sentinel Deployment and Service
+## Using uninstall.sh (recommended, v0.64.1+)
 
-If Trivy Operator is installed (the Job and script installations install it into `sentinel-system` as well since v0.61), remove it with Helm first so that it cleans up its own cluster-scoped resources:
+`deploy/uninstall.sh` removes everything that `deploy/install.sh` and `deploy/install-job.yaml` installed. Run it from the K8s Sentinel source directory:
 
 ```bash
-helm uninstall trivy-operator --namespace sentinel-system
+bash deploy/uninstall.sh --dry-run   # only lists what would be removed
+bash deploy/uninstall.sh             # asks, then removes
 ```
 
-The `VulnerabilityReport` resources written by Trivy Operator are stored in the namespaces of the workloads they belong to; delete them as well if you no longer need them:
+What it removes:
+
+- K8s Sentinel and the `sentinel-system` namespace (settings, accounts and stored events included)
+- Trivy Operator with its Trivy server
+- Tetragon (including the NetworkPolicy `tetragon-grpc`)
+- What the installer Job left in `kube-system`
+- **The quarantine policy and the quarantine labels on Pods**: a pod left isolated with no K8s Sentinel to release it would stay that way
+
+| Option | Effect |
+|---|---|
+| `--dry-run` | Lists what would be deleted and deletes nothing |
+| `--keep-tetragon` | Leaves Tetragon alone, for a cluster where it was installed before K8s Sentinel |
+| `--purge` | Also deletes the Tracing, Network and Admission Policies made in K8s Sentinel, every vulnerability report, and the Tetragon and Trivy CRDs |
+| `--yes` | Does not ask |
+
+Set the `TETRAGON_NAMESPACE` environment variable if Tetragon is not in `kube-system`.
+
+## What Stays Without --purge
+
+:::info
+Without `--purge`, the policies made in K8s Sentinel stay and **go on being enforced**: Network Policies by Cilium, Admission Policies by the API server. Tracing Policies are kept as objects but do nothing once Tetragon is gone. Vulnerability reports and the CRDs stay too.
+:::
+
+To clean them up manually later, list and delete them:
 
 ```bash
-kubectl delete vulnerabilityreports --all --all-namespaces
+kubectl get tracingpolicy,tracingpolicynamespaced --all-namespaces
+kubectl delete tracingpolicynamespaced <name> -n <namespace>
+kubectl delete tracingpolicy <name>
 ```
 
-Then delete the Deployment and Service:
+## Persistent Data
+
+For a PersistentVolume you added for K8s Sentinel's data, the claim is deleted with the namespace, and whether the data itself is kept depends on the volume's reclaim policy. With hostPath or a Local Volume, delete the data directory on the node manually:
 
 ```bash
-kubectl delete deployment -n sentinel-system sentinel
-kubectl delete service -n sentinel-system sentinel
-```
-
-Or delete all resources at once with the same manifest used for installation (Namespace, RBAC, Deployment, Service; after running it you can skip Step 2 and Step 3):
-
-```bash
-kubectl delete -f deploy/sentinel.yaml
-```
-
-## Step 2: Delete the Namespace
-
-```bash
-kubectl delete namespace sentinel-system
-```
-
-**Why:** Deleting a namespace also deletes all resources within it, including Pods, Services, ConfigMaps, Secrets, and more. This operation is irreversible - confirm that no data needs to be retained before proceeding.
-
-## Step 3: Remove RBAC Resources
-
-```bash
-kubectl delete clusterrole sentinel
-kubectl delete clusterrolebinding sentinel
-```
-
-**Why:** ClusterRole and ClusterRoleBinding are cluster-scoped resources that do not belong to any namespace. Deleting the namespace does not remove them - they must be manually cleaned up. The Role and RoleBinding used by registry scanning (`sentinel-registry-scan`) live inside `sentinel-system` and were already deleted together with the namespace.
-
-## Step 4: Clear Persistent Data (Optional)
-
-If K8s Sentinel used a PersistentVolume for data storage, clear it separately:
-
-```bash
-kubectl delete pvc -n sentinel-system --all
-# If using hostPath, manually delete the data directory on the node
 sudo rm -rf /data/sentinel/
 ```
 
-> Double-check the path before running `sudo rm -rf` - this operation cannot be undone.
-
-## Retaining TracingPolicies
-
-:::info
-TracingPolicy CRD resources created by K8s Sentinel are not automatically deleted on uninstall. These Policies will continue to be enforced by Tetragon after uninstallation. If you no longer need them, clean them up manually:
-
-```bash
-# List all TracingPolicy resources
-kubectl get tracingpolicy,tracingpolicynamespaced --all-namespaces
-
-# Delete a specific TracingPolicyNamespaced
-kubectl delete tracingpolicynamespaced <name> -n <namespace>
-```
-
-To delete a cluster-level TracingPolicy:
-
-```bash
-kubectl delete tracingpolicy <name>
-```
-:::
+> Double-check the path before running `sudo rm -rf`. This cannot be undone.

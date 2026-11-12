@@ -36,7 +36,7 @@ Navigate to the **"Security Events"** page. Events are listed in reverse chronol
 
 **Event statistics row:** Shows the total event count in the database, broken down by Warning and Critical.
 
-Since v0.64, a repeated event moves to the top of the list with its new count.
+A repeated event **keeps its place in the list** and takes its new count and time (v0.64.2+; in v0.64.0 and v0.64.1 it jumped to the top on every repeat, which kept the list reshuffling). Since v0.64.1, Tetragon appending to its own export log (`/var/log/tetragon/`) is no longer reported as a security event.
 
 ---
 

@@ -40,6 +40,7 @@ Fresh installs (install-job / install.sh) handle all of this automatically.
 - **Everyone is signed out once**: since v0.64 a session is refused after its account is deleted or its password changes
 - Creating a Tracing Policy under a **name that already exists** is refused instead of replacing the existing policy
 - Re-apply `deploy/sentinel.yaml` to drop the unused cluster-wide `pods/log` permission (optional)
+- **An existing Tetragon is still on the host network**: since v0.64.1 the installers put Tetragon on the pod network and limit its gRPC port to K8s Sentinel with a NetworkPolicy, but they do not change a Tetragon that is already installed. See [Installing Tetragon](./tetragon-install.md) for how to move it
 :::
 
 :::caution[Upgrading to v0.60+ (vulnerability scanning)]

@@ -49,7 +49,7 @@ chmod +x install.sh
 **The script executes the following flow:**
 
 1. **Prepare Helm** - When Helm is needed to install Tetragon or Trivy Operator and `helm` is not found locally, the script downloads the latest stable release into a temp directory for its own use (nothing is installed system-wide; cleaned up when the script exits)
-2. **Deploy Tetragon** - Skipped when a `tetragon` DaemonSet already exists; otherwise rendered from the official Cilium Helm Chart and applied (`helm template | kubectl apply`) with `tetragon.grpc.address=0.0.0.0:54321`
+2. **Deploy Tetragon** - Skipped when a `tetragon` DaemonSet already exists; otherwise installed from the official Cilium Helm Chart as a Helm release (`helm install` since v0.64.1, so a later `helm upgrade` works) with `hostNetwork=false` and `tetragon.grpc.address=0.0.0.0:54321`. Whether or not Tetragon was installed just now, the script applies `tetragon-grpc-policy.yaml` so that only K8s Sentinel can reach the gRPC port (see [Installing Tetragon](./tetragon-install.md) for the reason)
 3. **kubectl apply the K8s Sentinel manifest** - Creates the required Namespace, ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service resources
 4. **Deploy Trivy Operator** - Skipped when a Trivy Operator Deployment already exists in any namespace of the cluster; otherwise installed into `sentinel-system` with `helm install`, using the `trivy-operator-values.yaml` in the same directory (see [Installing Trivy Operator](./trivy-operator.md))
 

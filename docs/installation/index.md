@@ -40,6 +40,7 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 - **所有使用者會被登出一次**：v0.64 起帳號被刪除或密碼變更後，其 Session 會被拒絕
 - 以**已存在的名稱**建立 Tracing Policy 會被拒絕，不再覆蓋既有的 policy
 - 可重新套用 `deploy/sentinel.yaml` 以移除不再使用的叢集層級 `pods/log` 權限（選用）
+- **既有的 Tetragon 仍在 host network 上**：v0.64.1 起安裝程式會把 Tetragon 裝在 Pod 網路並以 NetworkPolicy 限制 gRPC 埠只有 K8s Sentinel 能連，但不會更動已安裝的 Tetragon，搬移方式見 [安裝 Tetragon](./tetragon-install.md)
 :::
 
 :::caution[升級到 v0.60+（弱點掃描）]

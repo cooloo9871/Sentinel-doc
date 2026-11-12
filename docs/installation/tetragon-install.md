@@ -20,20 +20,43 @@ sidebar_position: 3
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm install tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
   --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-唯一必要的自訂參數是 **`tetragon.grpc.address=0.0.0.0:54321`**：K8s Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到；綁定到 Pod 網路後 K8s Sentinel 才能連線。其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。
+- **`tetragon.grpc.address=0.0.0.0:54321`** 為必要設定：K8s Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到
+- **`hostNetwork=false` 與 NetworkPolicy**（v0.64.1 起的安裝方式）用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
 
-:::note[既有的 Tetragon 要升級設定？]
-安裝器偵測到 Tetragon DaemonSet 已存在時會跳過安裝，因此不會幫舊環境補上 gRPC 設定。直接修改運行中的設定並重啟：
+其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。`deploy/install-job.yaml` 與 `deploy/install.sh` 會自動完成以上全部設定。
+
+:::note
+離開 host network 後，Tetragon 要等節點的 CNI 就緒才會啟動，因此節點開機最初幾秒的行為不會被觀測到。
+:::
+
+### 把既有的 Tetragon 移出 host network
+
+安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝，因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
+
+以 Helm release 安裝者（`helm list -n kube-system` 看得到 `tetragon`）：
 
 ```bash
-kubectl -n kube-system patch cm tetragon-config --type merge \
-  -p '{"data":{"server-address":"0.0.0.0:54321"}}'
-kubectl -n kube-system rollout restart ds/tetragon
+helm upgrade tetragon cilium/tetragon -n kube-system --reuse-values \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
-:::
+
+由 v0.64.0 以前的 `deploy/install.sh` 安裝者（當時是套用 render 出來的 manifest，沒有留下 release）：
+
+```bash
+helm template tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321 | kubectl apply -f -
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
+```
+
+K8s Sentinel 會在半分鐘內自行找到 agent 的新位址。驗證方式：從任一其他 Pod 執行 `nc -zv <tetragon Pod IP> 54321`，應該要逾時。
 
 :::tip
 K8s Sentinel 預設假設 Tetragon 安裝於 `kube-system` Namespace。若安裝於其他 Namespace（例如 `-n tetragon`），部署 K8s Sentinel 時需將環境變數 `TETRAGON_NAMESPACE` 設為對應值。

@@ -11,6 +11,7 @@ sidebar_position: 2
 以一個 Kubernetes Job（`sentinel-installer`，位於 **`kube-system`**）在叢集內部完成安裝，本機不需要 git、helm 或任何工具，只需要 `kubectl`。Job 依序執行三個步驟：
 
 1. **Tetragon**：若叢集已存在 `tetragon` DaemonSet 則跳過；否則以 Helm 安裝，並設定 `tetragon.grpc.address=0.0.0.0:54321`（K8s Sentinel 收集事件所需），等待 DaemonSet 就緒
+   v0.64.1 起另外設定 `hostNetwork=false` 並套用 `deploy/tetragon-grpc-policy.yaml`，讓 Tetragon 的 gRPC 埠只有 K8s Sentinel 能連（原因見 [安裝 Tetragon](./tetragon-install.md)）；對先前已安裝在 host network 上的 Tetragon 不生效
 2. **K8s Sentinel**：直接從 GitHub 套用 `deploy/sentinel.yaml`（Namespace、RBAC、Deployment、Service 一個檔案全部包含，不使用 Kustomize），等待 Deployment 就緒
 3. **Trivy Operator**（v0.61+）：若叢集任一 Namespace 已有 Trivy Operator 的 Deployment 則跳過；否則以 Helm 安裝至 `sentinel-system`（release 名稱 `trivy-operator`），套用 `deploy/trivy-operator-values.yaml`。此步驟排在最後，即使失敗 K8s Sentinel 本體也已安裝完成（詳見 [安裝 Trivy Operator](./trivy-operator.md)）
 

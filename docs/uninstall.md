@@ -5,81 +5,55 @@ sidebar_position: 17
 ---
 
 :::warning
-解除安裝將刪除所有 K8s Sentinel 資源，包含使用者帳號與 JWT secret。但**不會**自動刪除已建立的 TracingPolicy，以避免影響叢集既有的安全策略。請在執行前確認已備份必要資料。
+解除安裝會刪除 `sentinel-system` Namespace 內的所有資料，包含設定、使用者帳號與已儲存的事件。請在執行前確認已備份必要資料。
 :::
 
-## 步驟一：刪除 K8s Sentinel Deployment 與 Service
+## 使用 uninstall.sh（建議，v0.64.1+）
 
-若有安裝 Trivy Operator（Job 與腳本安裝自 v0.61 起會一併安裝至 `sentinel-system`），請先以 Helm 移除，讓它清掉自己的叢集級資源：
+`deploy/uninstall.sh` 會移除 `deploy/install.sh` 與 `deploy/install-job.yaml` 所安裝的全部內容。於 K8s Sentinel 原始碼目錄下執行：
 
 ```bash
-helm uninstall trivy-operator --namespace sentinel-system
+bash deploy/uninstall.sh --dry-run   # 只列出會被移除的項目
+bash deploy/uninstall.sh             # 詢問確認後移除
 ```
 
-Trivy Operator 寫出的 `VulnerabilityReport` 存放在各工作負載所屬的 Namespace，若不再需要可一併刪除：
+移除的項目：
+
+- K8s Sentinel 與 `sentinel-system` Namespace（含設定、帳號與已儲存的事件）
+- Trivy Operator 與其 Trivy server
+- Tetragon（含 NetworkPolicy `tetragon-grpc`）
+- 安裝 Job 留在 `kube-system` 的資源
+- **Quarantine policy 與 Pod 上的隔離 Label**：若留下隔離規則卻沒有 K8s Sentinel 可以解除，被隔離的 Pod 會永遠維持隔離
+
+| 選項 | 效果 |
+|---|---|
+| `--dry-run` | 列出會被刪除的項目，不實際刪除 |
+| `--keep-tetragon` | 保留 Tetragon，適用於 Tetragon 早於 K8s Sentinel 安裝的叢集 |
+| `--purge` | 另外刪除在 K8s Sentinel 中建立的 Tracing、Network 與 Admission Policy、所有弱點報告，以及 Tetragon 與 Trivy 的 CRD |
+| `--yes` | 不詢問確認 |
+
+Tetragon 不在 `kube-system` 時，請設定環境變數 `TETRAGON_NAMESPACE`。
+
+## 未使用 --purge 時會保留的內容
+
+:::info
+不加 `--purge` 時，在 K8s Sentinel 中建立的 Policy 會保留並**繼續生效**：Network Policy 由 Cilium 執行、Admission Policy 由 API Server 執行。Tracing Policy 的物件也會保留，但 Tetragon 移除後就不再有作用。弱點報告與 CRD 同樣會保留。
+:::
+
+若之後想手動清除，可列出並刪除：
 
 ```bash
-kubectl delete vulnerabilityreports --all --all-namespaces
+kubectl get tracingpolicy,tracingpolicynamespaced --all-namespaces
+kubectl delete tracingpolicynamespaced <name> -n <namespace>
+kubectl delete tracingpolicy <name>
 ```
 
-接著刪除 Deployment 與 Service：
+## 持久化資料
+
+為 K8s Sentinel 資料加掛的 PersistentVolume，其 PVC 會隨 Namespace 一併刪除，實際資料是否保留取決於該 PV 的 reclaim policy。若使用 hostPath 或 Local Volume，節點上的資料目錄需手動刪除：
 
 ```bash
-kubectl delete deployment -n sentinel-system sentinel
-kubectl delete service -n sentinel-system sentinel
-```
-
-或以安裝時的同一份 manifest 一次刪除所有資源（Namespace、RBAC、Deployment、Service；執行後可略過步驟二與步驟三）：
-
-```bash
-kubectl delete -f deploy/sentinel.yaml
-```
-
-## 步驟二：刪除 Namespace
-
-```bash
-kubectl delete namespace sentinel-system
-```
-
-**原理：** 刪除 namespace 會同時刪除其中所有資源，包含 Pod、Service、ConfigMap、Secret 等。此操作不可逆，請確認已無需要保留的資料後再執行。
-
-## 步驟三：移除 RBAC 資源
-
-```bash
-kubectl delete clusterrole sentinel
-kubectl delete clusterrolebinding sentinel
-```
-
-**原理：** ClusterRole 和 ClusterRoleBinding 是叢集級別（cluster-scoped）資源，不屬於任何 namespace，因此刪除 namespace 時不會一併刪除，需手動清除。Registry 掃描使用的 Role 與 RoleBinding（`sentinel-registry-scan`）位於 `sentinel-system` 內，已隨 Namespace 一併刪除。
-
-## 步驟四：清除持久化資料（選用）
-
-若 K8s Sentinel 使用了 PersistentVolume 儲存資料，需另行清除：
-
-```bash
-kubectl delete pvc -n sentinel-system --all
-# 若使用 hostPath，手動刪除節點上的資料目錄
 sudo rm -rf /data/sentinel/
 ```
 
 > 執行 `sudo rm -rf` 前請再次確認路徑正確，此操作無法復原。
-
-## 保留 TracingPolicy
-
-:::info
-K8s Sentinel 建立的 TracingPolicy CRD 資源不會被自動刪除，解除安裝後這些 Policy 仍會繼續由 Tetragon 執行。若確認不再需要，可手動清除：
-
-```bash
-# 列出所有 TracingPolicy 資源
-kubectl get tracingpolicy,tracingpolicynamespaced --all-namespaces
-
-# 刪除指定的 TracingPolicyNamespaced
-kubectl delete tracingpolicynamespaced <name> -n <namespace>
-```
-
-若需刪除叢集級別的 TracingPolicy：
-
-```bash
-kubectl delete tracingpolicy <name>
-```
-:::
