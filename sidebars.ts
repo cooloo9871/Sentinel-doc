@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
         'installation/index',
         'installation/job-install',
         'installation/script-install',
+        'installation/trivy-operator',
         'installation/persistent-storage',
         'login',
         'installation/audit-webhook',
@@ -72,6 +73,15 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'features/quarantine',
+          ],
+        },
+        {
+          type: 'category',
+          label: '弱點掃描',
+          collapsed: false,
+          items: [
+            'features/vulnerabilities',
+            'features/registry-scanning',
           ],
         },
         {

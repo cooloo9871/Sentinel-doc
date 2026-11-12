@@ -15,6 +15,7 @@ sidebar_position: 3
 | Kubernetes | 1.32+ | 叢集需正常運作，且能透過 kubeconfig 存取 |
 | Cilium | 1.14+ | 作為叢集 CNI，需啟用 **kube-proxy replacement**、**Hubble** 與 **Hubble Relay**（安裝方式見 [安裝與設定 Cilium](./installation/cilium-install.md)） |
 | Tetragon | 1.0+ | 以 DaemonSet 形式部署，需將 **gRPC 綁定至 Pod 網路**（`0.0.0.0:54321`，安裝方式見 [安裝 Tetragon](./installation/tetragon-install.md)） |
+| Trivy Operator | 選用 | 提供工作負載弱點掃描結果（v0.60+）。Job 與腳本安裝會一併安裝至 `sentinel-system`；未安裝時 K8s Sentinel 其餘功能照常運作（見 [安裝 Trivy Operator](./installation/trivy-operator.md)） |
 | kubectl | 1.32+ | 用於本機操作叢集，需已設定有效的 kubeconfig |
 | 存取權限 | cluster-admin 或具 TracingPolicy RBAC | 安裝 K8s Sentinel 及操作 TracingPolicy CRD 均需要足夠的叢集權限 |
 

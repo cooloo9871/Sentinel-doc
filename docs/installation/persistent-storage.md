@@ -22,6 +22,7 @@ K8s Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的
 - Alerts 告警規則與 Syslog 轉送設定
 - 自訂 Policy Templates
 - Security Events / Admission Events 歷史事件
+- [Registry 掃描](../features/registry-scanning.md)的 Registry 設定（含認證）與掃描結果（`registries.json` 與 `registry-scans/`，v0.62+）
 - Session Timeout 等系統設定
 
 正式環境請務必將 `/data/sentinel` 改掛 **PersistentVolume**。

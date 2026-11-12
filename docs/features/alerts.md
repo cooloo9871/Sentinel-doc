@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## 功能說明
 
-Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Events 或 Admission Events 中出現符合條件的事件時，K8s Sentinel 會自動透過 HTTP POST 將告警訊息推送至指定的 Webhook URL，支援 Slack、Microsoft Teams、Discord 及任何相容的 Webhook 服務。
+Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Events 或 Admission Events 中出現符合條件的事件時，K8s Sentinel 會自動透過 HTTP POST 將告警訊息推送至指定的 Webhook URL。訊息內容為 **Slack 格式**，可直接用於 Slack Incoming Webhook，或任何接受 Slack 格式的服務。
 
 ---
 
@@ -65,14 +65,13 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ## 支援的 Webhook 平台
 
-K8s Sentinel 的 Webhook 告警格式相容於以下主流平台：
+K8s Sentinel 送出的告警 Payload 為 **Slack 格式**，各平台的支援情況如下：
 
-| 平台 | 說明 |
-|---|---|
-| **Slack** | 使用 Slack Incoming Webhooks 即可接收告警訊息 |
-| **Microsoft Teams** | 使用 Teams Incoming Webhook Connector 接收告警 |
-| **Discord** | 使用 Discord Webhook URL 接收告警 |
-| **自訂 HTTP Endpoint** | 任何可接收 HTTP POST JSON Payload 的服務均可整合 |
+| 平台 | 支援 | 說明 |
+|---|---|---|
+| **Slack** | ✅ | 使用 Slack Incoming Webhook URL 即可接收告警訊息 |
+| **Discord** | ✅ | 在 Discord Webhook URL 結尾加上 `/slack`，Discord 即會接受 Slack 格式的 Payload |
+| **Microsoft Teams** | ❌ | 不支援：Teams 需要自己的卡片格式，無法解讀 Slack 格式的 Payload |
 
 :::tip
 建議為不同嚴重性設定不同的告警規則，例如將 `critical` 等級事件推送至高優先級頻道，`warning` 等級推送至一般監控頻道，以區分處理優先順序。

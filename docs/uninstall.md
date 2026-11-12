@@ -10,17 +10,29 @@ sidebar_position: 17
 
 ## 步驟一：刪除 K8s Sentinel Deployment 與 Service
 
-逐一刪除 Deployment 與 Service：
+若有安裝 Trivy Operator（Job 與腳本安裝自 v0.61 起會一併安裝至 `sentinel-system`），請先以 Helm 移除，讓它清掉自己的叢集級資源：
+
+```bash
+helm uninstall trivy-operator --namespace sentinel-system
+```
+
+Trivy Operator 寫出的 `VulnerabilityReport` 存放在各工作負載所屬的 Namespace，若不再需要可一併刪除：
+
+```bash
+kubectl delete vulnerabilityreports --all --all-namespaces
+```
+
+接著刪除 Deployment 與 Service：
 
 ```bash
 kubectl delete deployment -n sentinel-system sentinel
 kubectl delete service -n sentinel-system sentinel
 ```
 
-或使用 Kustomize 一次刪除所有由 `deploy/base/` 管理的資源：
+或以安裝時的同一份 manifest 一次刪除所有資源（Namespace、RBAC、Deployment、Service；執行後可略過步驟二與步驟三）：
 
 ```bash
-kubectl delete -k deploy/base/
+kubectl delete -f deploy/sentinel.yaml
 ```
 
 ## 步驟二：刪除 Namespace
@@ -34,11 +46,11 @@ kubectl delete namespace sentinel-system
 ## 步驟三：移除 RBAC 資源
 
 ```bash
-kubectl delete clusterrole sentinel-role
-kubectl delete clusterrolebinding sentinel-rolebinding
+kubectl delete clusterrole sentinel
+kubectl delete clusterrolebinding sentinel
 ```
 
-**原理：** ClusterRole 和 ClusterRoleBinding 是叢集級別（cluster-scoped）資源，不屬於任何 namespace，因此刪除 namespace 時不會一併刪除，需手動清除。
+**原理：** ClusterRole 和 ClusterRoleBinding 是叢集級別（cluster-scoped）資源，不屬於任何 namespace，因此刪除 namespace 時不會一併刪除，需手動清除。Registry 掃描使用的 Role 與 RoleBinding（`sentinel-registry-scan`）位於 `sentinel-system` 內，已隨 Namespace 一併刪除。
 
 ## 步驟四：清除持久化資料（選用）
 

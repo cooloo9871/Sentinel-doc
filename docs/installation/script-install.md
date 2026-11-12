@@ -13,6 +13,7 @@ sidebar_position: 3
 1. 偵測並安裝 Helm（若本機尚未安裝）
 2. 使用 Helm 安裝 Tetragon 至叢集（若叢集尚未部署）
 3. 透過 `kubectl apply` 將 K8s Sentinel 部署至 `sentinel-system` namespace
+4. 使用 Helm 安裝 Trivy Operator 至 `sentinel-system`（v0.61+，若叢集尚未部署）
 
 整個安裝流程在本機執行，每個步驟均會輸出進度訊息，方便直接觀察安裝狀態，適合快速試用或開發測試環境。
 
@@ -47,9 +48,10 @@ chmod +x install.sh
 
 **原理**：腳本依序執行以下流程：
 
-1. **準備 Helm**：若本機未偵測到 `helm` 指令，腳本會自動下載最新穩定版到暫存目錄使用（不會安裝到系統，結束後自動清除）
+1. **準備 Helm**：安裝 Tetragon 或 Trivy Operator 需要用到時，若本機未偵測到 `helm` 指令，腳本會自動下載最新穩定版到暫存目錄使用（不會安裝到系統，腳本結束時自動清除）
 2. **部署 Tetragon**：叢集已有 `tetragon` DaemonSet 時跳過；否則以 Cilium 官方 Helm Chart 產生 manifest 套用（`helm template | kubectl apply`），並設定 `tetragon.grpc.address=0.0.0.0:54321`
 3. **kubectl apply 部署 K8s Sentinel 清單**：建立 Namespace、ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
+4. **部署 Trivy Operator**：叢集任一 Namespace 已有 Trivy Operator 的 Deployment 時跳過；否則以 `helm install` 安裝至 `sentinel-system`，套用同目錄下的 `trivy-operator-values.yaml`（詳見 [安裝 Trivy Operator](./trivy-operator.md)）
 
 ---
 
@@ -59,16 +61,18 @@ chmod +x install.sh
 
 | 輸出訊息階段 | 說明 |
 |---|---|
-| `[INFO] Checking Helm...` | 偵測本機是否已安裝 Helm |
-| `[INFO] Installing Helm...` | 下載並安裝 Helm（僅在未安裝時出現） |
-| `[INFO] Installing Tetragon via Helm...` | 使用 Helm 部署 Tetragon 至叢集 |
-| `[INFO] Deploying Sentinel...` | 套用 K8s Sentinel 相關 Kubernetes 資源 |
-| `[INFO] Installation complete.` | 所有資源建立完成 |
+| `[helm] not found, downloading to temp dir...` | 本機沒有 Helm，下載到暫存目錄（僅在需要時出現） |
+| `[tetragon] already installed, skipping` | 叢集已有 Tetragon，跳過 |
+| `[tetragon] not found, installing latest version...` | 部署 Tetragon 並等待 DaemonSet 就緒，完成後輸出 `[tetragon] ready` |
+| `[sentinel] applying manifests...` | 套用 K8s Sentinel 相關 Kubernetes 資源，並等待 Deployment 就緒 |
+| `[trivy-operator] already installed, skipping` | 叢集已有 Trivy Operator，跳過 |
+| `[trivy-operator] not found, installing latest version...` | 安裝 Trivy Operator 並等待 Deployment 就緒，完成後輸出 `[trivy-operator] ready` |
+| `Done. Access via:` | 所有步驟完成 |
 
-安裝完成後，腳本最後會顯示建議的 port-forward 指令，例如：
+安裝完成後，腳本最後會顯示建議的 port-forward 指令：
 
 ```bash
-kubectl port-forward svc/sentinel -n sentinel-system 8080:80
+kubectl port-forward -n sentinel-system svc/sentinel 8080:80
 ```
 
 可複製此指令並在本機執行，即可透過瀏覽器開啟 K8s Sentinel 管理介面。
@@ -107,5 +111,5 @@ kubectl logs -n sentinel-system deployment/sentinel
 ---
 
 :::warning[正式環境注意事項]
-腳本執行過程中會自動安裝 Helm 並修改叢集設定（新增 Tetragon、建立 RBAC 資源等）。在**正式環境**中，這類自動化操作可能繞過變更審查流程，建議改用 [Kubernetes Job 安裝](./job-install.md) 方式，以保有更好的操作透明度與控制性。
+腳本執行過程中會自動下載 Helm 並修改叢集設定（新增 Tetragon 與 Trivy Operator、建立 RBAC 資源等）。在**正式環境**中，這類自動化操作可能繞過變更審查流程，建議改用 [Kubernetes Job 安裝](./job-install.md) 方式，以保有更好的操作透明度與控制性。
 :::

@@ -40,6 +40,14 @@ flowchart TD
 | Policy 套用後無效 | 模式為 Monitoring（非 Protect） | 在 Tracing Policy 列表切換該 Policy 的 Mode，或以頁面頂部的 **Global Protect Mode** banner 全域切換為 ON |
 | Behavior Discovery 無資料 | Tetragon Agent 未正常運作 | 確認 `tetragon` DaemonSet 狀態（見下方步驟） |
 | Security Events 頁面空白 | TracingPolicy 尚未建立，或 Tetragon 事件串流中斷 | 先到「Cluster → Event Sources」確認各節點 Ingestion 為 `Connected`（`Stream Down` 時檢查 Tetragon gRPC 綁定與網路），再確認已建立 TracingPolicy |
+| Vulnerabilities 頁面顯示 `Trivy Operator was not found in this cluster.` | 尚未安裝 Trivy Operator（只套用 `deploy/sentinel.yaml` 不會安裝） | 依 [安裝 Trivy Operator](./installation/trivy-operator.md) 安裝 |
+| Vulnerabilities 頁面顯示 `Sentinel is not permitted to read vulnerability reports.` | 從 v0.59 以前升級，ClusterRole 缺少 `vulnerabilityreports` 讀取規則 | 重新套用 `deploy/sentinel.yaml` |
+| 工作負載一直停在 `partial` 或 `Not scanned` | Trivy Operator 以舊版 values 安裝，沒有共用的 Trivy server，掃描容器互搶快取鎖（`cache may be in use by another process`）；或掃描逾時 | 以目前的 `deploy/trivy-operator-values.yaml` 執行 `helm upgrade`，再 `rollout restart deployment/trivy-operator`（見 [安裝 Trivy Operator](./installation/trivy-operator.md)） |
+| 剛掃描完的結果沒有出現 | 掃描報告摘要快取 5 分鐘 | 在 Vulnerabilities 頁面按 **Refresh** |
+| Registry 掃描以權限錯誤失敗 | 從 v0.61 以前升級，缺少 `sentinel-system` 內的 Role `sentinel-registry-scan` | 重新套用 `deploy/sentinel.yaml` |
+| Registry 的 Image 掃描出現 `context deadline exceeded` | v0.63.2（含）以前單一 Image 掃描沿用 Trivy 預設的 5 分鐘上限 | 升級至 v0.63.3+（上限為 13 分鐘） |
+| quay.io 使用萬用字元 Filter（如 `myorg/*`）且設定帳密時出現 `the registry's token service refused the credentials (HTTP 400)` | v0.63.1（含）以前的已知問題 | 升級至 v0.63.2+ |
+| YAML 編輯器沒有顯示 | v0.53.0 至 v0.59.4 的編輯器從公開 CDN 載入，被 Content-Security-Policy 擋下（離線叢集也無法載入） | 升級至 v0.59.5+，編輯器已內建於 Image |
 | Pod 啟動失敗（CrashLoopBackOff） | ServiceAccount 無法連線叢集或 RBAC 設定錯誤 | 確認 ServiceAccount 與 ClusterRoleBinding 設定是否正確 |
 
 ## 重置管理員密碼

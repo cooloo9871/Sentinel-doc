@@ -25,6 +25,7 @@ sidebar_position: 4
 
 - 可直接在編輯器中輸入或修改 TracingPolicy YAML 內容，支援從外部來源複製貼上完整定義
 - 編輯器提供語法高亮與行號顯示，方便辨識 YAML 結構層次
+- 編輯器（Monaco）已內建於 K8s Sentinel 的 Image 中，由 K8s Sentinel 自行提供，**不需要網際網路連線**，離線叢集也能使用（v0.59.5+；Tracing Policy、Templates、Admission Policy、Network Policy 的 YAML 編輯器皆同）
 - 頁面右上角的 **Mode** 下拉選單設定此 Policy 的執行模式（`Monitoring` / `Protect`）
 - 完成後點擊「**Apply**」套用
 

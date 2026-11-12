@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## 功能說明
 
-Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy 與 Quarantine 隔離狀態。
+Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy、Quarantine 隔離狀態與弱點掃描摘要。
 
 ---
 
@@ -24,6 +24,19 @@ Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈�
 | **Security Events** | Tetragon 偵測到的 kprobe 安全事件總數，細分 `Critical: N / Warning: N` |
 | **Admission Events** | ValidatingAdmissionPolicy 違規事件總數，細分 `Critical: N / Warning: N` |
 | **Global Protect Mode** | 全域保護模式的開關狀態；`OFF` 時顯示「Monitoring only」，`ON` 時顯示「Enforcing」 |
+
+---
+
+## Vulnerabilities 卡片
+
+v0.61 起，Dashboard 會顯示 **Vulnerabilities** 卡片，資料來自 Trivy Operator 的掃描報告（見 [工作負載弱點](./vulnerabilities.md)）：
+
+- **Critical 與 High 弱點總數**
+- 同時具有 Critical 弱點且**對外暴露**的工作負載數（大於 0 時以紅色顯示）
+- **未完整掃描**的工作負載數
+- 最該優先修補的 **5 個工作負載**，欄位為 `Workload`、`Namespace`、`Critical`、`High`、`Fixable`，對外暴露者帶 `Exposed` 徽章
+
+此卡片**一律顯示**：沒有掃描器時會寫明「Scanning is not enabled」，不會呈現一張可能被誤認為「叢集很乾淨」的空表格。點擊卡片右上角的按鈕可跳轉至 Vulnerabilities 頁面。
 
 ---
 

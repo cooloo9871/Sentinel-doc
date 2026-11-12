@@ -36,9 +36,15 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 全新安裝（install-job / install.sh）會自動處理，無需手動操作。
 :::
 
+:::caution[升級到 v0.60+（弱點掃描）]
+- **重新套用 `deploy/sentinel.yaml`**：ClusterRole 新增 `vulnerabilityreports` 與 `jobs` 的唯讀規則（v0.60），以及 `sentinel-system` 內供 Registry 掃描使用的 Role（v0.62）
+- **Trivy Operator**：既有環境不會自動安裝，安裝與升級方式見 [安裝 Trivy Operator](./trivy-operator.md)
+:::
+
 安裝完成後：
 
 - **正式環境請先完成 [設定永久儲存（PV / PVC）](./persistent-storage.md)**：預設的 `emptyDir` 會在 Pod 重啟時清空所有帳號、規則與事件資料
+- 兩種安裝方式都會一併安裝 Trivy Operator（v0.61+）；若只套用 `deploy/sentinel.yaml`，或想了解離線環境的設定，請見 [安裝 Trivy Operator](./trivy-operator.md)
 - 若需使用 Admission Events 功能，請另行完成 [串接 API Server Audit Log](./audit-webhook.md) 的設定
 
 ## 選擇建議

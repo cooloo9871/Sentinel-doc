@@ -8,15 +8,16 @@ sidebar_position: 2
 
 ## 安裝原理說明
 
-以一個 Kubernetes Job（`sentinel-installer`，位於 **`kube-system`**）在叢集內部完成安裝，本機不需要 git、helm 或任何工具，只需要 `kubectl`。Job 依序執行兩個步驟：
+以一個 Kubernetes Job（`sentinel-installer`，位於 **`kube-system`**）在叢集內部完成安裝，本機不需要 git、helm 或任何工具，只需要 `kubectl`。Job 依序執行三個步驟：
 
 1. **Tetragon**：若叢集已存在 `tetragon` DaemonSet 則跳過；否則以 Helm 安裝，並設定 `tetragon.grpc.address=0.0.0.0:54321`（K8s Sentinel 收集事件所需），等待 DaemonSet 就緒
 2. **K8s Sentinel**：直接從 GitHub 套用 `deploy/sentinel.yaml`（Namespace、RBAC、Deployment、Service 一個檔案全部包含，不使用 Kustomize），等待 Deployment 就緒
+3. **Trivy Operator**（v0.61+）：若叢集任一 Namespace 已有 Trivy Operator 的 Deployment 則跳過；否則以 Helm 安裝至 `sentinel-system`（release 名稱 `trivy-operator`），套用 `deploy/trivy-operator-values.yaml`。此步驟排在最後，即使失敗 K8s Sentinel 本體也已安裝完成（詳見 [安裝 Trivy Operator](./trivy-operator.md)）
 
 安裝程序完全在叢集內部執行，不依賴本機環境，適合 CI/CD Pipeline 或無法在本機執行 bash 的情境。
 
 :::note[前置需求]
-- Job 在叢集內執行，需要能對外連線至 `helm.cilium.io` 與 `raw.githubusercontent.com`
+- Job 在叢集內執行，需要能對外連線至 `helm.cilium.io`、`raw.githubusercontent.com`、`aquasecurity.github.io` 與 `github.com`
 - 安裝 Job 以 `cluster-admin` 權限執行（建立 Namespace 與 ClusterRole 所需）；Job 的 ServiceAccount 位於 `kube-system`
 :::
 
@@ -44,7 +45,7 @@ kubectl logs -n kube-system job/sentinel-installer -f
 kubectl get jobs -n kube-system
 ```
 
-**原理**：Job 成功完成後 `COMPLETIONS` 顯示 `1/1`。日誌會依序輸出 `[1/2] Tetragon` 與 `[2/2] Deploying K8s Sentinel` 兩階段的進度。
+**原理**：Job 成功完成後 `COMPLETIONS` 顯示 `1/1`。日誌會依序輸出 `[1/3] Tetragon`、`[2/3] Deploying K8s Sentinel` 與 `[3/3] Trivy Operator` 三階段的進度。
 
 預期輸出範例：
 
@@ -71,6 +72,7 @@ kubectl get svc -n sentinel-system
 **預期輸出**：
 
 - `sentinel-XXXX` Pod 狀態為 `Running`
+- 由安裝 Job 安裝 Trivy Operator 時，另會看到 `trivy-operator` 與 `trivy-server` 的 Pod；剛安裝完出現的一批 `scan-vulnerabilityreport-*` Pod 是第一輪掃描，完成後會自動移除
 - Service `sentinel` 建立完成，顯示 ClusterIP
 
 ```
