@@ -52,6 +52,10 @@ v0.61 起，若已安裝 Trivy Operator，Pod 自身的 Image 有 Critical 弱�
 
 標示依據的是**每個 Pod 自己正在執行的 Image**：仍在執行舊的、未掃描 Image 的 Pod，不會因為新版 Image 的掃描結果而被標示。完整的弱點清單見 [工作負載弱點](./vulnerabilities.md)。
 
+![帶弱點標示的 Pod 與詳情面板](/img/features/network-topology/vulnerability-marker.png)
+
+畫面上有這類 Pod 時，圖例會多出「Critical CVEs」一項。
+
 ---
 
 ## 篩選與檢視選項

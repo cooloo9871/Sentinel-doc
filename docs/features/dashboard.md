@@ -29,6 +29,8 @@ Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈�
 
 ## Vulnerabilities 卡片
 
+![Dashboard 的 Vulnerabilities 卡片](/img/features/dashboard/vulnerabilities-card.png)
+
 v0.61 起，Dashboard 會顯示 **Vulnerabilities** 卡片，資料來自 Trivy Operator 的掃描報告（見 [工作負載弱點](./vulnerabilities.md)）：
 
 - **Critical 與 High 弱點總數**

@@ -72,6 +72,11 @@ K8s Sentinel 提供兩種建立方式：
 
 **建立原理：** K8s Sentinel 根據表單內容自動產生對應的 TracingPolicy YAML，並透過 Kubernetes API Server 將資源建立至叢集，Tetragon Agent 會在數秒內套用新策略。
 
+:::note[v0.64 起的行為]
+- 以已存在的名稱建立 Policy 會被拒絕，不會覆蓋既有的 Policy
+- 表單無法完整表示的 Policy 會改以 YAML 編輯器開啟，避免儲存時遺失欄位
+:::
+
 ---
 
 ## 切換 Global Protect Mode

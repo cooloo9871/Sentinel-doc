@@ -52,6 +52,10 @@ Since v0.61, if Trivy Operator is installed, a red bug icon appears in the **top
 
 The mark follows **the image each Pod is itself running**: a Pod still running an old, unscanned image is not marked on the strength of the scan results of the new image. For the full list of vulnerabilities, see [Workload Vulnerabilities](./vulnerabilities.md).
 
+![A Pod with the vulnerability mark and its detail panel](/img/features/network-topology/vulnerability-marker.png)
+
+When such a Pod is on screen, the legend gains a "Critical CVEs" entry.
+
 ---
 
 ## Filters and View Options

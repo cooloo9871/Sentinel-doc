@@ -87,9 +87,15 @@ sentinel        ClusterIP   10.96.123.45    <none>        80/TCP     3m
 
 ---
 
+:::note[Job 一律安裝 main 分支的內容]
+Job 從 GitHub 取得 `deploy/sentinel.yaml` 與 `deploy/trivy-operator-values.yaml`，不會讀取本機 clone 的檔案。若要安裝固定版本或修改過的 manifest，請改用[本機腳本安裝](./script-install.md)或直接套用 manifest。
+:::
+
+---
+
 ## 清理安裝 Job（選用）
 
-安裝完成後，可移除安裝 Job 及其 ServiceAccount 與 ClusterRoleBinding（不影響已安裝的 K8s Sentinel）：
+v0.64 起，安裝 Job 會在最後一步**自行移除**綁定 `cluster-admin` 的 ClusterRoleBinding，不會在 `kube-system` 留下一個永久持有 cluster-admin 的 ServiceAccount；Job 本身則在完成 10 分鐘後自動刪除。若要一併清除剩下的 ServiceAccount，可執行（不影響已安裝的 K8s Sentinel）：
 
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml

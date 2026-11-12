@@ -87,9 +87,15 @@ If the Pod is `Pending` or `CrashLoopBackOff`, use `kubectl describe pod <pod-na
 
 ---
 
+:::note[The Job always installs what is on the main branch]
+The Job fetches `deploy/sentinel.yaml` and `deploy/trivy-operator-values.yaml` from GitHub and does not read your local clone. To install a pinned version or edited manifests, use the [local script installation](./script-install.md) or apply the manifest directly.
+:::
+
+---
+
 ## Cleaning Up the Installer Job (Optional)
 
-After the installation completes, the installer Job with its ServiceAccount and ClusterRoleBinding can be removed (this does not affect the installed K8s Sentinel):
+Since v0.64 the installer Job **removes** its `cluster-admin` ClusterRoleBinding itself as its last step, so no ServiceAccount is left holding cluster-admin in `kube-system`; the Job itself is deleted ten minutes after it finishes. To remove the remaining ServiceAccount as well, run (this does not affect the installed K8s Sentinel):
 
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml

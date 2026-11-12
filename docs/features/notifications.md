@@ -36,6 +36,8 @@ K8s Sentinel 後端（v0.43+）透過各節點 Tetragon Agent 的 **gRPC `GetEve
 
 **事件統計列：** 顯示目前資料庫中的事件總數、Warning 數量與 Critical 數量。
 
+v0.64 起，重複發生的事件會帶著更新後的次數移到列表最上方。
+
 ---
 
 ## 過濾事件

@@ -18,6 +18,10 @@ sidebar_position: 11
 
 ## 列表的排序與判讀
 
+![Vulnerabilities Workloads 列表](/img/features/vulnerabilities/workloads.png)
+
+列表上方的摘要列顯示工作負載總數、Critical 與 High 弱點總數，以及「critical and exposed」的工作負載數。工作負載有多個 Image 時，`Image` 欄顯示第一個並標示「+N more」。
+
 列表欄位為 `Workload`、`Namespace`、`Image`、`Critical`、`High`、`Medium`、`Low`、`Unknown`、`Fixable`、`Scanned`。
 
 | 行為 | 說明 |
@@ -49,14 +53,16 @@ Image 必須相同：相同的 repository 與 tag（或 digest）；若取自其
 |---|---|
 | **Search workload or image...** | 以工作負載名稱或 Image 搜尋 |
 | **Namespace 篩選** | 可同時選擇多個 Namespace |
-| **Severity** | `Critical` / `High` / `Medium` / `Low` / `Unknown` |
-| **Show only** | `Exposed`、`Fix available`、`Not fully scanned`，可複選疊加；例如 Exposed 加上 Fix available 就是一份待辦清單 |
+| **Filter → Severity** | `Critical` / `High` / `Medium` / `Low` / `Unknown` |
+| **Filter → Show only** | `Exposed`、`Fix available`、`Not fully scanned`，可複選疊加；例如 Exposed 加上 Fix available 就是一份待辦清單 |
 | **Refresh** | 立即重新讀取叢集 |
 | **Export CSV** | 匯出目前畫面上的內容，每個 Image 一行 |
 
 **展開任一列**可看到各 Image 自己的數量與弱點明細，欄位為 `Severity`、`ID`（CVE 編號，連結至公告）、`Package`、`Installed`、`Fixed in`、`Summary`（工作負載有多個 Image 時另有 `Container` 欄）。明細依嚴重性由高到低排列，同一嚴重性內有修正版本的排前面；預設顯示 50 筆，點擊「Show all N findings」顯示全部。
 
 若展開當下報告無法讀取（Trivy Operator 每次重新掃描都會改寫報告），該列會明確說明，而不是顯示成沒有弱點；按 **Refresh** 重試即可。
+
+![展開工作負載的弱點明細](/img/features/vulnerabilities/workload-expanded.png)
 
 ---
 

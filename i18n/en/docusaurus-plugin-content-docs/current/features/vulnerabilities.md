@@ -18,6 +18,10 @@ This feature only **presents and orders** results; it does not block deployments
 
 ## Ordering and Reading the List
 
+![Vulnerabilities Workloads list](/img/features/vulnerabilities/workloads.png)
+
+The summary line above the list shows the number of workloads, the Critical and High totals, and the number of workloads that are "critical and exposed". When a workload has several images, the `Image` column shows the first one with "+N more".
+
 The list columns are `Workload`, `Namespace`, `Image`, `Critical`, `High`, `Medium`, `Low`, `Unknown`, `Fixable` and `Scanned`.
 
 | Behavior | Description |
@@ -49,14 +53,16 @@ The image has to be the same: same repository and tag (or digest); when the repo
 |---|---|
 | **Search workload or image...** | Search by workload name or image |
 | **Namespace filter** | Several namespaces can be selected at once |
-| **Severity** | `Critical` / `High` / `Medium` / `Low` / `Unknown` |
-| **Show only** | `Exposed`, `Fix available`, `Not fully scanned`; the flags can be combined, for example Exposed plus Fix available is a to-do list |
+| **Filter → Severity** | `Critical` / `High` / `Medium` / `Low` / `Unknown` |
+| **Filter → Show only** | `Exposed`, `Fix available`, `Not fully scanned`; the flags can be combined, for example Exposed plus Fix available is a to-do list |
 | **Refresh** | Re-read the cluster immediately |
 | **Export CSV** | Export what is currently on screen, one line per image |
 
 **Expand any row** to see each image's own counts and the finding details, with the columns `Severity`, `ID` (the CVE ID, linking to its advisory), `Package`, `Installed`, `Fixed in` and `Summary` (plus a `Container` column when the workload has several images). Findings are ordered from the highest severity down, and within a severity the ones with a fixed version come first; 50 are shown by default, and clicking "Show all N findings" shows all of them.
 
 If a report cannot be read at the moment you expand the row (Trivy Operator rewrites the report on every rescan), the row says so explicitly instead of showing no findings; click **Refresh** to retry.
+
+![Expanded workload findings](/img/features/vulnerabilities/workload-expanded.png)
 
 ---
 

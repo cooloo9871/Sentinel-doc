@@ -36,6 +36,12 @@ Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Ex
 Fresh installs (install-job / install.sh) handle all of this automatically.
 :::
 
+:::caution[Upgrading to v0.64+]
+- **Everyone is signed out once**: since v0.64 a session is refused after its account is deleted or its password changes
+- Creating a Tracing Policy under a **name that already exists** is refused instead of replacing the existing policy
+- Re-apply `deploy/sentinel.yaml` to drop the unused cluster-wide `pods/log` permission (optional)
+:::
+
 :::caution[Upgrading to v0.60+ (vulnerability scanning)]
 - **Re-apply `deploy/sentinel.yaml`**: the ClusterRole adds read-only rules for `vulnerabilityreports` and `jobs` (v0.60), plus a Role in `sentinel-system` used by registry scanning (v0.62)
 - **Trivy Operator**: it is not installed automatically on existing environments; see [Installing Trivy Operator](./trivy-operator.md) for how to install and upgrade it

@@ -68,6 +68,11 @@ Click **"Apply"** when done.
 
 **How it works:** K8s Sentinel automatically generates the corresponding TracingPolicy or TracingPolicyNamespaced YAML from the form data and creates the resource in the cluster via the Kubernetes API Server. The Tetragon Agent applies the new policy within seconds.
 
+:::note[Behavior since v0.64]
+- Creating a policy under a name that already exists is refused instead of replacing the existing policy
+- A policy the form cannot fully represent opens in the YAML editor, so no field is lost on save
+:::
+
 ---
 
 ## Toggle Global Protect Mode

@@ -36,6 +36,12 @@ v0.43 起事件收集改走 gRPC（不再使用 `kubectl exec`），既有環境
 全新安裝（install-job / install.sh）會自動處理，無需手動操作。
 :::
 
+:::caution[升級到 v0.64+]
+- **所有使用者會被登出一次**：v0.64 起帳號被刪除或密碼變更後，其 Session 會被拒絕
+- 以**已存在的名稱**建立 Tracing Policy 會被拒絕，不再覆蓋既有的 policy
+- 可重新套用 `deploy/sentinel.yaml` 以移除不再使用的叢集層級 `pods/log` 權限（選用）
+:::
+
 :::caution[升級到 v0.60+（弱點掃描）]
 - **重新套用 `deploy/sentinel.yaml`**：ClusterRole 新增 `vulnerabilityreports` 與 `jobs` 的唯讀規則（v0.60），以及 `sentinel-system` 內供 Registry 掃描使用的 Role（v0.62）
 - **Trivy Operator**：既有環境不會自動安裝，安裝與升級方式見 [安裝 Trivy Operator](./trivy-operator.md)

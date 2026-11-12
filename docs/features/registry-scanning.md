@@ -43,6 +43,8 @@ Trivy Operator 只會查看叢集內的工作負載，因此這裡的掃描由 *
 
 點擊「**Save**」後，該 Registry 會立即開始第一次掃描。
 
+![Add Registry 表單與 Test filters 結果](/img/features/registries/new.png)
+
 ### 使用自有 CA 簽發憑證的 Registry
 
 v0.63 起不需要再勾選 **Skip TLS certificate verification**：把 CA 的 `ca.pem` 內容貼到 **CA certificate**，K8s Sentinel 列出 Registry 內容與掃描 Pod 拉取 Image 時，都會以這張 CA 驗證。這張 CA 是**加入**公開信任的 CA 清單，而不是取代，因此掃描仍可下載弱點資料庫。
@@ -79,6 +81,8 @@ Filters 的格式是 `repository` 或 `repository:tag`，以 `*` 作為萬用字
 
 ## 查看結果
 
+![Registries 列表](/img/features/registries/list.png)
+
 Registries 列表欄位為 `Registry`、`Filters`、`Schedule`、`Last scan`、`Images`、`Critical`、`High`、`Failed`，每列提供 **Scan now**、**Edit**、**Delete**。
 
 點入單一 Registry 後可看到各 Image 的 `Critical` / `High` / `Medium` / `Low` / `Unknown` / `Fixable` 數量與掃描時間：
@@ -86,6 +90,10 @@ Registries 列表欄位為 `Registry`、`Filters`、`Schedule`、`Last scan`、`
 - **展開 Image** 查看弱點明細，版面與 Workloads 頁面相同，同樣由最嚴重的排起（v0.62.1+）
 - **Search image...** 搜尋；**Severity** 與 **Show only**（`Fix available`、`Scan failed`）篩選
 - **Export CSV** 匯出
+
+![單一 Registry 的 Image 掃描結果](/img/features/registries/detail.png)
+
+![展開 Image 的弱點明細](/img/features/registries/image-expanded.png)
 
 ### 掃描失敗不等於乾淨
 

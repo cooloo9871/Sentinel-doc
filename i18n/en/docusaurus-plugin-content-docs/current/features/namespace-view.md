@@ -61,7 +61,7 @@ The card also shows `Reports` (the number of reports), `Newest report` (the time
 ## Behavior When a Stream Fails
 
 - **A red banner appears on the Dashboard the moment any stream has failed**, and the Tetragon stat card reflects streams rather than plain Pod readiness
-- Any stream ending triggers a **full reconnect** (v0.50+), fixing the case where a single broken node was never redialed; scaled-down nodes are pruned automatically
+- Since v0.64, one unreachable Tetragon agent **no longer interrupts event collection from the other nodes**, and nodes that join later are connected to automatically; scaled-down nodes are pruned automatically
 - A recovered source clears its failure streak
 - Programmatic access: `GET /api/ingestion/health` returns every source's status
 

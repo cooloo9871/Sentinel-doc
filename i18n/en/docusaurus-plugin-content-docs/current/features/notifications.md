@@ -36,6 +36,8 @@ Navigate to the **"Security Events"** page. Events are listed in reverse chronol
 
 **Event statistics row:** Shows the total event count in the database, broken down by Warning and Critical.
 
+Since v0.64, a repeated event moves to the top of the list with its new count.
+
 ---
 
 ## Filtering Events

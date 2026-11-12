@@ -29,6 +29,8 @@ After logging in, the top of the Dashboard displays four statistics cards provid
 
 ## Vulnerabilities Card
 
+![Vulnerabilities card on the Dashboard](/img/features/dashboard/vulnerabilities-card.png)
+
 Since v0.61, the Dashboard shows a **Vulnerabilities** card, with data from Trivy Operator's scan reports (see [Workload Vulnerabilities](./vulnerabilities.md)):
 
 - **Critical and High vulnerability totals**

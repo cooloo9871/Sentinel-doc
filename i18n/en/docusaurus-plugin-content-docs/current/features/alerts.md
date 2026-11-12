@@ -18,6 +18,8 @@ Navigate to **"Settings → Alerts"** to see all configured alert rules.
 
 ![Alerts page](/img/features/alerts/overview.png)
 
+Since v0.64, Viewers and the log see only the **host** of a webhook URL; the full URL (including any token in it) is visible to Admins only.
+
 ---
 
 ## Creating a New Alert Rule

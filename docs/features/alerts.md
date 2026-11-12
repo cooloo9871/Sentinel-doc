@@ -18,6 +18,8 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ![Alerts 頁面](/img/features/alerts/overview.png)
 
+v0.64 起，Viewer 角色與系統 log 只會看到 Webhook URL 的**主機名稱**，完整 URL（含其中的 token）僅 Admin 可見。
+
 ---
 
 ## 建立新告警規則

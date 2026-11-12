@@ -43,6 +43,8 @@ Open "**Vulnerabilities → Registries**" and click "**+ Add Registry**" in the 
 
 After you click "**Save**", the registry's first scan starts immediately.
 
+![Add Registry form with the Test filters result](/img/features/registries/new.png)
+
 ### A Registry With a Certificate Issued by Your Own CA
 
 Since v0.63 you no longer need to check **Skip TLS certificate verification**: paste the contents of the CA's `ca.pem` into **CA certificate**, and the registry is verified against this CA both when K8s Sentinel lists the registry contents and when the scan Pods pull images. The CA is **added to** the list of publicly trusted CAs, not swapped for it, so a scan can still download the vulnerability database.
@@ -79,6 +81,8 @@ Before saving you can click "**Test filters**": it only lists the registry conte
 
 ## Viewing Results
 
+![Registries list](/img/features/registries/list.png)
+
 The Registries list columns are `Registry`, `Filters`, `Schedule`, `Last scan`, `Images`, `Critical`, `High` and `Failed`, and each row offers **Scan now**, **Edit** and **Delete**.
 
 Clicking into a single registry shows each image's `Critical` / `High` / `Medium` / `Low` / `Unknown` / `Fixable` counts and scan time:
@@ -86,6 +90,10 @@ Clicking into a single registry shows each image's `Critical` / `High` / `Medium
 - **Expand an image** to see the finding details, in the same layout as the Workloads page and likewise ordered worst first (v0.62.1+)
 - Search with **Search image...**; filter with **Severity** and **Show only** (`Fix available`, `Scan failed`)
 - Export with **Export CSV**
+
+![Image scan results of one registry](/img/features/registries/detail.png)
+
+![Expanded image findings](/img/features/registries/image-expanded.png)
 
 ### A Failed Scan Is Not Clean
 

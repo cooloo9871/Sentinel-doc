@@ -85,4 +85,6 @@ Click **"Save"** to apply the new value.
 
 :::warning
 Session Timeout changes take effect on the **next login**. Active sessions are not affected - users must log out and back in for the new timeout to apply.
+
+Since v0.64, when an account is **deleted** or its **password changes**, its existing sessions end immediately and return to the sign-in page; the role is also read from the account as it is now, not from the role recorded in the token.
 :::
