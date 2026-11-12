@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## About This Feature
 
-The Alerts page lets you configure **webhook alert rules** that trigger when Security Events or Admission Events match specified conditions. K8s Sentinel sends an HTTP POST to the configured webhook URL, supporting Slack, Microsoft Teams, Discord, and any compatible webhook service.
+The Alerts page lets you configure **webhook alert rules** that trigger when Security Events or Admission Events match specified conditions. K8s Sentinel sends an HTTP POST to the configured webhook URL. The message is in **Slack format**, so it works directly with a Slack Incoming Webhook or any service that accepts the Slack format.
 
 ---
 
@@ -65,12 +65,13 @@ Two rules pointing at different webhook URLs of the same Slack app share one quo
 
 ## Supported Platforms
 
-| Platform | Notes |
-|---|---|
-| **Slack** | Use a Slack Incoming Webhook URL |
-| **Microsoft Teams** | Use a Teams Incoming Webhook Connector URL |
-| **Discord** | Use a Discord Webhook URL |
-| **Custom HTTP endpoint** | Any service that can receive an HTTP POST with a JSON payload |
+The alert payload K8s Sentinel sends is in **Slack format**. Platform support is as follows:
+
+| Platform | Supported | Notes |
+|---|---|---|
+| **Slack** | ✅ | Use a Slack Incoming Webhook URL |
+| **Discord** | ✅ | Append `/slack` to the Discord Webhook URL and Discord accepts the Slack-format payload |
+| **Microsoft Teams** | ❌ | Not supported: Teams requires its own card format and cannot interpret a Slack-format payload |
 
 :::tip
 Consider setting up separate rules for different severity levels - route `critical` alerts to a high-priority channel and `warning` alerts to a general monitoring channel to help triage incidents faster.

@@ -18,6 +18,9 @@ graph TD
     B -->|"gRPC GetFlows"| H["Hubble Relay"]
     C --> D
     D --> E["TracingPolicy CRD"]
+    B -->|"read VulnerabilityReport"| C
+    T["Trivy Operator (optional)"] -->|"scans workload images, writes VulnerabilityReport"| C
+    B -->|"create scan Jobs (sentinel-system)"| R["Trivy scan Pods (registry scanning)"]
     B -->|"/data/sentinel/"| F["Persistent Storage"]
 ```
 
@@ -29,8 +32,10 @@ graph TD
 | Backend | Go 1.x + HTTP Server (port 8080) | RESTful API service with a built-in Kubernetes client, handling cluster communication and user authentication |
 | Cilium Tetragon | eBPF DaemonSet | Security observation agent deployed on every Kubernetes node, capturing syscalls and file access at the kernel layer via eBPF; K8s Sentinel collects events per node over gRPC (`GetEvents`) |
 | Hubble Relay | Cilium component | Aggregates every node's network flows behind one gRPC endpoint; K8s Sentinel reads its `GetFlows` stream as the data source for Network Topology |
+| Trivy Operator | Optional component (Helm, installed in `sentinel-system`) | Scans the images of running workloads and writes `VulnerabilityReport`; K8s Sentinel only reads the reports and does not scan workloads itself (v0.60+) |
+| Trivy scan Pods | Kubernetes Job (`sentinel-system`) | Started by K8s Sentinel for [Registry Scanning](./features/registry-scanning.md), one short-lived Pod per image (v0.62+) |
 | TracingPolicy | Kubernetes CRD (cilium.io/v1alpha1) | Custom Resource Definition that defines the kprobe rules and security policies Tetragon should enforce |
-| Persistent Storage | /data/sentinel/ | Local persistence path: user accounts, the JWT signing key, alert and syslog configs, custom templates, event history and the Audit Log |
+| Persistent Storage | /data/sentinel/ | Local persistence path: user accounts, the JWT signing key, alert and syslog configs, custom templates, event history and the Audit Log, registry settings and scan results |
 
 ## Data Flow
 
@@ -65,3 +70,5 @@ Persistent data is stored at the following paths:
 | `/data/sentinel/users.json` | User accounts and password hashes |
 | `/data/sentinel/.jwt-secret` | The JWT token signing key, auto-generated on first startup; can be overridden by the `JWT_SECRET` environment variable since v0.53 |
 | `/data/sentinel/` (rest) | Alert / syslog configs, custom policy templates, Security / Admission event history and the Audit Log |
+| `/data/sentinel/registries.json` | Registry settings for registry scanning (including credentials) |
+| `/data/sentinel/registry-scans/` | Registry scan results, one directory per registry |

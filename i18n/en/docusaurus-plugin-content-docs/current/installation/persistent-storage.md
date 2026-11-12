@@ -22,6 +22,7 @@ An `emptyDir` lives and dies with the Pod - **every restart or reschedule wipes 
 - Alert rules and Syslog forwarding configs
 - Custom Policy Templates
 - Security Events / Admission Events history
+- The registry settings (including credentials) and scan results of [Registry Scanning](../features/registry-scanning.md) (`registries.json` and `registry-scans/`, v0.62+)
 - System settings such as Session Timeout
 
 For production, mount `/data/sentinel` on a **PersistentVolume**.

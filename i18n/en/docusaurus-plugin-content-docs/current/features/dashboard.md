@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## About This Page
 
-The Dashboard is the home page after logging in to K8s Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode - letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, and the current Quarantine state.
+The Dashboard is the home page after logging in to K8s Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode - letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, the current Quarantine state, and a vulnerability scan summary.
 
 ---
 
@@ -24,6 +24,19 @@ After logging in, the top of the Dashboard displays four statistics cards provid
 | **Security Events** | Total number of security events (kprobe violations) recorded so far; includes both Warning and Critical events |
 | **Admission Events** | Total number of Kubernetes admission control violations recorded by ValidatingAdmissionPolicy (VAP) |
 | **Global Protect Mode** | Global protection mode toggle state (On / Off); when enabled, all TracingPolicies simultaneously switch to Protect mode |
+
+---
+
+## Vulnerabilities Card
+
+Since v0.61, the Dashboard shows a **Vulnerabilities** card, with data from Trivy Operator's scan reports (see [Workload Vulnerabilities](./vulnerabilities.md)):
+
+- **Critical and High vulnerability totals**
+- The number of workloads that have a Critical finding and are also **externally exposed** (shown in red when greater than 0)
+- The number of workloads that are **not fully scanned**
+- The **5 workloads** to fix first, with the columns `Workload`, `Namespace`, `Critical`, `High` and `Fixable`; exposed ones carry an `Exposed` badge
+
+This card is **always shown**: when there is no scanner it states "Scanning is not enabled" instead of presenting an empty table that could be mistaken for "the cluster is clean". Click the button in the card's top-right corner to jump to the Vulnerabilities page.
 
 ---
 

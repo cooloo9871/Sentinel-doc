@@ -15,6 +15,7 @@ Before deploying K8s Sentinel, confirm your environment meets all of the followi
 | Kubernetes | 1.32+ | Cluster must be running and accessible via kubeconfig |
 | Cilium | 1.14+ | The cluster CNI; **kube-proxy replacement**, **Hubble** and **Hubble Relay** must be enabled (see [Installing and Configuring Cilium](./installation/cilium-install.md)) |
 | Tetragon | 1.0+ | Deployed as a DaemonSet, with **gRPC bound to the pod network** (`0.0.0.0:54321`, see [Installing Tetragon](./installation/tetragon-install.md)) |
+| Trivy Operator | Optional | Provides the workload vulnerability scan results (v0.60+). The Job and script installations install it into `sentinel-system` as well; without it the rest of K8s Sentinel works as usual (see [Installing Trivy Operator](./installation/trivy-operator.md)) |
 | kubectl | 1.32+ | For local cluster operations; a valid kubeconfig must be configured |
 | Access | cluster-admin or TracingPolicy RBAC | Sufficient cluster permissions required for installing K8s Sentinel and operating TracingPolicy CRDs |
 

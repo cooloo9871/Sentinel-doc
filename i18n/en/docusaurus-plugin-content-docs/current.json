@@ -14,5 +14,21 @@
   "sidebar.sentinelSidebar.category.功能操作教學": {
     "message": "Feature Tutorials",
     "description": "The label for category 功能操作教學 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.弱點掃描": {
+    "message": "Vulnerabilities",
+    "description": "The label for category 弱點掃描 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.通知與事件": {
+    "message": "Notifications & Events",
+    "description": "The label for category 通知與事件 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.叢集資訊": {
+    "message": "Cluster",
+    "description": "The label for category 叢集資訊 in sidebar sentinelSidebar"
+  },
+  "sidebar.sentinelSidebar.category.系統設定": {
+    "message": "Settings",
+    "description": "The label for category 系統設定 in sidebar sentinelSidebar"
   }
 }

@@ -8,15 +8,16 @@ sidebar_position: 2
 
 ## How It Works
 
-A Kubernetes Job (`sentinel-installer`, in **`kube-system`**) performs the installation inside the cluster: no git, helm or anything else needed locally, only `kubectl`. The Job runs two steps in order:
+A Kubernetes Job (`sentinel-installer`, in **`kube-system`**) performs the installation inside the cluster: no git, helm or anything else needed locally, only `kubectl`. The Job runs three steps in order:
 
 1. **Tetragon**: skipped if a `tetragon` DaemonSet already exists; otherwise installed via Helm with `tetragon.grpc.address=0.0.0.0:54321` (required for K8s Sentinel's event collection), waiting for the DaemonSet to become ready
 2. **K8s Sentinel**: applies `deploy/sentinel.yaml` straight from GitHub (Namespace, RBAC, Deployment and Service in one file, no Kustomize), waiting for the Deployment to become ready
+3. **Trivy Operator** (v0.61+): skipped if a Trivy Operator Deployment already exists in any namespace of the cluster; otherwise installed via Helm into `sentinel-system` (release name `trivy-operator`) with `deploy/trivy-operator-values.yaml`. This step comes last, so even if it fails K8s Sentinel itself is already installed (see [Installing Trivy Operator](./trivy-operator.md))
 
 The whole procedure runs inside the cluster with no dependency on the local machine, which suits CI/CD pipelines and environments where a local bash cannot be used.
 
 :::note[Prerequisites]
-- The Job runs in-cluster and needs egress to `helm.cilium.io` and `raw.githubusercontent.com`
+- The Job runs in-cluster and needs egress to `helm.cilium.io`, `raw.githubusercontent.com`, `aquasecurity.github.io` and `github.com`
 - The installer runs with `cluster-admin` (needed to create the Namespace and ClusterRole); its ServiceAccount lives in `kube-system`
 :::
 
@@ -44,7 +45,7 @@ kubectl logs -n kube-system job/sentinel-installer -f
 kubectl get jobs -n kube-system
 ```
 
-**How it works**: `COMPLETIONS` shows `1/1` once the Job succeeds. The log prints the two phases in order: `[1/2] Tetragon` and `[2/2] Deploying K8s Sentinel`.
+**How it works**: `COMPLETIONS` shows `1/1` once the Job succeeds. The log prints the three phases in order: `[1/3] Tetragon`, `[2/3] Deploying K8s Sentinel` and `[3/3] Trivy Operator`.
 
 Expected output:
 
@@ -71,6 +72,7 @@ kubectl get svc -n sentinel-system
 **Expected output**:
 
 - The `sentinel-XXXX` Pod is `Running`
+- When the installer Job installed Trivy Operator, you will also see the `trivy-operator` and `trivy-server` Pods; the batch of `scan-vulnerabilityreport-*` Pods that appears right after installation is the first scan pass, and they are removed automatically as they finish
 - Service `sentinel` is created, showing a ClusterIP
 
 ```

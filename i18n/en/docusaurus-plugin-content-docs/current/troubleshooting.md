@@ -40,6 +40,14 @@ flowchart TD
 | Policy has no effect after applying | Mode is Monitoring (not Protect) | Switch the policy Mode on the Tracing Policy list, or flip the **Global Protect Mode** banner at the top of that page to ON |
 | No data in Behavior Discovery | Tetragon Agent not running normally | Check `tetragon` DaemonSet status (see steps below) |
 | Security Events page is empty | No TracingPolicy created, or a Tetragon event stream is down | Check "Cluster → Event Sources" first: every node should show Ingestion `Connected` (on `Stream Down`, check the Tetragon gRPC bind and network), then confirm a TracingPolicy exists |
+| The Vulnerabilities page shows `Trivy Operator was not found in this cluster.` | Trivy Operator is not installed yet (applying only `deploy/sentinel.yaml` does not install it) | Install it by following [Installing Trivy Operator](./installation/trivy-operator.md) |
+| The Vulnerabilities page shows `Sentinel is not permitted to read vulnerability reports.` | Upgraded from v0.59 or earlier, and the ClusterRole lacks the `vulnerabilityreports` read rule | Re-apply `deploy/sentinel.yaml` |
+| Workloads stay at `partial` or `Not scanned` | Trivy Operator was installed with older values and has no shared Trivy server, so the scan containers compete for the cache lock (`cache may be in use by another process`); or the scan timed out | Run `helm upgrade` with the current `deploy/trivy-operator-values.yaml`, then `rollout restart deployment/trivy-operator` (see [Installing Trivy Operator](./installation/trivy-operator.md)) |
+| Results of a scan that just finished do not appear | The scan report summaries are cached for 5 minutes | Click **Refresh** on the Vulnerabilities page |
+| Registry scans fail with a permission error | Upgraded from v0.61 or earlier, and the Role `sentinel-registry-scan` in `sentinel-system` is missing | Re-apply `deploy/sentinel.yaml` |
+| A registry image scan shows `context deadline exceeded` | Up to and including v0.63.2, a single image scan used Trivy's default 5-minute limit | Upgrade to v0.63.3+ (the limit is 13 minutes) |
+| On quay.io, a wildcard Filter (such as `myorg/*`) with credentials set shows `the registry's token service refused the credentials (HTTP 400)` | A known issue up to and including v0.63.1 | Upgrade to v0.63.2+ |
+| The YAML editor does not appear | From v0.53.0 to v0.59.4 the editor was loaded from a public CDN and blocked by the Content-Security-Policy (it could not load in air-gapped clusters either) | Upgrade to v0.59.5+, where the editor is bundled in the image |
 | Pod startup failed (CrashLoopBackOff) | ServiceAccount cannot connect to cluster or RBAC misconfiguration | Verify ServiceAccount and ClusterRoleBinding are configured correctly |
 
 ## Reset Admin Password

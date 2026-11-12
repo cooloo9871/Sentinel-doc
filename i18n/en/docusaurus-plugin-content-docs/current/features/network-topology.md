@@ -22,7 +22,7 @@ Open the "**Network Topology**" page and the observed connections render automat
 
 | Item | Description |
 |---|---|
-| **Pod node** | A Pod in the cluster, showing its namespace and Pod name; **a quarantined Pod carries a red border and a lock icon** |
+| **Pod node** | A Pod in the cluster, showing its namespace and Pod name; **a quarantined Pod carries a red border and a lock icon**; **a Pod whose own images have Critical vulnerabilities carries a red bug icon in its top-left corner** (v0.61+) |
 | **Node node** | A Kubernetes node (blue), showing its name and IP address |
 | **Link-local node** | Link-local addresses such as `169.254.0.0/16` (slate), e.g. a sidecar probing cloud metadata (`169.254.169.254`), kept distinct from external traffic |
 | **External node** | A connection source or destination outside the cluster (amber); external traffic SNATed through a node is labelled "world via node" |
@@ -43,6 +43,14 @@ Click any edge to open the **Connection Detail** panel:
 | **Source / Destination** | Pod names and IP addresses of both ends |
 | **Connections** | Cumulative connection count |
 | **Ports** | Destination ports used, with a count per port |
+
+---
+
+## Vulnerability Marks
+
+Since v0.61, if Trivy Operator is installed, a red bug icon appears in the **top-left corner** of a node when the Pod's own images have Critical vulnerabilities, alongside the network state mark in the other corner. Click the Pod and the detail panel shows the number of Critical vulnerabilities, and notes it specifically when the Pod is also reachable from outside the cluster.
+
+The mark follows **the image each Pod is itself running**: a Pod still running an old, unscanned image is not marked on the strength of the scan results of the new image. For the full list of vulnerabilities, see [Workload Vulnerabilities](./vulnerabilities.md).
 
 ---
 

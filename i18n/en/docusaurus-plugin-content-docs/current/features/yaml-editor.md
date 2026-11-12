@@ -25,6 +25,7 @@ Clicking "**+ New YAML**" on the list page opens a full-screen dark-themed YAML 
 
 - Type or modify the TracingPolicy YAML directly; pasting a complete manifest from an external source is supported
 - The editor provides syntax highlighting and line numbers
+- The editor (Monaco) is bundled in the K8s Sentinel image and served by K8s Sentinel itself, so it **needs no internet connection** and works in air-gapped clusters too (v0.59.5+; the same applies to the YAML editors for Tracing Policy, Templates, Admission Policy and Network Policy)
 - The **Mode** dropdown in the top-right corner sets the policy's execution mode (`Monitoring` / `Protect`)
 - Click "**Apply**" when done
 

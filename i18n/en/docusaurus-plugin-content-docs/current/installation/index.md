@@ -36,9 +36,15 @@ Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Ex
 Fresh installs (install-job / install.sh) handle all of this automatically.
 :::
 
+:::caution[Upgrading to v0.60+ (vulnerability scanning)]
+- **Re-apply `deploy/sentinel.yaml`**: the ClusterRole adds read-only rules for `vulnerabilityreports` and `jobs` (v0.60), plus a Role in `sentinel-system` used by registry scanning (v0.62)
+- **Trivy Operator**: it is not installed automatically on existing environments; see [Installing Trivy Operator](./trivy-operator.md) for how to install and upgrade it
+:::
+
 After installation:
 
 - **For production, set up [Persistent Storage (PV / PVC)](./persistent-storage.md) first** - the default `emptyDir` wipes all accounts, rules and event data whenever the Pod restarts
+- Both installation methods also install Trivy Operator (v0.61+); if you only apply `deploy/sentinel.yaml`, or want to know about the setup for air-gapped environments, see [Installing Trivy Operator](./trivy-operator.md)
 - If you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md)
 
 ## Recommendation

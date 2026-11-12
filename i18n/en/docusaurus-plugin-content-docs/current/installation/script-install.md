@@ -13,6 +13,7 @@ sidebar_position: 3
 1. Detects and installs Helm (if not already installed locally)
 2. Uses Helm to install Tetragon to the cluster (if not already deployed)
 3. Deploys K8s Sentinel to the `sentinel-system` namespace via `kubectl apply`
+4. Uses Helm to install Trivy Operator into `sentinel-system` (v0.61+, if not already deployed in the cluster)
 
 The entire installation runs locally, printing progress messages at each step, making it easy to observe the installation status. Ideal for quick evaluation or development/test environments.
 
@@ -47,9 +48,10 @@ chmod +x install.sh
 
 **The script executes the following flow:**
 
-1. **Prepare Helm** - If `helm` is not found locally, the script downloads the latest stable release into a temp directory for its own use (nothing is installed system-wide; cleaned up on exit)
+1. **Prepare Helm** - When Helm is needed to install Tetragon or Trivy Operator and `helm` is not found locally, the script downloads the latest stable release into a temp directory for its own use (nothing is installed system-wide; cleaned up when the script exits)
 2. **Deploy Tetragon** - Skipped when a `tetragon` DaemonSet already exists; otherwise rendered from the official Cilium Helm Chart and applied (`helm template | kubectl apply`) with `tetragon.grpc.address=0.0.0.0:54321`
 3. **kubectl apply the K8s Sentinel manifest** - Creates the required Namespace, ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment, and Service resources
+4. **Deploy Trivy Operator** - Skipped when a Trivy Operator Deployment already exists in any namespace of the cluster; otherwise installed into `sentinel-system` with `helm install`, using the `trivy-operator-values.yaml` in the same directory (see [Installing Trivy Operator](./trivy-operator.md))
 
 ---
 
@@ -59,16 +61,18 @@ During installation, the script prints progress messages for each phase:
 
 | Output Phase | Description |
 |---|---|
-| `[INFO] Checking Helm...` | Checking if Helm is installed locally |
-| `[INFO] Installing Helm...` | Downloading and installing Helm (only when not already installed) |
-| `[INFO] Installing Tetragon via Helm...` | Deploying Tetragon to the cluster via Helm |
-| `[INFO] Deploying Sentinel...` | Applying K8s Sentinel Kubernetes resources |
-| `[INFO] Installation complete.` | All resources created successfully |
+| `[helm] not found, downloading to temp dir...` | Helm is not installed locally, so it is downloaded to a temp directory (only appears when needed) |
+| `[tetragon] already installed, skipping` | Tetragon already exists in the cluster, skipped |
+| `[tetragon] not found, installing latest version...` | Deploying Tetragon and waiting for the DaemonSet to become ready; prints `[tetragon] ready` when done |
+| `[sentinel] applying manifests...` | Applying K8s Sentinel Kubernetes resources and waiting for the Deployment to become ready |
+| `[trivy-operator] already installed, skipping` | Trivy Operator already exists in the cluster, skipped |
+| `[trivy-operator] not found, installing latest version...` | Installing Trivy Operator and waiting for the Deployment to become ready; prints `[trivy-operator] ready` when done |
+| `Done. Access via:` | All steps completed |
 
-After installation, the script displays a suggested port-forward command, for example:
+After installation, the script displays a suggested port-forward command:
 
 ```bash
-kubectl port-forward svc/sentinel -n sentinel-system 8080:80
+kubectl port-forward -n sentinel-system svc/sentinel 8080:80
 ```
 
 Copy and run this command locally to open the K8s Sentinel management UI in your browser.
@@ -107,5 +111,5 @@ kubectl logs -n sentinel-system deployment/sentinel
 ---
 
 :::warning[Production Environment Note]
-The script automatically installs Helm and modifies cluster configuration (adding Tetragon, creating RBAC resources, etc.). In **production environments**, such automated operations may bypass change review processes. Consider using [Kubernetes Job Installation](./job-install.md) instead for better operational transparency and control.
+The script automatically downloads Helm and modifies cluster configuration (adding Tetragon and Trivy Operator, creating RBAC resources, etc.). In **production environments**, such automated operations may bypass change review processes. Consider using [Kubernetes Job Installation](./job-install.md) instead for better operational transparency and control.
 :::
