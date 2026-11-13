@@ -68,6 +68,41 @@ current-context: default
 `/api/admission-events/webhook` 端點在**未設定 Token 時為開放端點**（因為呼叫者是 kube-apiserver，沒有登入 Session 可用）。叢集內若有不完全信任的工作負載，請依下方「[保護 Webhook 端點](#保護-webhook-端點建議)」設定 Token 驗證，避免偽造事件灌入。
 :::
 
+### 讓這個位址固定不變
+
+kube-apiserver 使用 host network，以節點的 DNS 而不是叢集的 DNS 解析名稱，因此這個檔案中無法使用 `sentinel.sentinel-system.svc`，只能填 IP。
+
+Service 只要存在，ClusterIP 就不會變：重啟或升級 K8s Sentinel 都不會改變它。但**刪除 Service 會改變**，而解除安裝後重新安裝就等於刪除 Service。若希望每次都拿到相同的位址，可以自行指定：在叢集的 Service 網段中挑一個未使用的位址，設定在 Service 上：
+
+```yaml title="sentinel-service.yaml"
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel
+  namespace: sentinel-system
+spec:
+  clusterIP: 10.96.100.100
+  selector:
+    app: sentinel
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: ClusterIP
+```
+
+既有 Service 的 `clusterIP` 無法修改，因此要先刪除再套用：
+
+```bash
+kubectl -n sentinel-system delete service sentinel
+kubectl apply -f sentinel-service.yaml
+```
+
+請把這個 Service 放在自己的檔案中，並在 `deploy/sentinel.yaml` 之後套用。之後重新套用 `deploy/sentinel.yaml` 時，你指定的 `clusterIP` 會保留，不會被悄悄換掉。Service 網段每個叢集不同，可用下列指令查詢，這也是官方 manifest 沒有預設位址的原因：
+
+```bash
+kubectl cluster-info dump | grep -m1 service-cluster-ip-range
+```
+
 ## 步驟三：修改 kube-apiserver 設定
 
 編輯 kubeadm configmap，加入 Audit 相關的 extraArgs 與 extraVolumes：

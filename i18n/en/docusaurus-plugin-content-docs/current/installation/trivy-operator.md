@@ -120,6 +120,10 @@ Keep them if another tool reads these reports; K8s Sentinel does not use them.
 
 ## Air-gapped Clusters
 
+:::tip
+Since v0.71.0 every release carries an offline bundle that takes care of carrying the images, rewriting the manifests and setting the environment variables below; see [Offline Installation](./offline-install.md). This section covers the manual setup without the bundle.
+:::
+
 Trivy downloads its vulnerability database as an OCI artifact, and by default pulls the database and its own image from `mirror.gcr.io`. For a cluster with no outbound access, copy the following into a registry the cluster can reach:
 
 | Item | Default location |
@@ -153,6 +157,7 @@ helm install trivy-operator aqua/trivy-operator \
 |---|---|---|
 | `TRIVY_IMAGE` | `mirror.gcr.io/aquasec/trivy:0.76.1` | The Trivy image that registry scans run |
 | `TRIVY_DB_REPOSITORY` / `TRIVY_JAVA_DB_REPOSITORY` | Trivy's defaults | Where registry scans download the vulnerability databases from; in an air-gapped cluster point both at the internal mirror |
+| `TRIVY_INSECURE` (v0.72+) | unset | `true` has registry scans verify no certificate, neither the database mirror's nor the scanned registry's. For a mirror with a certificate Trivy cannot be made to trust |
 
 :::note
 The database is only as current as the copy in the internal registry, so schedule regular updates of the mirror. The operator's own image and the registries your workloads use need the same treatment; for private registries and credentials, see the [Trivy Operator documentation](https://aquasecurity.github.io/trivy-operator/).

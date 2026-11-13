@@ -14,7 +14,7 @@ K8s Sentinel 是一套以 **Cilium 與 Tetragon（eBPF）** 為基礎的 Kuberne
 - **執行期安全**：以 TracingPolicy 監控與阻擋行程執行、檔案存取（Monitoring / Protect 模式）
 - **網路安全**：以 Cilium Network Policy 管理 Pod 的 Ingress / Egress 存取，搭配 Network Topology 呈現實際流量與對外暴露面
 - **資源准入**：以 ValidatingAdmissionPolicy 在資源建立當下即攔截違規設定
-- **弱點掃描**：呈現執行中工作負載與 Registry 內 Image 的已知弱點（CVE），由 Trivy 掃描；只回報、不阻擋部署
+- **弱點掃描**：呈現執行中工作負載與 Registry 內 Image 的已知弱點（CVE），由 Trivy 掃描；可搭配 Admission Policy 拒絕弱點超過上限的 Image
 - **事件應變**：即時安全事件串流、一鍵 Pod 網路隔離（Quarantine）、Webhook 告警與 Syslog 轉送
 - **可稽核性**：所有操作與登入行為完整記錄於 Audit Log
 
@@ -25,7 +25,7 @@ DevSecOps 工程師與 Platform 團隊不需手寫 YAML 或逐一 kubectl 操作
 | 功能模組 | 說明 |
 |---|---|
 | TracingPolicy 管理 | 以視覺化方式建立、編輯、啟用、停用及刪除 TracingPolicy，無需手動撰寫 YAML |
-| Admission Policy | 圖形化建立 Kubernetes ValidatingAdmissionPolicy，支援 Label、Image、資源限制、ConfigMap / Secret 大小等九種規則類型 |
+| Admission Policy | 圖形化建立 Kubernetes ValidatingAdmissionPolicy，支援 Label、Image、資源限制、hostPath、環境變數、ConfigMap / Secret 大小、弱點上限等十四種規則類型 |
 | Network Policy | 圖形化建立 Cilium Network Policy，管理 Pod 的 Ingress / Egress 網路存取規則（含 L7 HTTP 規則） |
 | Quarantine | 事件應變時一鍵隔離可疑 Pod 的網路連線，保留行程與記憶體狀態供鑑識調查 |
 | Network Topology | 以互動式圖形呈現 Cilium 觀測到的 Pod 連線關係（含 L7），快速識別異常網路流量；具 Critical 弱點的 Pod 會被標示 |

@@ -21,7 +21,7 @@ Supported registry types:
 | **Quay** (quay.io) | `https://quay.io` |
 
 :::note
-This feature only reports results. It does not block deployments, and it does not yet mark which registry images are running in the cluster.
+This page only reports results, and it does not yet mark which registry images are running in the cluster. To refuse the deployment of images by these results, see [Refusing Vulnerable Images](./vulnerability-admission.md): registry scan results are what lets an image be checked **before its first deployment**.
 :::
 
 ---
@@ -115,4 +115,4 @@ Clicking into a single registry shows each image's `Critical` / `High` / `Medium
 
 - `deploy/sentinel.yaml` is from v0.62 or later: its Role `sentinel-registry-scan` lets K8s Sentinel create scan Jobs in `sentinel-system`; without it scans fail with a permission error
 - If Trivy Operator is installed, it has to be upgraded with the current `deploy/trivy-operator-values.yaml` so that the operator does not in turn scan these scan Jobs, see [Installing Trivy Operator](../installation/trivy-operator.md)
-- Air-gapped clusters need the `TRIVY_IMAGE`, `TRIVY_DB_REPOSITORY` and `TRIVY_JAVA_DB_REPOSITORY` environment variables set, also covered on the page above
+- Air-gapped clusters need the `TRIVY_IMAGE`, `TRIVY_DB_REPOSITORY` and `TRIVY_JAVA_DB_REPOSITORY` environment variables set, also covered on the page above; an [offline installation](../installation/offline-install.md) sets them for you

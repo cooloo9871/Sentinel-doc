@@ -12,7 +12,7 @@ sidebar_position: 11
 
 **K8s Sentinel 不自行掃描這些 Image。** 掃描由 [Trivy Operator](https://github.com/aquasecurity/trivy-operator) 執行，K8s Sentinel 讀取它寫出的 `VulnerabilityReport` 資源。Trivy Operator 為選用元件，安裝方式見 [安裝 Trivy Operator](../installation/trivy-operator.md)。
 
-此功能只做**呈現與排序**，不會阻擋部署。尚未部署、仍在 Registry 中的 Image，請見 [Registry 掃描](./registry-scanning.md)。
+此頁面只做**呈現與排序**，本身不會阻擋部署；要依掃描結果拒絕弱點過多的 Image，請見 [以掃描結果阻擋部署](./vulnerability-admission.md)。尚未部署、仍在 Registry 中的 Image，請見 [Registry 掃描](./registry-scanning.md)。
 
 ---
 

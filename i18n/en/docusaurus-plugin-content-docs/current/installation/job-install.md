@@ -10,7 +10,7 @@ sidebar_position: 2
 
 A Kubernetes Job (`sentinel-installer`, in **`kube-system`**) performs the installation inside the cluster: no git, helm or anything else needed locally, only `kubectl`. The Job runs three steps in order:
 
-1. **Tetragon**: skipped if a `tetragon` DaemonSet already exists; otherwise installed via Helm with `tetragon.grpc.address=0.0.0.0:54321` (required for K8s Sentinel's event collection), waiting for the DaemonSet to become ready
+1. **Tetragon**: skipped if a Tetragon DaemonSet already exists in any namespace (not only `kube-system` since v0.69); otherwise installed via Helm with `tetragon.grpc.address=0.0.0.0:54321` (required for K8s Sentinel's event collection), waiting for the DaemonSet to become ready
    Since v0.64.1 it also sets `hostNetwork=false` and applies `deploy/tetragon-grpc-policy.yaml`, so that only K8s Sentinel can reach the Tetragon gRPC port (see [Installing Tetragon](./tetragon-install.md) for the reason); this has no effect on a Tetragon that was already installed on the host network
 2. **K8s Sentinel**: applies `deploy/sentinel.yaml` straight from GitHub (Namespace, RBAC, Deployment and Service in one file, no Kustomize), waiting for the Deployment to become ready
 3. **Trivy Operator** (v0.61+): skipped if a Trivy Operator Deployment already exists in any namespace of the cluster; otherwise installed via Helm into `sentinel-system` (release name `trivy-operator`) with `deploy/trivy-operator-values.yaml`. This step comes last, so even if it fails K8s Sentinel itself is already installed (see [Installing Trivy Operator](./trivy-operator.md))
@@ -96,7 +96,7 @@ The Job fetches `deploy/sentinel.yaml` and `deploy/trivy-operator-values.yaml` f
 
 ## Cleaning Up the Installer Job (Optional)
 
-Since v0.64 the installer Job **removes** its `cluster-admin` ClusterRoleBinding itself as its last step, so no ServiceAccount is left holding cluster-admin in `kube-system`; the Job itself is deleted ten minutes after it finishes. To remove the remaining ServiceAccount as well, run (this does not affect the installed K8s Sentinel):
+Since v0.64 the installer Job **removes** its `cluster-admin` ClusterRoleBinding itself as its last step, so no ServiceAccount is left holding cluster-admin in `kube-system`; the Job itself is deleted ten minutes after it finishes. **A Job that failed keeps the binding so that it can retry**; remove it with the command below. To remove the remaining ServiceAccount as well, run (this does not affect the installed K8s Sentinel):
 
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml

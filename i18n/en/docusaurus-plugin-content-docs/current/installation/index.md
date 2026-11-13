@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Installation Overview
 
-K8s Sentinel offers two installation methods. Choose the one that best fits your use case.
+K8s Sentinel offers three installation methods. Choose the one that best fits your use case.
 
 ## Comparison
 
@@ -14,6 +14,7 @@ K8s Sentinel offers two installation methods. Choose the one that best fits your
 |---|---|---|---|
 | **Kubernetes Job** | Production / CI pipelines | kubectl access | Automated, no manual steps |
 | **Local Script (install.sh)** | Quick evaluation / development | bash + kubectl | Visible steps, easy to observe |
+| **Offline Installation** (v0.71+) | The cluster has no internet access | A private registry + kubectl | No Helm and no outbound access needed on the cluster side |
 
 ## Common Prerequisites
 
@@ -25,6 +26,19 @@ Regardless of installation method, confirm the following before starting:
 - Tetragon is installed (see [Installing Tetragon](./tetragon-install.md))
 
 Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
+
+:::caution[Re-applying deploy/sentinel.yaml puts back what the file says]
+Most upgrades require re-applying `deploy/sentinel.yaml`. If you changed the Deployment or the Service **by editing that file** (a PVC in place of the `emptyDir`, `AUDIT_WEBHOOK_TOKEN`, a pinned image tag, a `NodePort`), carry those edits into the new file first, or apply your own copy.
+
+Applied as it comes, the data volume goes back to `emptyDir`, which is an empty K8s Sentinel with only the `admin` / `admin` account, and an audit webhook token set in the file is dropped. Changes made with `kubectl set env` or `kubectl patch`, and a `clusterIP` you chose, are kept.
+:::
+
+:::caution[Upgrading to v0.66 through v0.70 (refusing vulnerable images)]
+- **Re-apply `deploy/sentinel.yaml`, then restart K8s Sentinel**: it adds the `VulnerabilityGate` kind, which v0.67, v0.68 and v0.70 each extended. Without it the matching admission policies admit everything; see [Refusing Vulnerable Images](../features/vulnerability-admission.md) for what each version shows
+- The Deployment Gate page of v0.65.0 is gone, and the policy it made is removed on upgrade; make it again under Admission Policy
+- Vulnerability Limit, Blocked CVEs, Host Path Volumes and Environment Variables policies made before v0.69 are best made again in the form, see [Admission Policy](../features/admission-policy.md)
+- v0.71 and v0.72 have no manifest change
+:::
 
 :::caution[Upgrading from before v0.43?]
 Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Existing clusters need three things before upgrading:
@@ -51,7 +65,7 @@ Fresh installs (install-job / install.sh) handle all of this automatically.
 After installation:
 
 - **For production, set up [Persistent Storage (PV / PVC)](./persistent-storage.md) first** - the default `emptyDir` wipes all accounts, rules and event data whenever the Pod restarts
-- Both installation methods also install Trivy Operator (v0.61+); if you only apply `deploy/sentinel.yaml`, or want to know about the setup for air-gapped environments, see [Installing Trivy Operator](./trivy-operator.md)
+- All three installation methods also install Trivy Operator; if you only apply `deploy/sentinel.yaml`, see [Installing Trivy Operator](./trivy-operator.md)
 - If you plan to use the Admission Events feature, also complete [Wiring Up the API Server Audit Log](./audit-webhook.md)
 
 ## Recommendation
@@ -59,4 +73,5 @@ After installation:
 :::tip[Which method should I use?]
 - **Production environments**: Use [Kubernetes Job Installation](./job-install.md). The Job runs inside the cluster, ensuring network consistency and making it easy to audit and integrate with automation.
 - **Quick evaluation or development**: Use [Local Script Installation](./script-install.md). The script prints installation progress step by step, making it easy to observe and debug.
+- **A cluster with no internet access**: Use [Offline Installation](./offline-install.md). Carry the images to a private registry first, then install from the offline bundle.
 :::

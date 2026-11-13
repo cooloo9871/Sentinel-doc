@@ -10,7 +10,7 @@ sidebar_position: 17
 
 ## 使用 uninstall.sh（建議，v0.64.1+）
 
-`deploy/uninstall.sh` 會移除 `deploy/install.sh` 與 `deploy/install-job.yaml` 所安裝的全部內容。於 K8s Sentinel 原始碼目錄下執行：
+`deploy/uninstall.sh` 會移除 `deploy/install.sh` 與 `deploy/install-job.yaml` 所安裝的全部內容。於 K8s Sentinel 原始碼目錄下執行（以 [離線安裝](./installation/offline-install.md) 部署者，請使用離線套件內的 `uninstall.sh`）：
 
 ```bash
 bash deploy/uninstall.sh --dry-run   # 只列出會被移除的項目
@@ -23,21 +23,30 @@ bash deploy/uninstall.sh             # 詢問確認後移除
 - Trivy Operator 與其 Trivy server
 - Tetragon（含 NetworkPolicy `tetragon-grpc`）
 - 安裝 Job 留在 `kube-system` 的資源
+- K8s Sentinel 存放掃描結果的物件 `sentinel-vulnerability-gate`（v0.69 起在 K8s Sentinel 移除之後才刪除）
 - **Quarantine policy 與 Pod 上的隔離 Label**：若留下隔離規則卻沒有 K8s Sentinel 可以解除，被隔離的 Pod 會永遠維持隔離
 
 | 選項 | 效果 |
 |---|---|
 | `--dry-run` | 列出會被刪除的項目，不實際刪除 |
-| `--keep-tetragon` | 保留 Tetragon，適用於 Tetragon 早於 K8s Sentinel 安裝的叢集 |
-| `--purge` | 另外刪除在 K8s Sentinel 中建立的 Tracing、Network 與 Admission Policy、所有弱點報告，以及 Tetragon 與 Trivy 的 CRD |
+| `--keep-tetragon` | 保留 Tetragon，適用於 Tetragon 早於 K8s Sentinel 安裝的叢集。v0.69 起仍會移除 NetworkPolicy `tetragon-grpc`，因為它只放行 K8s Sentinel，留著會讓任何人都連不上；移除後 Tetragon 的 gRPC API 不再受限，而它本身沒有認證 |
+| `--purge` | 另外刪除在 K8s Sentinel 中建立或編輯過的 Tracing、Network 與 Admission Policy、所有弱點報告，以及 Tetragon 與 Trivy 的 CRD |
 | `--yes` | 不詢問確認 |
 
 Tetragon 不在 `kube-system` 時，請設定環境變數 `TETRAGON_NAMESPACE`。
+
+:::note[不是 K8s Sentinel 安裝的元件不會被移除]
+v0.69 起，不在 `sentinel-system` 的 Trivy Operator，以及不在 `kube-system`（或 `TETRAGON_NAMESPACE`）的 Tetragon，視為不是 K8s Sentinel 安裝的，會連同它們的叢集層級物件、報告與 CRD 一起保留，加上 `--purge` 也一樣。
+:::
 
 ## 未使用 --purge 時會保留的內容
 
 :::info
 不加 `--purge` 時，在 K8s Sentinel 中建立的 Policy 會保留並**繼續生效**：Network Policy 由 Cilium 執行、Admission Policy 由 API Server 執行。Tracing Policy 的物件也會保留，但 Tetragon 移除後就不再有作用。弱點報告與 CRD 同樣會保留。
+:::
+
+:::warning[依掃描結果判斷的 Admission Policy 會全部放行]
+以 **Vulnerability Limit** 與 **Blocked CVEs** 規則建立的 Admission Policy 是例外：它們依據的掃描結果會被移除，因此從解除安裝起會**全部放行**，見 [以掃描結果阻擋部署](./features/vulnerability-admission.md)。
 :::
 
 若之後想手動清除，可列出並刪除：

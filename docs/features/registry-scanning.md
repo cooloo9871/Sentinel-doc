@@ -21,7 +21,7 @@ Trivy Operator 只會查看叢集內的工作負載，因此這裡的掃描由 *
 | **Quay**（quay.io） | `https://quay.io` |
 
 :::note
-此功能只回報結果，不會阻擋部署，目前也不會標示 Registry 中哪些 Image 正在叢集內執行。
+此頁面只回報結果，目前也不會標示 Registry 中哪些 Image 正在叢集內執行。要依掃描結果拒絕 Image 的部署，請見 [以掃描結果阻擋部署](./vulnerability-admission.md)：Registry 掃描的結果正是讓 Image 在**第一次部署前**就能被檢查的來源。
 :::
 
 ---
@@ -115,4 +115,4 @@ Registries 列表欄位為 `Registry`、`Filters`、`Schedule`、`Last scan`、`
 
 - `deploy/sentinel.yaml` 為 v0.62 以後的版本：其中的 Role `sentinel-registry-scan` 讓 K8s Sentinel 能在 `sentinel-system` 內建立掃描 Job；缺少時掃描會以權限錯誤失敗
 - 若有安裝 Trivy Operator，需以目前的 `deploy/trivy-operator-values.yaml` 升級，Operator 才不會反過來掃描這些掃描 Job，見 [安裝 Trivy Operator](../installation/trivy-operator.md)
-- 離線叢集需設定 `TRIVY_IMAGE`、`TRIVY_DB_REPOSITORY`、`TRIVY_JAVA_DB_REPOSITORY` 環境變數，同樣見上述頁面
+- 離線叢集需設定 `TRIVY_IMAGE`、`TRIVY_DB_REPOSITORY`、`TRIVY_JAVA_DB_REPOSITORY` 環境變數，同樣見上述頁面；以 [離線安裝](../installation/offline-install.md) 部署時已自動設定

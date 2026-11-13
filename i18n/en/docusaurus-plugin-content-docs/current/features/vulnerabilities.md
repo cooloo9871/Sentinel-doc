@@ -12,7 +12,7 @@ The "**Vulnerabilities → Workloads**" page (since v0.60) lists every **running
 
 **K8s Sentinel does not scan these images itself.** [Trivy Operator](https://github.com/aquasecurity/trivy-operator) does the scanning, and K8s Sentinel reads the `VulnerabilityReport` resources it writes. Trivy Operator is an optional component; see [Installing Trivy Operator](../installation/trivy-operator.md) for how to install it.
 
-This feature only **presents and orders** results; it does not block deployments. For images that are not deployed yet and still sit in a registry, see [Registry Scanning](./registry-scanning.md).
+This page only **presents and orders** results and does not block deployments by itself; to refuse images with too many vulnerabilities by these results, see [Refusing Vulnerable Images](./vulnerability-admission.md). For images that are not deployed yet and still sit in a registry, see [Registry Scanning](./registry-scanning.md).
 
 ---
 

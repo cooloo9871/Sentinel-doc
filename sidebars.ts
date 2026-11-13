@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
         'installation/index',
         'installation/job-install',
         'installation/script-install',
+        'installation/offline-install',
         'installation/trivy-operator',
         'installation/persistent-storage',
         'login',
@@ -57,6 +58,7 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'features/admission-policy',
+            'features/vulnerability-admission',
           ],
         },
         {

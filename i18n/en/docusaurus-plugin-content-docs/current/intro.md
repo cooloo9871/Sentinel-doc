@@ -14,7 +14,7 @@ K8s Sentinel is a Kubernetes security management platform built on **Cilium and 
 - **Runtime security**: monitor and block process executions and file access with TracingPolicy (Monitoring / Protect modes)
 - **Network security**: manage Pod Ingress / Egress access with Cilium Network Policy, with Network Topology showing actual traffic and the external exposure surface
 - **Admission control**: intercept non-compliant configuration at creation time with ValidatingAdmissionPolicy
-- **Vulnerability scanning**: show the known vulnerabilities (CVEs) in the images of running workloads and of registries, scanned by Trivy; report only, never blocking deployments
+- **Vulnerability scanning**: show the known vulnerabilities (CVEs) in the images of running workloads and of registries, scanned by Trivy; combine with Admission Policy to refuse images over a vulnerability limit
 - **Incident response**: a live security event stream, one-click Pod network isolation (Quarantine), webhook alerts and Syslog forwarding
 - **Auditability**: every operation and sign-in recorded in the Audit Log
 
@@ -25,7 +25,7 @@ DevSecOps engineers and Platform teams manage the full lifecycle of security pol
 | Module | Description |
 |---|---|
 | TracingPolicy Management | Visually create, edit, enable, disable, and delete TracingPolicies - no manual YAML required |
-| Admission Policy | Graphically build Kubernetes ValidatingAdmissionPolicies with nine rule types: Label, Image, resource limits, ConfigMap / Secret size, and more |
+| Admission Policy | Graphically build Kubernetes ValidatingAdmissionPolicies with fourteen rule types: Label, Image, resource limits, hostPath, environment variables, ConfigMap / Secret size, vulnerability limits, and more |
 | Network Policy | Graphically build Cilium Network Policies to manage Pod Ingress / Egress access rules, including L7 HTTP rules |
 | Quarantine | One-click network isolation of a suspicious Pod for incident response - the process and memory stay intact for forensics |
 | Network Topology | Interactive graph of Pod connections observed by Cilium (including L7) - quickly identify anomalous network traffic; Pods with Critical vulnerabilities are marked |

@@ -26,7 +26,7 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
 - **`tetragon.grpc.address=0.0.0.0:54321`** is required: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321`, reachable only from inside the pod
-- **`hostNetwork=false` and the NetworkPolicy** (how it is installed since v0.64.1) are what keep that API to K8s Sentinel. Tetragon's gRPC server has **no authentication and no TLS**: whoever can connect reads every process started on the node, command line included, and can list, disable or delete tracing policies. On the host network, which is the chart's default, the port is open on every node's address to every pod in the cluster, and a NetworkPolicy does not apply to a hostNetwork pod; off the host network it is an ordinary pod port, and `deploy/tetragon-grpc-policy.yaml` (NetworkPolicy `tetragon-grpc`) admits only the K8s Sentinel pod. Edit the namespaces in that file if Tetragon or K8s Sentinel is installed elsewhere
+- **`hostNetwork=false` and the NetworkPolicy** (how it is installed since v0.64.1) are what keep that API to K8s Sentinel. Tetragon's gRPC server has **no authentication and no TLS**: whoever can connect reads every process started on the node, command line included, and can list, disable or delete tracing policies. On the host network, which is the chart's default, the port is open on every node's address to every pod in the cluster, and a NetworkPolicy does not apply to a hostNetwork pod; off the host network it is an ordinary pod port, and `deploy/tetragon-grpc-policy.yaml` (NetworkPolicy `tetragon-grpc`) admits only the K8s Sentinel pod. A NetworkPolicy governs traffic between pods: a process on the node itself, or a pod on the host network of that node, can still reach the port. Edit the namespaces in that file if Tetragon or K8s Sentinel is installed elsewhere
 
 Everything else can stay at defaults: the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default. `deploy/install-job.yaml` and `deploy/install.sh` do all of this for you.
 
@@ -36,12 +36,12 @@ Off the host network Tetragon starts once the node's CNI is up, so the first sec
 
 ### Moving an existing Tetragon off the host network
 
-The installers skip Tetragon when its DaemonSet is already present, so one installed earlier is still on the host network with its gRPC port open to the cluster.
+The installers skip Tetragon when its DaemonSet is already present (looked for in every namespace since v0.69, not only `kube-system`), so one installed earlier is still on the host network with its gRPC port open to the cluster.
 
 Installed as a Helm release (`helm list -n kube-system` shows `tetragon`):
 
 ```bash
-helm upgrade tetragon cilium/tetragon -n kube-system --reuse-values \
+helm upgrade tetragon cilium/tetragon -n kube-system --reset-then-reuse-values \
   --set hostNetwork=false \
   --set tetragon.grpc.address=0.0.0.0:54321
 kubectl apply -f deploy/tetragon-grpc-policy.yaml

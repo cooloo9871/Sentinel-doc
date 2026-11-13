@@ -120,6 +120,10 @@ kubectl delete clustersbomreports,clusterconfigauditreports,clusterrbacassessmen
 
 ## 離線（Air-gapped）叢集
 
+:::tip
+v0.71.0 起每個 release 都附帶離線套件，會一併處理 Image 搬運、manifest 改寫與下列環境變數，見 [離線安裝](./offline-install.md)。本節說明的是不使用離線套件時的手動設定。
+:::
+
 Trivy 以 OCI artifact 的形式下載弱點資料庫，預設從 `mirror.gcr.io` 拉取資料庫與自身的 Image。無法連外的叢集，請把下列內容複製到叢集可存取的 Registry：
 
 | 項目 | 預設位置 |
@@ -153,6 +157,7 @@ helm install trivy-operator aqua/trivy-operator \
 |---|---|---|
 | `TRIVY_IMAGE` | `mirror.gcr.io/aquasec/trivy:0.76.1` | Registry 掃描所執行的 Trivy Image |
 | `TRIVY_DB_REPOSITORY` / `TRIVY_JAVA_DB_REPOSITORY` | Trivy 的預設值 | Registry 掃描下載弱點資料庫的位置；離線叢集請兩者都指向內部 mirror |
+| `TRIVY_INSECURE`（v0.72+） | 未設定 | 設為 `true` 時，Registry 掃描不驗證任何憑證，包含資料庫 mirror 與被掃描的 Registry。用於 mirror 的憑證無法讓 Trivy 信任的情況 |
 
 :::note
 資料庫的新舊取決於內部 Registry 中的副本，請排程定期更新 mirror。Operator 自身的 Image 與工作負載所使用的 Registry 也需要同樣處理，私有 Registry 與認證的設定請參考 [Trivy Operator 官方文件](https://aquasecurity.github.io/trivy-operator/)。

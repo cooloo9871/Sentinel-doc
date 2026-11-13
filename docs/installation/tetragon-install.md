@@ -26,7 +26,7 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
 - **`tetragon.grpc.address=0.0.0.0:54321`** 為必要設定：K8s Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到
-- **`hostNetwork=false` 與 NetworkPolicy**（v0.64.1 起的安裝方式）用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
+- **`hostNetwork=false` 與 NetworkPolicy**（v0.64.1 起的安裝方式）用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。NetworkPolicy 管的是 Pod 之間的流量：節點本身的行程，或該節點上使用 host network 的 Pod，仍然連得到這個埠。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
 
 其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。`deploy/install-job.yaml` 與 `deploy/install.sh` 會自動完成以上全部設定。
 
@@ -36,12 +36,12 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 
 ### 把既有的 Tetragon 移出 host network
 
-安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝，因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
+安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝（v0.69 起會在所有 Namespace 中尋找，不限於 `kube-system`），因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
 
 以 Helm release 安裝者（`helm list -n kube-system` 看得到 `tetragon`）：
 
 ```bash
-helm upgrade tetragon cilium/tetragon -n kube-system --reuse-values \
+helm upgrade tetragon cilium/tetragon -n kube-system --reset-then-reuse-values \
   --set hostNetwork=false \
   --set tetragon.grpc.address=0.0.0.0:54321
 kubectl apply -f deploy/tetragon-grpc-policy.yaml
