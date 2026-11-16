@@ -34,24 +34,25 @@ The process has three steps:
 | **A private registry** | A registry the cluster's nodes can pull from (Harbor, for example). With Harbor, first create the project the images go into (`sentinel` in the examples below) |
 | **Pullable without credentials** | The nodes and Trivy both have to pull from the registry **without credentials**. The bundle sets no image pull secret |
 | **Nodes trust the registry's certificate** | That is the container runtime's configuration on every node (containerd's `certs.d`), which the bundle does not touch. If other workloads already pull from this registry, it is done |
-| **Tools to carry the images** | `mirror-images.sh` uses `skopeo` when it is installed. Without it, `docker`, `podman` or `nerdctl` carry the images, but not Trivy's vulnerability databases: those are OCI artifacts, not container images, and need `skopeo` or `oras` |
+| **Tools to carry the images** | The machines on both sides need only `docker` or `podman` (v0.74+). docker is used when a machine has both, and the script says which it uses. Trivy's vulnerability databases are OCI artifacts, which neither can pull or push as an image, so the script runs `skopeo` from a container image (`quay.io/skopeo/stable:v1.18`) for those; `save` takes that image along so `push` has it offline. It is a tool of the script and is not pushed to your registry |
+| **Log in to the registry first** | Before `push`, log in to the registry on that machine (`docker login`, `podman login`) |
 | **CPU architecture** | Images are saved for the architecture of the machine that runs `save`. Run it on one that matches your nodes |
 | **Cluster prerequisites** | The same as for an online install: Kubernetes 1.32+ and Cilium (with kube-proxy replacement and Hubble), see [Prerequisites](../prerequisites.md). Cilium is not part of the bundle and has to be installed offline by your own means |
 
 :::caution[No databases, no scans]
-Without Trivy's two databases in the registry, K8s Sentinel still installs and runs, but **no image can be scanned**. Make sure `skopeo` or `oras` is on the machine that runs `mirror-images.sh`.
+Without Trivy's two databases in the registry, K8s Sentinel still installs and runs, but **no image can be scanned**. Up to v0.73, `mirror-images.sh` needed `skopeo` or `oras` installed on the machine to carry the databases; since v0.74 the script handles it itself and needs only `docker` or `podman`.
 :::
 
 ---
 
 ## Step 1: Download and Save the Images (Online Machine)
 
-Download the bundle from the release page (v0.72.0 is used below; replace it with the version you are installing):
+Download the bundle from the release page (v0.75.0 is used below; replace it with the version you are installing):
 
 ```bash
-curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.72.0/sentinel-offline-v0.72.0.tar.gz
-tar xzf sentinel-offline-v0.72.0.tar.gz
-cd sentinel-offline-v0.72.0
+curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.75.0/sentinel-offline-v0.75.0.tar.gz
+tar xzf sentinel-offline-v0.75.0.tar.gz
+cd sentinel-offline-v0.75.0
 bash mirror-images.sh save        # about 2 GB, into ./images
 ```
 
@@ -63,13 +64,13 @@ What the bundle contains:
 | `mirror-images.sh` | Saves (`save`) and pushes (`push`) the images |
 | `install.sh` | The offline installer |
 | `uninstall.sh` | The uninstaller, see [Uninstall](../uninstall.md) |
-| `manifests/` | `sentinel.yaml`, `tetragon.yaml`, `tetragon-grpc-policy.yaml`, `trivy-operator.yaml` |
+| `manifests/` | `sentinel.yaml`, `tetragon.yaml`, `tetragon-grpc-policy.yaml`, `trivy-operator.yaml`, `trivy-operator-crds.yaml` (v0.75+) |
 | `VERSION` | The bundle's version |
 
-For v0.72.0, `images.txt` lists:
+For v0.75.0, `images.txt` lists:
 
 ```text
-ghcr.io/cooloo9871/sentinel:v0.72.0
+ghcr.io/cooloo9871/sentinel:v0.75.0
 mirror.gcr.io/aquasec/trivy:0.76.1
 mirror.gcr.io/aquasec/trivy-operator:0.36.1
 quay.io/cilium/hubble-export-stdout:v1.1.1
@@ -94,12 +95,20 @@ bash mirror-images.sh push harbor.example.com/sentinel
 
 The registry argument is a host and path, without `http://` or `https://`.
 
+Add `--insecure-registry` (v0.73+) when the registry serves plain HTTP, or its certificate is one this machine does not trust (`x509: certificate signed by unknown authority`):
+
+```bash
+bash mirror-images.sh push harbor.example.com/sentinel --insecure-registry
+```
+
+It only affects the pushing machine and **does not change what the cluster trusts**. With `docker` the registry also has to be listed under `insecure-registries` in the daemon's configuration: docker has no per-command switch for pushing images.
+
 **An image keeps its path under the registry**; only the leading registry host is replaced:
 
 | Original location | Location after the push |
 |---|---|
 | `quay.io/cilium/tetragon:v1.8.0` | `harbor.example.com/sentinel/cilium/tetragon:v1.8.0` |
-| `ghcr.io/cooloo9871/sentinel:v0.72.0` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.72.0` |
+| `ghcr.io/cooloo9871/sentinel:v0.75.0` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.75.0` |
 | `mirror.gcr.io/aquasec/trivy-db:2` | `harbor.example.com/sentinel/aquasec/trivy-db:2` |
 
 A machine that reaches both the internet and the registry can do it in one go:
@@ -112,8 +121,8 @@ Environment variables `mirror-images.sh` reads:
 
 | Variable | Description |
 |---|---|
-| `INSECURE=1` | For pushing to a registry on plain HTTP or with a certificate this machine does not trust. It only affects the pushing machine and **does not change what the cluster trusts**. `docker` has no such switch: the registry has to be listed under `insecure-registries` in its daemon's configuration |
-| `CONTAINER_CLI` | Names the command to use in place of the detected `docker` / `podman` / `nerdctl`, for example `CONTAINER_CLI="sudo podman"` |
+| `INSECURE=1` | Does the same as `--insecure-registry` on `push` (the only way to write it up to v0.72) |
+| `CONTAINER_CLI` | Names the command to use in place of the detected `docker` / `podman`, for example `CONTAINER_CLI=podman` or `CONTAINER_CLI="sudo podman"` |
 | `IMAGES_DIR` | Where the images are kept; defaults to `./images` inside the bundle |
 
 ---
@@ -130,7 +139,11 @@ The script rewrites every image in the manifests to its location in the private 
 
 1. **Tetragon**: skipped when a Tetragon DaemonSet exists in any namespace; otherwise `tetragon.yaml` is applied and waited for. The NetworkPolicy `tetragon-grpc` is applied afterwards
 2. **K8s Sentinel**: applies `sentinel.yaml` and waits for the Deployment
-3. **Trivy Operator**: skipped when a Trivy Operator exists in any namespace; otherwise installed into `sentinel-system`
+3. **Trivy Operator**: skipped when a Trivy Operator exists in any namespace; otherwise installed into `sentinel-system`. Since v0.75 its CRDs are applied first and waited for until the API server serves them, then the rest
+
+:::note[no matches for kind "ClusterComplianceReport" up to v0.74]
+On a cluster without Trivy Operator, `install.sh` up to v0.74 ended with `no matches for kind "ClusterComplianceReport"` and stopped before waiting for the operator. An install that ended this way is complete in everything K8s Sentinel uses, and nothing needs to be run again; v0.75.0 fixes it.
+:::
 
 As with the online installers, **a Tetragon or a Trivy Operator already in the cluster is left as it is**. An existing Tetragon needs the gRPC address K8s Sentinel requires set by you, see [Installing Tetragon](./tetragon-install.md).
 
@@ -209,7 +222,7 @@ bash uninstall.sh
 To produce a bundle yourself (for an unreleased version, say), run this from the K8s Sentinel source directory on a machine with internet access and Helm:
 
 ```bash
-bash deploy/offline/build.sh v0.72.0
+bash deploy/offline/build.sh v0.75.0
 ```
 
 The two files are written to `dist/`. The Tetragon and Trivy Operator chart versions are defined in `deploy/offline/versions.env`.
