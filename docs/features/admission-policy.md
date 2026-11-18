@@ -110,6 +110,10 @@ Binding 用於將已建立的 ValidatingAdmissionPolicy 綁定至指定範圍，
 
 **執行原理：** K8s Sentinel 透過 Kubernetes API Server 建立 `ValidatingAdmissionPolicy` 與 `ValidatingAdmissionPolicyBinding` 資源。API Server 在處理每個符合 `matchConstraints` 的資源請求時，會自動評估 CEL 表達式，驗證不通過時依 `failurePolicy` 設定決定拒絕或警告。
 
+## 被限制在部分 Namespace 的 Admin（v0.81+）
+
+被限制在部分 Namespace 的 Admin 可以為自己的 Namespace 建立 Policy 與 Binding，受限的 Viewer 可以查看。這類 Policy 會被標記所屬的 Namespace 並受到額外限制（Binding 只能是「Only these namespaces」、只比對 Namespace 層級資源等），詳見 [依 Namespace 限制帳號存取](./namespace-access.md)。
+
 :::info
 Admission Policy 需要 Kubernetes 1.26+ 並已啟用 `ValidatingAdmissionPolicy` feature gate（Kubernetes 1.28+ 預設啟用）。
 :::

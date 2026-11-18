@@ -32,6 +32,12 @@ Open the "**Network Topology**" page and the observed connections render automat
 
 ---
 
+## Pod Detail and Quarantine
+
+Click any pod node to open the **Pod Detail** panel on the right, with the pod's name, namespace, IP and the ways in from outside the cluster. Since v0.76 an Admin can quarantine the pod straight from this panel with **Quarantine this pod**; see [Quarantine](./quarantine.md).
+
+---
+
 ## Connection Detail
 
 Click any edge to open the **Connection Detail** panel:

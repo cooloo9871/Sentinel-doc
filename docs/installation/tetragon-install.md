@@ -34,6 +34,29 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 離開 host network 後，Tetragon 要等節點的 CNI 就緒才會啟動，因此節點開機最初幾秒的行為不會被觀測到。
 :::
 
+### 使用 CRI-O 的節點（v0.78+）
+
+不需要額外設定，以相同方式安裝即可。
+
+在 CRI-O 搭配 crun 的節點上，容器內的行程位於比容器名稱低一層的 cgroup，而 Tetragon 是從 cgroup 名稱判斷 Pod，因此回報的每一個事件都沒有 Pod 資訊。v0.78 起，K8s Sentinel 會自行判斷這些行程屬於哪個 Pod（依據啟動它們的 container runtime 命令列上的容器 ID），Tracing Policy 與其他 runtime 一樣生效，Behavior Discovery 與 Security Events 也會顯示 Pod。使用 containerd 的節點沒有任何改變。
+
+:::warning[請保持 tetragon.cri.enabled 與 tetragon.cgidmap.enabled 關閉]
+這兩個設定是 Tetragon 自己對這個問題的解法，但在 Tetragon 1.8.0 上只能判斷部分行程，而且會讓指定 Namespace 或 Pod selector 的 Tracing Policy **完全不生效**：Policy 要求終止的行程不會被終止。
+
+**v0.77.0 的安裝程式曾在 CRI-O 叢集上開啟這兩個設定。** 若你的叢集是用該版本安裝的，或曾手動開啟，請以目前安裝的 chart 版本（`helm -n kube-system list` 可查詢）關閉：
+
+```bash
+helm repo update cilium
+helm -n kube-system upgrade tetragon cilium/tetragon --version <已安裝的版本> --reuse-values \
+  --set tetragon.cri.enabled=false \
+  --set tetragon.cgidmap.enabled=false
+kubectl -n kube-system rollout status daemonset/tetragon
+kubectl -n sentinel-system rollout restart deployment/sentinel
+```
+
+以 v0.77.0 離線套件安裝者當時套用的是 `tetragon-crio.yaml`，請改以新版離線套件的 `manifests/tetragon.yaml` 覆蓋套用。
+:::
+
 ### 把既有的 Tetragon 移出 host network
 
 安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝（v0.69 起會在所有 Namespace 中尋找，不限於 `kube-system`），因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。

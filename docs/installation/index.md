@@ -33,6 +33,14 @@ K8s Sentinel 提供三種安裝方式，可依據使用場景與需求選擇最�
 直接套用原始檔案時，資料 volume 會回到 `emptyDir`，也就是一個只有 `admin` / `admin` 帳號的全新 K8s Sentinel，檔案中設定的 audit webhook token 也會消失。以 `kubectl set env` 或 `kubectl patch` 做的修改，以及你自行指定的 `clusterIP`，則會保留。
 :::
 
+:::caution[升級到 v0.76 到 v0.81]
+- **v0.79 需要重新套用 `deploy/sentinel.yaml`**：新增 `kube-system` 中的 Role 與 RoleBinding `sentinel-tetragon-exec`，讓 Behavior Discovery 以啟動路徑列出原本就在執行的行程。這是 Tetragon 所在 Namespace 的 `pods/exec` 權限，可以選擇不授予，見 [Behavior Discovery](../features/behavior-discovery.md)
+- **使用 CRI-O 且以 v0.77.0 安裝的叢集**：需要關閉兩個 Tetragon 設定，否則指定 Namespace 的 Tracing Policy 不會生效，見 [安裝 Tetragon](./tetragon-install.md)
+- v0.76.1 起，Hubble Relay 的預設位址改為 `hubble-relay.<ns>.svc:80`，自訂 cluster domain 的叢集不再出現 Network Topology 空白與 `name resolver error: produced zero addresses`；仍可用環境變數 `HUBBLE_RELAY_ADDRESS` 覆寫
+- v0.80 起，重設其他帳號的密碼需要整個叢集的 Admin，見 [依 Namespace 限制帳號存取](../features/namespace-access.md)
+- 其餘版本只需要更新 Image
+:::
+
 :::caution[升級到 v0.66 到 v0.70（以掃描結果阻擋部署）]
 - **重新套用 `deploy/sentinel.yaml`，再重啟 K8s Sentinel**：新增了 `VulnerabilityGate` 類型，v0.67、v0.68、v0.70 又各自擴充過；沒有重新套用時，對應的 Admission Policy 會全部放行，各版本的現象見 [以掃描結果阻擋部署](../features/vulnerability-admission.md)
 - v0.65.0 的 Deployment Gate 頁面已移除，它建立的 Policy 會在升級時被移除，請在 Admission Policy 重新建立

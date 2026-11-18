@@ -33,6 +33,14 @@ Most upgrades require re-applying `deploy/sentinel.yaml`. If you changed the Dep
 Applied as it comes, the data volume goes back to `emptyDir`, which is an empty K8s Sentinel with only the `admin` / `admin` account, and an audit webhook token set in the file is dropped. Changes made with `kubectl set env` or `kubectl patch`, and a `clusterIP` you chose, are kept.
 :::
 
+:::caution[Upgrading to v0.76 through v0.81]
+- **v0.79 needs `deploy/sentinel.yaml` re-applied**: it adds the Role and RoleBinding `sentinel-tetragon-exec` in `kube-system`, which lets Behavior Discovery list processes that were already running by the path they were started by. It is `pods/exec` in Tetragon's namespace and you can do without it, see [Behavior Discovery](../features/behavior-discovery.md)
+- **CRI-O clusters installed with v0.77.0**: two Tetragon settings have to be switched off, or Tracing Policies that name a namespace are not enforced, see [Installing Tetragon](./tetragon-install.md)
+- Since v0.76.1 the default Hubble Relay address is `hubble-relay.<ns>.svc:80`, so a cluster with a custom cluster domain no longer shows an empty Network Topology with `name resolver error: produced zero addresses`; the `HUBBLE_RELAY_ADDRESS` environment variable still overrides it
+- Since v0.80, resetting another account's password takes an Admin of the whole cluster, see [Limiting an Account to Namespaces](../features/namespace-access.md)
+- The other versions need nothing beyond the new image
+:::
+
 :::caution[Upgrading to v0.66 through v0.70 (refusing vulnerable images)]
 - **Re-apply `deploy/sentinel.yaml`, then restart K8s Sentinel**: it adds the `VulnerabilityGate` kind, which v0.67, v0.68 and v0.70 each extended. Without it the matching admission policies admit everything; see [Refusing Vulnerable Images](../features/vulnerability-admission.md) for what each version shows
 - The Deployment Gate page of v0.65.0 is gone, and the policy it made is removed on upgrade; make it again under Admission Policy

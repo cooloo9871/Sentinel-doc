@@ -32,6 +32,12 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 ---
 
+## Pod 詳情與隔離
+
+點擊任一個 Pod 節點，右側會開啟 **Pod Detail** 面板，顯示 Pod 名稱、Namespace、IP 與對外暴露的路徑。v0.76 起，Admin 可以直接在這個面板點擊「**Quarantine this pod**」隔離該 Pod，操作方式見 [Quarantine](./quarantine.md)。
+
+---
+
 ## 連線詳情（Connection Detail）
 
 點擊任一條邊線，右側會開啟 **Connection Detail** 面板，顯示該連線的完整資訊：

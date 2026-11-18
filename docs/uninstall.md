@@ -23,6 +23,7 @@ bash deploy/uninstall.sh             # 詢問確認後移除
 - Trivy Operator 與其 Trivy server
 - Tetragon（含 NetworkPolicy `tetragon-grpc`）
 - 安裝 Job 留在 `kube-system` 的資源
+- Role 與 RoleBinding `sentinel-tetragon-exec`（v0.79.1+）。若曾以較早的腳本解除安裝 v0.79.0，請手動移除：`kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec`，否則之後任何以相同名稱建立 ServiceAccount 的人都會取得 Tetragon Namespace 的 exec 權限
 - K8s Sentinel 存放掃描結果的物件 `sentinel-vulnerability-gate`（v0.69 起在 K8s Sentinel 移除之後才刪除）
 - **Quarantine policy 與 Pod 上的隔離 Label**：若留下隔離規則卻沒有 K8s Sentinel 可以解除，被隔離的 Pod 會永遠維持隔離
 

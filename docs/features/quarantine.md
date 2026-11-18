@@ -27,7 +27,7 @@ Quarantine 的運作方式如下：
 
 ## 隔離一個 Pod
 
-隔離操作的入口在「**Notifications → Security Events**」頁面。
+隔離操作有兩個入口：安全事件的詳細資訊，以及 Network Topology 上的 Pod。以下先說明從「**Notifications → Security Events**」頁面隔離。
 
 1. 找到可疑行為對應的安全事件，點擊該列展開詳細資訊面板
 2. 點擊面板右下角的「**Quarantine this pod**」按鈕
@@ -39,6 +39,18 @@ Quarantine 的運作方式如下：
 ![Quarantine 確認對話框](/img/features/quarantine/confirm-dialog.png)
 
 4. 點擊「**Quarantine**」確認執行，該 Pod 立即被網路隔離
+
+### 從 Network Topology 隔離（v0.76+）
+
+不必等到有安全事件指出某個 Pod。在 [Network Topology](./network-topology.md) 上點擊 Pod，右側的 **Pod Detail** 面板同樣提供「**Quarantine this pod**」按鈕，適合用在看到某個 Pod 正在對外連線，或正被外部連入的時候。
+
+![Network Topology 的 Pod Detail 面板與 Quarantine this pod 按鈕](/img/features/quarantine/topology-quarantine.png)
+
+- 會先以確認對話框詢問，並列出 Namespace 與 Pod 名稱
+- 確認後節點立即變成紅框並帶鎖頭圖示，面板顯示「This pod is quarantined. Release it from the Quarantine page.」
+- 僅 Admin 可見；外部位址與 Node 無法隔離
+- 被限制在部分 Namespace 的 Admin 只能隔離自己 Namespace 中的 Pod（見 [依 Namespace 限制帳號存取](./namespace-access.md)）
+- 解除隔離的方式不變，見下一節
 
 ---
 

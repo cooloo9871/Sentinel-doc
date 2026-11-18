@@ -24,8 +24,11 @@ sidebar_position: 13
 |---|---|
 | **使用者名稱** | 登入用的帳號名稱 |
 | **角色** | 使用者角色（`admin` 或 `viewer`） |
+| **Namespace 標籤** | 帳號被限制在指定 Namespace 時，顯示這些 Namespace（v0.80+） |
 | **建立日期** | 帳號建立時間 |
 | **Change Password** | 修改該帳號的登入密碼 |
+| **Access** | 設定該帳號可存取整個叢集或指定的 Namespace（v0.80+），見 [依 Namespace 限制帳號存取](./namespace-access.md) |
+| **Delete** | 刪除該帳號 |
 
 ---
 
@@ -39,7 +42,7 @@ sidebar_position: 13
 
 - **新密碼至少 8 個字元**（伺服器端強制）
 - **變更自己的密碼需輸入目前密碼（Current Password）**，被劫持的 Session 無法無聲地把帳號主人鎖在門外（唯一例外：首次登入的強制變更畫面不需目前密碼，v0.58.1）
-- admin **重設其他帳號**的密碼屬於獨立操作，不需要舊密碼，但同樣會寫入稽核
+- admin **重設其他帳號**的密碼屬於獨立操作，不需要舊密碼，但同樣會寫入稽核。v0.80 起這需要**整個叢集的 Admin**，被限制在部分 Namespace 的 Admin 無法重設
 - 每一次密碼變更（含因目前密碼錯誤而被拒絕的嘗試）都會記錄在 [Audit Log](./audit-log.md)
 
 另外，以預設 `admin` / `admin` 首次登入時會**強制要求先設定新密碼**，詳見[登入 K8s Sentinel](../login.md)。
@@ -59,6 +62,7 @@ sidebar_position: 13
 | **Username** | ✅ | 登入帳號名稱，建立後不可修改 |
 | **Password** | ✅ | 初始密碼，建議建立後由使用者自行變更 |
 | **Role** | ✅ | 選擇角色：`admin`（完整存取權限）或 `viewer`（唯讀存取） |
+| **Access** | - | `Whole cluster`（預設）或 `Selected namespaces`（v0.80+）。選擇後者時勾選該帳號可存取的 Namespace，見 [依 Namespace 限制帳號存取](./namespace-access.md) |
 
 填寫完成後點擊「**Create**」建立帳號。
 
@@ -70,6 +74,8 @@ sidebar_position: 13
 |---|---|
 | **admin** | 完整的系統存取與管理權限，可建立/修改/刪除所有 Policy、管理使用者、修改系統設定 |
 | **viewer** | 唯讀存取，可瀏覽所有頁面與資料，但無法進行任何新增、修改或刪除操作 |
+
+兩種角色都可以再被限制在指定的 Namespace 內（v0.80+），角色在這些 Namespace 中仍然有效，見 [依 Namespace 限制帳號存取](./namespace-access.md)。
 
 ---
 

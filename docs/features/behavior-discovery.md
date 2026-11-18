@@ -18,6 +18,29 @@ Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並�
 
 此功能不需要事先建立 TracingPolicy，即可在背景持續累積觀察資料。
 
+### Tetragon 啟動前就在執行的行程（v0.79+）
+
+Process 規則比對的是行程**被啟動時使用的路徑**。對於 Tetragon 啟動之前就已經在執行的行程，Tetragon 只知道 kernel 實際載入的檔案（連結已被解開）：連結到 `coreutils` 的 `sleep` 會顯示為 `coreutils`，`/bin/sh` 會顯示為 `busybox` 或 `dash`。用這些名稱建立的白名單，會在 Pod 下次啟動時拒絕真正的名稱。
+
+v0.79 起，這些行程會以啟動時的路徑列出（`/usr/bin/sleep`、`/bin/sh`）。K8s Sentinel 執行期間才安裝或重啟 Tetragon，或有新節點加入時，原本就在執行的行程也會在一分鐘內被學習到。
+
+Tetragon 的 API 不提供啟動路徑，因此 K8s Sentinel 會在節點上讀取：在 `tetragon` 容器中執行一支固定的腳本，只接收行程 ID。這需要 `deploy/sentinel.yaml` 中新增的 Role 與 RoleBinding **`sentinel-tetragon-exec`**（位於 `kube-system`，授予 `pods/exec`）。
+
+:::warning[這個權限的範圍]
+Kubernetes 無法只針對某一種 Pod 授予 exec，因此這是該 Namespace 中**所有 Pod** 的 exec，包含 Tetragon 具特權的 Pod：取得 K8s Sentinel 控制權的人可以藉此進入節點。若不想授予，可以刪除：
+
+```bash
+kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
+```
+
+其餘功能照常運作，這些行程會以 kernel 載入的檔案名稱列出，K8s Sentinel 的 log 會註明。把 profile 轉成白名單之前，請先檢查這些項目。
+:::
+
+- **升級到 v0.79**：需要重新套用 `deploy/sentinel.yaml`，只更新 Image 的話 Role 不存在，名稱會維持原樣。升級前學到的名稱會留在 profile 中，直到 profile 被清除
+- Tetragon 安裝在 `kube-system` 以外的 Namespace 時，請在該 Namespace 建立這組 Role 與 RoleBinding，並刪除 `kube-system` 中的那一組
+- 已知缺口：以 `#!` 行啟動的腳本，在這種情況下會被列為直譯器而不是腳本本身
+- v0.79.1 起，啟動路徑只有在確實指向該行程正在執行的檔案時才會被採用，行程無法讓自己以其他程式的名稱列出；container runtime（`crun`、`/dev/fd/3`）也不再出現在 Pod 的行程中
+
 ---
 
 ## 查看 Behavior Discovery 頁面

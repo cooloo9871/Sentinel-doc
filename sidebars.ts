@@ -110,6 +110,7 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'features/users',
+            'features/namespace-access',
             'features/alerts',
             'features/syslog',
             'features/event-retention',

@@ -24,8 +24,11 @@ Navigate to **"Settings → Users"** to see all current user accounts.
 |---|---|
 | **Username** | The login account name |
 | **Role** | User role (`admin` or `viewer`) |
+| **Namespace badges** | The namespaces an account is limited to, when it is (v0.80+) |
 | **Created date** | When the account was created |
 | **Change Password** | Button to update the account's login password |
+| **Access** | Sets whether the account reaches the whole cluster or selected namespaces (v0.80+), see [Limiting an Account to Namespaces](./namespace-access.md) |
+| **Delete** | Deletes the account |
 
 ---
 
@@ -39,7 +42,7 @@ Password security rules (v0.47+):
 
 - **New passwords must be at least 8 characters** (enforced server-side)
 - **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out (one exception: the forced first-login change screen skips it, v0.58.1)
-- An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same
+- An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same. Since v0.80 it takes an **Admin of the whole cluster**; an Admin limited to namespaces cannot
 - Every password change, including an attempt rejected for a wrong current password, is recorded in the [Audit Log](./audit-log.md)
 
 Also note: the first sign-in with the default `admin` / `admin` **forces a password change** - see [Sign In to K8s Sentinel](../login.md).
@@ -59,6 +62,7 @@ Click **"+ New User"** in the top-right corner to open the new-user page (since 
 | **Username** | ✅ | Login account name - cannot be changed after creation |
 | **Password** | ✅ | Initial password - recommend the user change it after first login |
 | **Role** | ✅ | Select `admin` (full access) or `viewer` (read-only) |
+| **Access** | - | `Whole cluster` (default) or `Selected namespaces` (v0.80+). With the latter, tick the namespaces the account may reach, see [Limiting an Account to Namespaces](./namespace-access.md) |
 
 Click **"Create"** to create the account.
 
@@ -70,6 +74,8 @@ Click **"Create"** to create the account.
 |---|---|
 | **admin** | Full system access - can create, modify, and delete all policies, manage users, and change system settings |
 | **viewer** | Read-only access - can browse all pages and data but cannot add, modify, or delete anything |
+
+Either role can further be limited to selected namespaces (v0.80+); the role still applies inside them. See [Limiting an Account to Namespaces](./namespace-access.md).
 
 ---
 

@@ -27,7 +27,7 @@ Quarantine behaves as follows:
 
 ## Quarantining a Pod
 
-The quarantine action lives on the "**Notifications → Security Events**" page.
+There are two ways in: the detail of a Security Event, and a pod on the Network Topology. Quarantining from the "**Notifications → Security Events**" page comes first.
 
 1. Find the security event for the suspicious behavior and click the row to expand its detail panel
 2. Click the "**Quarantine this pod**" button at the bottom right of the panel
@@ -39,6 +39,18 @@ The quarantine action lives on the "**Notifications → Security Events**" page.
 ![Quarantine confirmation dialog](/img/features/quarantine/confirm-dialog.png)
 
 4. Click "**Quarantine**" to confirm - the Pod is isolated immediately
+
+### Quarantine From the Network Topology (v0.76+)
+
+There is no need to wait for a Security Event to name a pod. Click a pod on the [Network Topology](./network-topology.md) and its **Pod Detail** panel offers the same **Quarantine this pod** button: for a pod seen connecting out, or being reached from outside.
+
+![Pod Detail panel on the Network Topology with the Quarantine this pod button](/img/features/quarantine/topology-quarantine.png)
+
+- It asks first, naming the namespace and pod
+- Once confirmed, the node turns red with a lock at once, and the panel says "This pod is quarantined. Release it from the Quarantine page."
+- Admins only; external addresses and nodes cannot be quarantined
+- An Admin limited to namespaces can quarantine only pods in its own namespaces (see [Limiting an Account to Namespaces](./namespace-access.md))
+- Releasing works as before, see the next section
 
 ---
 

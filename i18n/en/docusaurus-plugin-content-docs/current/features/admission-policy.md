@@ -110,6 +110,10 @@ Pair the ConfigMap / Secret Size rules with an "All except" binding that exclude
 
 **How it works:** K8s Sentinel creates `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding` resources via the Kubernetes API Server. For each resource request matching `matchConstraints`, the API Server evaluates the CEL expression and, based on `failurePolicy`, either rejects or warns.
 
+## An Admin Limited to Namespaces (v0.81+)
+
+An Admin limited to namespaces can make policies and bindings for its own namespaces, and a limited Viewer sees them. Such a policy is marked with the namespaces it is for and held to them (the binding can only be "Only these namespaces", only namespaced resources are matched, and more); see [Limiting an Account to Namespaces](./namespace-access.md).
+
 :::info
 Admission Policy requires Kubernetes 1.26+ with the `ValidatingAdmissionPolicy` feature gate enabled (enabled by default in Kubernetes 1.28+).
 :::

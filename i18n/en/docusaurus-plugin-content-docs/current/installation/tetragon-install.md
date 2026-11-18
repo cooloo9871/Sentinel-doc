@@ -34,6 +34,29 @@ Everything else can stay at defaults: the Kubernetes metadata enrichment K8s Sen
 Off the host network Tetragon starts once the node's CNI is up, so the first seconds of a node's boot are not observed.
 :::
 
+### Nodes on CRI-O (v0.78+)
+
+Nothing extra to set up: install the same way.
+
+On CRI-O with crun, the processes of a container sit in a cgroup one level below the one named after the container, and Tetragon, which reads the pod from that name, reports every event without one. Since v0.78 K8s Sentinel places those processes itself (from the container ID on the command line of the container runtime that started them): Tracing Policies are enforced as on any other runtime, and Behavior Discovery and Security Events name the pod. Nothing changes on containerd.
+
+:::warning[Leave tetragon.cri.enabled and tetragon.cgidmap.enabled off]
+They are Tetragon's own answer to this, and with Tetragon 1.8.0 they place only some processes while stopping Tracing Policies that name a namespace or a pod selector from being enforced **at all**: nothing a policy says to kill is killed.
+
+**The v0.77.0 installers switched them on for CRI-O clusters.** If yours was installed with that release, or you set them by hand, switch them back with the version of the chart that is installed (`helm -n kube-system list`):
+
+```bash
+helm repo update cilium
+helm -n kube-system upgrade tetragon cilium/tetragon --version <installed version> --reuse-values \
+  --set tetragon.cri.enabled=false \
+  --set tetragon.cgidmap.enabled=false
+kubectl -n kube-system rollout status daemonset/tetragon
+kubectl -n sentinel-system rollout restart deployment/sentinel
+```
+
+An offline install made with the v0.77.0 bundle applied `tetragon-crio.yaml`; apply `manifests/tetragon.yaml` from the current bundle over it instead.
+:::
+
 ### Moving an existing Tetragon off the host network
 
 The installers skip Tetragon when its DaemonSet is already present (looked for in every namespace since v0.69, not only `kube-system`), so one installed earlier is still on the host network with its gRPC port open to the cluster.

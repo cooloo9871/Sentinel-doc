@@ -23,6 +23,7 @@ What it removes:
 - Trivy Operator with its Trivy server
 - Tetragon (including the NetworkPolicy `tetragon-grpc`)
 - What the installer Job left in `kube-system`
+- The Role and RoleBinding `sentinel-tetragon-exec` (v0.79.1+). If you uninstalled v0.79.0 with the earlier script, remove them by hand: `kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec`. Left behind, they would give exec in the Tetragon namespace to whoever next created a ServiceAccount of the same name
 - The object K8s Sentinel keeps its scan results in, `sentinel-vulnerability-gate` (since v0.69 removed only after K8s Sentinel is gone)
 - **The quarantine policy and the quarantine labels on Pods**: a pod left isolated with no K8s Sentinel to release it would stay that way
 
