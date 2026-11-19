@@ -111,6 +111,12 @@ Cilium 中只要某方向存在 allow 規則，該 Endpoint 在該方向就進�
 
 Policy 的作用範圍由 manifest 的 `kind` 決定：`CiliumNetworkPolicy` 為 Namespace 層級，`CiliumClusterwideNetworkPolicy` 為叢集層級。完成後點擊「**Apply**」套用。
 
+v0.81.3 起，以已存在的名稱從 YAML 建立 Policy 會被拒絕，不會覆蓋既有的 Policy。
+
+:::note[隔離用的 Policy 在列表中為唯讀（v0.82.1+）]
+[Quarantine](./quarantine.md) 使用的 `sentinel-quarantine` 會出現在 Network Policy 列表中，但只能查看，不能從這裡編輯。否則只有 Network Policy 管理權限、沒有 Quarantine 權限的帳號可以修改它，讓所有被隔離的 Pod 恢復連線，而頁面仍顯示它們處於隔離狀態。
+:::
+
 ---
 
 :::info

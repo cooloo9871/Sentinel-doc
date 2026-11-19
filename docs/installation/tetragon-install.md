@@ -40,6 +40,14 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 
 在 CRI-O 搭配 crun 的節點上，容器內的行程位於比容器名稱低一層的 cgroup，而 Tetragon 是從 cgroup 名稱判斷 Pod，因此回報的每一個事件都沒有 Pod 資訊。v0.78 起，K8s Sentinel 會自行判斷這些行程屬於哪個 Pod（依據啟動它們的 container runtime 命令列上的容器 ID），Tracing Policy 與其他 runtime 一樣生效，Behavior Discovery 與 Security Events 也會顯示 Pod。使用 containerd 的節點沒有任何改變。
 
+v0.82.1 修正了 CRI-O 上的幾個情況：
+
+- 透過 `$(...)`、subshell 或背景 fork 執行的指令，現在會歸屬到正確的 Pod。先前在 Tetragon 無法辨識 Pod 的節點（CRI-O 搭配 crun）上，這些指令在 Security Events 中沒有 Pod 資訊，因此被限制在部分 Namespace 的帳號看不到，依 Namespace 篩選的 Alert 也不會收到
+- CRI-O 搭配 runc 時，runtime 啟動自己的封存副本（`/proc/self/fd/N`）不再被列為 Pod 執行的程式
+- K8s Sentinel 在 Tetragon agent 中執行的指令（用來取得行程的啟動路徑）不再出現在 Security Events，這在所有 runtime 上都適用
+
+已知限制：K8s Sentinel 剛啟動或重新連上 agent 的前幾秒，事件仍可能沒有 Pod 資訊。上游的量測環境為 CRI-O 1.37（crun 與 runc）、Tetragon 1.8.0、cgroup v2。
+
 :::warning[請保持 tetragon.cri.enabled 與 tetragon.cgidmap.enabled 關閉]
 這兩個設定是 Tetragon 自己對這個問題的解法，但在 Tetragon 1.8.0 上只能判斷部分行程，而且會讓指定 Namespace 或 Pod selector 的 Tracing Policy **完全不生效**：Policy 要求終止的行程不會被終止。
 

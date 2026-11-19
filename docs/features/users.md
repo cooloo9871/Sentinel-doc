@@ -23,11 +23,11 @@ sidebar_position: 13
 | 欄位 | 說明 |
 |---|---|
 | **使用者名稱** | 登入用的帳號名稱 |
-| **角色** | 使用者角色（`admin` 或 `viewer`） |
+| **角色** | 帳號的角色：內建的 `Admin`、`Viewer`，或自訂角色（v0.82+），見 [角色與權限](./roles.md) |
 | **Namespace 標籤** | 帳號被限制在指定 Namespace 時，顯示這些 Namespace（v0.80+） |
 | **建立日期** | 帳號建立時間 |
 | **Change Password** | 修改該帳號的登入密碼 |
-| **Access** | 設定該帳號可存取整個叢集或指定的 Namespace（v0.80+），見 [依 Namespace 限制帳號存取](./namespace-access.md) |
+| **Access** | 變更該帳號的角色（v0.82+），以及設定它可存取整個叢集或指定的 Namespace（v0.80+），見 [依 Namespace 限制帳號存取](./namespace-access.md) |
 | **Delete** | 刪除該帳號 |
 
 ---
@@ -61,7 +61,7 @@ sidebar_position: 13
 |---|---|---|
 | **Username** | ✅ | 登入帳號名稱，建立後不可修改 |
 | **Password** | ✅ | 初始密碼，建議建立後由使用者自行變更 |
-| **Role** | ✅ | 選擇角色：`admin`（完整存取權限）或 `viewer`（唯讀存取） |
+| **Role** | ✅ | 從下拉選單選擇角色：`Admin`、`Viewer`，或在 Settings → Roles 建立的自訂角色（v0.82+）。預設為 `Viewer` |
 | **Access** | - | `Whole cluster`（預設）或 `Selected namespaces`（v0.80+）。選擇後者時勾選該帳號可存取的 Namespace，見 [依 Namespace 限制帳號存取](./namespace-access.md) |
 
 填寫完成後點擊「**Create**」建立帳號。
@@ -73,9 +73,20 @@ sidebar_position: 13
 | 角色 | 說明 |
 |---|---|
 | **admin** | 完整的系統存取與管理權限，可建立/修改/刪除所有 Policy、管理使用者、修改系統設定 |
-| **viewer** | 唯讀存取，可瀏覽所有頁面與資料，但無法進行任何新增、修改或刪除操作 |
+| **viewer** | 唯讀存取，可瀏覽 Policy、事件與弱點等頁面，但無法進行任何新增、修改或刪除操作，也看不到 Alerts、Syslog 與 Settings |
 
-兩種角色都可以再被限制在指定的 Namespace 內（v0.80+），角色在這些 Namespace 中仍然有效，見 [依 Namespace 限制帳號存取](./namespace-access.md)。
+v0.82.0 起，除了這兩個內建角色，還可以在「**Settings → Roles**」建立自訂角色，對產品的每個部分分別授予 None、View 或 Manage，見 [角色與權限](./roles.md)。
+
+### 變更帳號的角色（v0.82+）
+
+在使用者列表點擊該帳號的「**Access**」，於 **Role** 下拉選單選擇新的角色後按「**Save**」。變更立即生效，包含該帳號已經開啟的 Session。
+
+![Access 對話框](/img/features/users/access-dialog.png)
+
+- 管理帳號（建立、刪除、變更角色、重設密碼）需要 System 的 Manage 權限
+- 最後一個「角色為 Admin 且存取整個叢集」的帳號不能被刪除、改成其他角色或限制在部分 Namespace
+
+任何角色都可以再被限制在指定的 Namespace 內（v0.80+），角色在這些 Namespace 中仍然有效，見 [依 Namespace 限制帳號存取](./namespace-access.md)。
 
 ---
 

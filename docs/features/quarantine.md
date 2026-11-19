@@ -20,7 +20,7 @@ Quarantine 的運作方式如下：
 
 - **除 kubelet 健康檢查外，所有進出流量一律封鎖**。保留健康檢查是刻意的設計：若健康檢查也被擋下，kubelet 會重啟 Pod 並以全新（未被隔離）的副本取代，反而讓證據消失、威脅重新取得網路。
 - **隔離狀態記錄在 Pod 的 `sentinel.io/quarantine=true` Label 上**，因此即使 K8s Sentinel 重啟，隔離狀態依然存在。
-- 隔離由一條叢集層級的 Cilium Policy **`sentinel-quarantine`** 實現，它以上述 Label 選取目標 Pod。此 Policy 會在第一次執行隔離時自動建立。
+- 隔離由一條叢集層級的 Cilium Policy **`sentinel-quarantine`** 實現，它以上述 Label 選取目標 Pod。此 Policy 會在第一次執行隔離時自動建立。v0.82.1 起，它在 Network Policy 列表中為唯讀，不能從那裡編輯。
 - **若 Pod 被刪除重建，新 Pod 不會帶有隔離 Label**，也就不再受隔離限制。若威脅可能隨工作負載重建復發，請搭配其他 Policy 進行防護。
 
 ---
@@ -48,7 +48,7 @@ Quarantine 的運作方式如下：
 
 - 會先以確認對話框詢問，並列出 Namespace 與 Pod 名稱
 - 確認後節點立即變成紅框並帶鎖頭圖示，面板顯示「This pod is quarantined. Release it from the Quarantine page.」
-- 僅 Admin 可見；外部位址與 Node 無法隔離
+- 需要 Quarantine 的 Manage 權限（內建的 Admin，或 v0.82 起具有該權限的自訂角色，見 [角色與權限](./roles.md)）；外部位址與 Node 無法隔離
 - 被限制在部分 Namespace 的 Admin 只能隔離自己 Namespace 中的 Pod（見 [依 Namespace 限制帳號存取](./namespace-access.md)）
 - 解除隔離的方式不變，見下一節
 

@@ -33,6 +33,15 @@ Most upgrades require re-applying `deploy/sentinel.yaml`. If you changed the Dep
 Applied as it comes, the data volume goes back to `emptyDir`, which is an empty K8s Sentinel with only the `admin` / `admin` account, and an audit webhook token set in the file is dropped. Changes made with `kubectl set env` or `kubectl patch`, and a `clusterIP` you chose, are kept.
 :::
 
+:::caution[Upgrading to v0.81.2 through v0.82]
+These releases need only the new image and no manifest re-applied, but behaviour changes:
+
+- **v0.81.3 removes Global Protect Mode**: Protect is turned on one Tracing Policy at a time, and **Set all to Monitoring** sets them all back at once, see [Execution Mode](../features/execution-mode.md). `GET /api/mode` now returns `{"protect": n, "total": m}` and `PUT /api/mode` accepts only `Monitoring`; scripts calling them need adjusting
+- **v0.82.0 adds roles of your own**: existing Admin and Viewer accounts need no change. Roles made here are kept in `roles.json` in the data directory and need [Persistent Storage](./persistent-storage.md) to survive a restart, see [Roles and Permissions](../features/roles.md)
+- Since v0.82.0 every API route checks the role for reads as well. The built-in Viewer can no longer read `GET /api/alerts`, `GET /api/rsyslog` or `GET /api/settings/session-ttl` directly
+- Since v0.81.2 and v0.81.3, creating an Admission Policy, a binding, or a Network Policy from YAML under a name that already exists is refused instead of replacing the existing object
+:::
+
 :::caution[Upgrading to v0.76 through v0.81]
 - **v0.79 needs `deploy/sentinel.yaml` re-applied**: it adds the Role and RoleBinding `sentinel-tetragon-exec` in `kube-system`, which lets Behavior Discovery list processes that were already running by the path they were started by. It is `pods/exec` in Tetragon's namespace and you can do without it, see [Behavior Discovery](../features/behavior-discovery.md)
 - **CRI-O clusters installed with v0.77.0**: two Tetragon settings have to be switched off, or Tracing Policies that name a namespace are not enforced, see [Installing Tetragon](./tetragon-install.md)

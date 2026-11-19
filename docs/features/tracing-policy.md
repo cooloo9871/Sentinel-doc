@@ -79,19 +79,12 @@ K8s Sentinel 提供兩種建立方式：
 
 ---
 
-## 切換 Global Protect Mode
+## 一次全部切回 Monitoring
 
-TracingPolicy 頁面頂部包含一個 **Global Protect Mode** banner，可一次性切換叢集內所有 Policy 的執行模式。
+v0.81.3 起 Global Protect Mode 已移除：Protect 只能在列表的 **Mode** 欄位逐一為每個 Policy 開啟。
 
-![Global Protect Mode 切換區](/img/features/mode/monitoring.png)
+只要有任何 Policy 處於 Protect，列表右上角就會出現「**Set all to Monitoring**」按鈕，可以一次停止所有 Policy 的阻擋。頁首則會顯示有幾個 Policy 處於 Protect（例如 `2 / 4 in Protect`）。
 
-| 狀態 | Banner 文字 | 說明 |
-|---|---|---|
-| **OFF（預設）** | "Protect mode is off - monitoring only, no blocking" | 所有 Policy 僅記錄事件，不阻擋行為 |
-| **ON** | "Protect mode is on - all policies are enforcing" | 所有 Policy 同時進入 Protect 模式 |
+![Set all to Monitoring 確認對話框](/img/features/mode/set-all-monitoring.png)
 
-點擊「**Turn On**」後，K8s Sentinel 後端批次更新叢集內所有 TracingPolicy 的 `mode` 欄位為 `Protect`；再次點擊「**Turn Off**」則批次還原為 `Monitoring`。
-
-:::warning
-開啟 Global Protect Mode 前，請確認所有 Policy 規則已充分驗證。若 Whitelist 遺漏必要的執行路徑，切換後可能導致正常服務被阻擋。建議先逐條 Policy 切換確認無誤，再啟用全域切換。
-:::
+詳見 [執行模式切換](./execution-mode.md)。

@@ -18,7 +18,7 @@ Navigate to **"Settings → Alerts"** to see all configured alert rules.
 
 ![Alerts page](/img/features/alerts/overview.png)
 
-Since v0.64, Viewers and the log see only the **host** of a webhook URL; the full URL (including any token in it) is visible to Admins only.
+Since v0.64, Viewers and the log see only the **host** of a webhook URL; the full URL (including any token in it) is visible to Admins only. Since v0.82.0 Alerts and Syslog need the Notifications permission, and the built-in Viewer cannot read them through the API either, see [Roles and Permissions](./roles.md).
 
 ---
 

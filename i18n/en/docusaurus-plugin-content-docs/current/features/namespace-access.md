@@ -10,7 +10,7 @@ sidebar_position: 14
 
 Since v0.80.0 an account can be limited to some namespaces: it sees and manages only what is in them. This can be set when the account is created or later; accounts you already have keep the whole cluster.
 
-The role still applies inside the namespaces: a **limited Admin** creates and edits there, a **limited Viewer** reads.
+The role still applies inside the namespaces: a **limited Admin** creates and edits there, a **limited Viewer** reads. The same holds for the roles of your own since v0.82.0: inside its namespaces a limited account creates and edits what its role manages and reads what its role views, see [Roles and Permissions](./roles.md). Where this page says "limited Admin", with a role of your own it means a limited account whose role has Manage on that area.
 
 :::info[A division of work inside a team, not isolation between tenants]
 The limit is enforced by the server on **every request and event stream**, not by hiding pages. But the Network Topology shows the names of every namespace and workload, so this is suited to dividing work inside a team, not to isolating tenants that do not trust each other.
@@ -47,13 +47,14 @@ In the user list, click **Access** on the account, choose **Whole cluster** or *
 | **Network Topology** | Whole, since a connection has two ends and the far one is seldom its own. Quarantine from the topology works on its own pods only |
 | **Templates** | Read, and used to make policies. Adding, editing and deleting templates is for an Admin of the whole cluster, since they are shared by everyone |
 | **Admission Policy** | Since v0.81.0 a limited Admin makes policies and bindings for its own namespaces; see the next section |
-| **Registries**, **Event Sources**, **Audit Log**, all of **Settings**, the global Protect mode | Hidden, and refused by the API |
+| **Registries**, **Event Sources**, **Audit Log**, all of **Settings**, the **Set all to Monitoring** button on the Tracing Policy list | Hidden, and refused by the API. Notifications (Alerts, Syslog) and System belong to the cluster and stay out of reach of a limited account whatever its role |
 
 Further notes:
 
 - An event caused by a cluster-wide policy on one of its pods **is shown**, with the policy's name
-- A limited account's sidebar holds only Dashboard, Network Topology, Vulnerabilities → Workloads, Policies and Notifications (Security Events, Admission Events); the header does not show the global mode badge either
+- A limited account's sidebar holds only Dashboard, Network Topology, Vulnerabilities → Workloads, Policies and Notifications (Security Events, Admission Events); the header does not show the "N / M in Protect" badge either. Since v0.82.0, entries the role cannot view are absent as well
 - Opening the address of a hidden page directly sends a limited account back to the Dashboard
+- Since v0.81.2 the namespace filter on the Tracing Policy and Network Policy lists no longer offers `Cluster-wide` to a limited account
 
 ---
 
@@ -99,4 +100,4 @@ Not new, and not changed here: a binding an Admin of the whole cluster limits to
 ## Known Limits
 
 - A limited account does not see the event source warnings on the Dashboard
-- Upgrading to v0.80 or v0.81 needs nothing beyond the new image; no manifest has to be re-applied
+- Upgrading to v0.80, v0.81 or v0.82 needs nothing beyond the new image; no manifest has to be re-applied

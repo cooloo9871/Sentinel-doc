@@ -29,6 +29,10 @@ Admission Policy 頁面分為兩個標籤頁：
 
 ![建立 Admission Policy 表單](/img/features/admission-policy/new-form.png)
 
+:::note[名稱已存在時會被拒絕（v0.81.2+）]
+以已存在的名稱建立 Policy 或 Binding 會被拒絕，訊息為 `An admission policy named "..." already exists. Choose another name.`（Binding 則為 `A binding named ...`），不再直接覆蓋既有的物件。從列表編輯既有的 Policy 不受影響。
+:::
+
 ### 支援的規則類型
 
 K8s Sentinel 提供十四種內建規則類型，從「**Rule Type**」下拉選單選擇（v0.66.1 起由一排按鈕改為下拉選單）：

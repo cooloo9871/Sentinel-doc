@@ -37,26 +37,23 @@ Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重�
 
 ---
 
-## 方法三：Global Protect Mode（全域切換）
+## 一次全部切回 Monitoring
 
-除了逐一切換個別 Policy 的模式外，K8s Sentinel 提供 **Global Protect Mode** 功能，可一鍵將叢集內所有 TracingPolicy 同時切換執行模式。
+v0.81.3 起，**Global Protect Mode 已移除**：Protect 只能逐一為每個 Policy 開啟（方法一或方法二），不再有把所有 Policy 一次切換成 Protect 的開關。
 
-Global Protect Mode 的切換 banner 位於 **Tracing Policy 列表頁頂部**。
+相反的方向仍然可以一次完成。只要有任何 Policy 處於 Protect，Tracing Policy 列表右上角就會出現「**Set all to Monitoring**」按鈕，用來立刻停止所有 Policy 的阻擋：
 
-![Global Protect Mode 切換 banner](/img/features/mode/monitoring.png)
+![Set all to Monitoring 確認對話框](/img/features/mode/set-all-monitoring.png)
 
-### 開啟 Global Protect Mode
+確認後，叢集內所有 TracingPolicy 與 TracingPolicyNamespaced 都會改為 Monitoring。違規行為仍會被記錄，只是不再被阻擋；要恢復阻擋，需要再逐一把 Policy 切回 Protect。這個操作會記錄在 [Audit Log](./audit-log.md)。
 
-點擊 banner 右側的「**Turn On**」按鈕。
+- 這個按鈕需要 Tracing Policy 的 Manage 權限（見 [角色與權限](./roles.md)），被限制在部分 Namespace 的帳號不會看到
+- 頁首的標示與 Dashboard 的 **Policies in Protect** 卡片會顯示有幾個 Policy 處於 Protect，例如 `2 / 4 in Protect`
 
-K8s Sentinel 後端會查詢叢集內所有 TracingPolicy 與 TracingPolicyNamespaced 資源，並批次將每一條 Policy 的 `mode` 欄位更新為 `Protect`。Tetragon Agent 監聽到 CRD 變更後立即重新載入規則並生效，無需重啟 Agent。
-
-### 關閉 Global Protect Mode
-
-點擊 banner 右側的「**Turn Off**」按鈕。
-
-K8s Sentinel 後端批次將所有 TracingPolicy 的 `mode` 欄位還原為 `Monitoring`，Tetragon Agent 立即切回僅記錄模式，停止阻擋任何行為。
+:::note[沒有條件的 Policy 不會進入 Protect]
+selector 沒有任何條件的 Policy（例如「Monitor All Process Executions」範本，回報每一次呼叫）即使設為 Protect 也會維持 Monitoring，因為對每一次呼叫都執行終止，會停止所選 Pod 中的所有行程。
+:::
 
 :::warning
-開啟 Global Protect Mode 之前，請務必確認叢集內所有 TracingPolicy 的規則已充分驗證。若規則設定有誤（例如 Whitelist 遺漏了必要的執行檔路徑），切換至 Protect 模式後可能導致正常的業務流量或關鍵服務被阻擋，造成服務中斷。建議先在測試環境驗證，或使用方法一逐條 Policy 切換確認無誤後，再啟用全域切換。
+把 Policy 切換為 Protect 之前，請確認它的規則已充分驗證。若規則設定有誤（例如 Whitelist 遺漏了必要的執行檔路徑），切換後可能導致正常的服務被阻擋。建議先以 Monitoring 觀察一段時間，確認沒有誤判後再切換。
 :::

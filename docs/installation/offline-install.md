@@ -47,12 +47,12 @@ Registry 中缺少 Trivy 的兩個資料庫時，K8s Sentinel 仍可安裝並正
 
 ## 步驟一：在可連網的機器上下載並儲存 Image
 
-從 release 頁面下載離線套件（以下以 v0.81.1 為例，請換成要安裝的版本）：
+從 release 頁面下載離線套件（以下以 v0.82.1 為例，請換成要安裝的版本）：
 
 ```bash
-curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.81.1/sentinel-offline-v0.81.1.tar.gz
-tar xzf sentinel-offline-v0.81.1.tar.gz
-cd sentinel-offline-v0.81.1
+curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.82.1/sentinel-offline-v0.82.1.tar.gz
+tar xzf sentinel-offline-v0.82.1.tar.gz
+cd sentinel-offline-v0.82.1
 bash mirror-images.sh save        # 約 2 GB，存入 ./images
 ```
 
@@ -67,10 +67,10 @@ bash mirror-images.sh save        # 約 2 GB，存入 ./images
 | `manifests/` | `sentinel.yaml`、`tetragon.yaml`、`tetragon-grpc-policy.yaml`、`trivy-operator.yaml`、`trivy-operator-crds.yaml`（v0.75+） |
 | `VERSION` | 套件版本 |
 
-以 v0.81.1 為例，`images.txt` 列出的內容為：
+以 v0.82.1 為例，`images.txt` 列出的內容為：
 
 ```text
-ghcr.io/cooloo9871/sentinel:v0.81.1
+ghcr.io/cooloo9871/sentinel:v0.82.1
 mirror.gcr.io/aquasec/trivy:0.76.1
 mirror.gcr.io/aquasec/trivy-operator:0.36.1
 quay.io/cilium/hubble-export-stdout:v1.1.1
@@ -108,7 +108,7 @@ bash mirror-images.sh push harbor.example.com/sentinel --insecure-registry
 | 原始位置 | 推送後的位置 |
 |---|---|
 | `quay.io/cilium/tetragon:v1.8.0` | `harbor.example.com/sentinel/cilium/tetragon:v1.8.0` |
-| `ghcr.io/cooloo9871/sentinel:v0.81.1` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.81.1` |
+| `ghcr.io/cooloo9871/sentinel:v0.82.1` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.82.1` |
 | `mirror.gcr.io/aquasec/trivy-db:2` | `harbor.example.com/sentinel/aquasec/trivy-db:2` |
 
 同一台機器若能同時連到網際網路與 Registry，可以一次完成：
@@ -222,7 +222,7 @@ bash uninstall.sh
 需要自行產生離線套件時（例如尚未發佈的版本），可在可連網且有 Helm 的機器上，於 K8s Sentinel 原始碼目錄執行：
 
 ```bash
-bash deploy/offline/build.sh v0.81.1
+bash deploy/offline/build.sh v0.82.1
 ```
 
 產出的兩個檔案位於 `dist/`。Tetragon 與 Trivy Operator 的 chart 版本定義在 `deploy/offline/versions.env`。

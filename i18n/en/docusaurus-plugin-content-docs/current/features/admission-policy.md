@@ -29,6 +29,10 @@ Click **"+ New Policy"** in the top-right corner to open the visual builder.
 
 ![Create Admission Policy form](/img/features/admission-policy/new-form.png)
 
+:::note[A taken name is refused (v0.81.2+)]
+Creating a policy or a binding under a name that already exists is refused with `An admission policy named "..." already exists. Choose another name.` (or `A binding named ...`) instead of replacing the existing one without a prompt. Editing an existing policy from the list is unchanged.
+:::
+
 ### Supported Rule Types
 
 K8s Sentinel provides fourteen built-in rule types, chosen from the **Rule Type** dropdown (a dropdown instead of a row of buttons since v0.66.1):

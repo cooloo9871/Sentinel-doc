@@ -18,7 +18,7 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ![Alerts 頁面](/img/features/alerts/overview.png)
 
-v0.64 起，Viewer 角色與系統 log 只會看到 Webhook URL 的**主機名稱**，完整 URL（含其中的 token）僅 Admin 可見。
+v0.64 起，Viewer 角色與系統 log 只會看到 Webhook URL 的**主機名稱**，完整 URL（含其中的 token）僅 Admin 可見。v0.82.0 起，Alerts 與 Syslog 需要 Notifications 權限，內建的 Viewer 連 API 也無法讀取，見 [角色與權限](./roles.md)。
 
 ---
 

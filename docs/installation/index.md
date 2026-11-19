@@ -33,6 +33,15 @@ K8s Sentinel 提供三種安裝方式，可依據使用場景與需求選擇最�
 直接套用原始檔案時，資料 volume 會回到 `emptyDir`，也就是一個只有 `admin` / `admin` 帳號的全新 K8s Sentinel，檔案中設定的 audit webhook token 也會消失。以 `kubectl set env` 或 `kubectl patch` 做的修改，以及你自行指定的 `clusterIP`，則會保留。
 :::
 
+:::caution[升級到 v0.81.2 到 v0.82]
+這幾個版本只需要更新 Image，不需要重新套用 manifest，但行為有以下改變：
+
+- **v0.81.3 移除 Global Protect Mode**：Protect 只能逐一為每個 Tracing Policy 開啟，「Set all to Monitoring」可以一次全部切回 Monitoring，見 [執行模式切換](../features/execution-mode.md)。`GET /api/mode` 改為回傳 `{"protect": n, "total": m}`，`PUT /api/mode` 只接受 `Monitoring`；若有腳本呼叫這兩個 API 需要調整
+- **v0.82.0 新增自訂角色**：既有的 Admin 與 Viewer 帳號不需要調整。自訂角色存放在資料目錄的 `roles.json`，需要 [持久化儲存](./persistent-storage.md) 才能在重啟後保留，見 [角色與權限](../features/roles.md)
+- v0.82.0 起，每一個 API 的讀取也會檢查角色。內建的 Viewer 不能再直接讀取 `GET /api/alerts`、`GET /api/rsyslog` 與 `GET /api/settings/session-ttl`
+- v0.81.2 與 v0.81.3 起，以已存在的名稱建立 Admission Policy、Binding 或以 YAML 建立 Network Policy 會被拒絕，不再覆蓋既有的物件
+:::
+
 :::caution[升級到 v0.76 到 v0.81]
 - **v0.79 需要重新套用 `deploy/sentinel.yaml`**：新增 `kube-system` 中的 Role 與 RoleBinding `sentinel-tetragon-exec`，讓 Behavior Discovery 以啟動路徑列出原本就在執行的行程。這是 Tetragon 所在 Namespace 的 `pods/exec` 權限，可以選擇不授予，見 [Behavior Discovery](../features/behavior-discovery.md)
 - **使用 CRI-O 且以 v0.77.0 安裝的叢集**：需要關閉兩個 Tetragon 設定，否則指定 Namespace 的 Tracing Policy 不會生效，見 [安裝 Tetragon](./tetragon-install.md)

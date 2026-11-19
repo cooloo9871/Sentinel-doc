@@ -23,7 +23,7 @@ Navigate to **"Settings → Users"** to see all current user accounts.
 | Column | Description |
 |---|---|
 | **Username** | The login account name |
-| **Role** | User role (`admin` or `viewer`) |
+| **Role** | The account's role: the built-in `Admin` or `Viewer`, or a role of your own (v0.82+), see [Roles and Permissions](./roles.md) |
 | **Namespace badges** | The namespaces an account is limited to, when it is (v0.80+) |
 | **Created date** | When the account was created |
 | **Change Password** | Button to update the account's login password |
@@ -61,7 +61,7 @@ Click **"+ New User"** in the top-right corner to open the new-user page (since 
 |---|---|---|
 | **Username** | ✅ | Login account name - cannot be changed after creation |
 | **Password** | ✅ | Initial password - recommend the user change it after first login |
-| **Role** | ✅ | Select `admin` (full access) or `viewer` (read-only) |
+| **Role** | ✅ | Choose the role from the select: `Admin`, `Viewer`, or a role made under Settings → Roles (v0.82+). The default is `Viewer` |
 | **Access** | - | `Whole cluster` (default) or `Selected namespaces` (v0.80+). With the latter, tick the namespaces the account may reach, see [Limiting an Account to Namespaces](./namespace-access.md) |
 
 Click **"Create"** to create the account.
@@ -73,9 +73,20 @@ Click **"Create"** to create the account.
 | Role | Description |
 |---|---|
 | **admin** | Full system access - can create, modify, and delete all policies, manage users, and change system settings |
-| **viewer** | Read-only access - can browse all pages and data but cannot add, modify, or delete anything |
+| **viewer** | Read-only access - can browse policies, events and vulnerabilities but cannot add, modify, or delete anything, and does not see Alerts, Syslog or Settings |
 
-Either role can further be limited to selected namespaces (v0.80+); the role still applies inside them. See [Limiting an Account to Namespaces](./namespace-access.md).
+Since v0.82.0 you can also make roles of your own under **Settings → Roles**, granting each part of the product separately at None, View or Manage. See [Roles and Permissions](./roles.md).
+
+### Changing an Account's Role (v0.82+)
+
+Click **Access** on the account's row, choose the new role in the **Role** select and click **Save**. It takes effect at once, in sessions the account already has open too.
+
+![Access dialog](/img/features/users/access-dialog.png)
+
+- Managing accounts (creating, deleting, changing roles, resetting passwords) needs Manage on System
+- The last account with the Admin role and the whole cluster cannot be deleted, given another role or limited to namespaces
+
+Any role can further be limited to selected namespaces (v0.80+); the role still applies inside them. See [Limiting an Account to Namespaces](./namespace-access.md).
 
 ---
 

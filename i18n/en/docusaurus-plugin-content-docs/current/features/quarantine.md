@@ -20,7 +20,7 @@ Quarantine behaves as follows:
 
 - **All traffic in and out is blocked, except the kubelet's health probes.** Keeping the probes alive is deliberate - without them the Pod would be restarted and replaced by a fresh, uncontained one, destroying the evidence and giving the threat its network back.
 - **The state is the Pod's `sentinel.io/quarantine=true` label**, so it survives a K8s Sentinel restart.
-- Isolation is enforced by one cluster-wide Cilium policy, **`sentinel-quarantine`**, which selects that label. It is created the first time it is needed.
+- Isolation is enforced by one cluster-wide Cilium policy, **`sentinel-quarantine`**, which selects that label. It is created the first time it is needed. Since v0.82.1 it is read-only in the Network Policy list and cannot be edited from there.
 - **A Pod that is deleted and recreated comes back without the label**, and so without the quarantine. If the threat may return with the recreated workload, combine quarantine with other policies.
 
 ---
@@ -48,7 +48,7 @@ There is no need to wait for a Security Event to name a pod. Click a pod on the 
 
 - It asks first, naming the namespace and pod
 - Once confirmed, the node turns red with a lock at once, and the panel says "This pod is quarantined. Release it from the Quarantine page."
-- Admins only; external addresses and nodes cannot be quarantined
+- It needs Manage on Quarantine (the built-in Admin, or since v0.82 a role of your own that has it, see [Roles and Permissions](./roles.md)); external addresses and nodes cannot be quarantined
 - An Admin limited to namespaces can quarantine only pods in its own namespaces (see [Limiting an Account to Namespaces](./namespace-access.md))
 - Releasing works as before, see the next section
 

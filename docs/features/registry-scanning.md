@@ -107,7 +107,7 @@ Registries 列表欄位為 `Registry`、`Filters`、`Schedule`、`Last scan`、`
 - **認證資訊**與其他設定一起存放在 K8s Sentinel 的資料目錄，不會回傳給瀏覽器。掃描 Pod 從一個只為該 Pod 存在的 Secret 讀取認證，且只作為該 Registry 主機的登入資訊，因此密碼不會寫進 Job，也不會被送往 Trivy 下載資料庫的 Registry
 - 修改 Registry 的 **URL** 時需要重新輸入密碼，避免已儲存的密碼被導向另一台主機
 - **設定與掃描結果存放在資料目錄**（`registries.json` 與 `registry-scans/`）。掛載永久儲存時重啟後仍保留；使用預設 `emptyDir` 時，重啟會清空 Registry 設定與結果，見 [設定永久儲存](../installation/persistent-storage.md)
-- **權限**：Viewer 可以查看結果；新增、編輯、刪除與啟動掃描僅限 Admin，且都會記錄在 [Audit Log](./audit-log.md)
+- **權限**：角色對 Vulnerabilities 有 View 權限即可查看結果；新增、編輯、刪除與啟動掃描需要 Manage 權限（見 [角色與權限](./roles.md)），且都會記錄在 [Audit Log](./audit-log.md)
 
 ---
 

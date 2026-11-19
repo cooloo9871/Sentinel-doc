@@ -40,6 +40,14 @@ Nothing extra to set up: install the same way.
 
 On CRI-O with crun, the processes of a container sit in a cgroup one level below the one named after the container, and Tetragon, which reads the pod from that name, reports every event without one. Since v0.78 K8s Sentinel places those processes itself (from the container ID on the command line of the container runtime that started them): Tracing Policies are enforced as on any other runtime, and Behavior Discovery and Security Events name the pod. Nothing changes on containerd.
 
+v0.82.1 fixes several cases on CRI-O:
+
+- Commands run through `$(...)`, a subshell or a background fork are now attributed to their pod. On a node where Tetragon names no pod (CRI-O with crun) they used to be listed in Security Events with no pod at all, which also hid them from accounts limited to a namespace and from alerts filtered by namespace
+- On CRI-O with runc, the runtime starting its own sealed copy (`/proc/self/fd/N`) is no longer listed as something the pod ran
+- The commands K8s Sentinel runs inside the Tetragon agent (to learn what each process was started by) no longer show up as Security Events, on every runtime
+
+Known limit: an event may still arrive without a pod in the first seconds after K8s Sentinel starts or reconnects to an agent. Upstream measured this on CRI-O 1.37 with crun and with runc, Tetragon 1.8.0, cgroup v2.
+
 :::warning[Leave tetragon.cri.enabled and tetragon.cgidmap.enabled off]
 They are Tetragon's own answer to this, and with Tetragon 1.8.0 they place only some processes while stopping Tracing Policies that name a namespace or a pod selector from being enforced **at all**: nothing a policy says to kill is killed.
 

@@ -37,33 +37,23 @@ After changing the mode, click **"Apply"**. The Tetragon Agent applies the chang
 
 ---
 
-## Method 3: Global Protect Mode (Bulk Switch)
+## Setting Everything Back to Monitoring
 
-In addition to switching individual Policy modes one by one, K8s Sentinel provides a **Global Protect Mode** feature that switches all TracingPolicies in the cluster to the same execution mode with one click.
+Since v0.81.3 **Global Protect Mode is removed**: Protect is turned on one policy at a time (Method 1 or 2), and there is no longer a switch that puts every policy into Protect at once.
 
-The Global Protect Mode toggle banner is located at the **top of the TracingPolicy list page**.
+The other direction can still be done in one step. While any policy is in Protect, the Tracing Policy list shows a **Set all to Monitoring** button at the top right, which stops every policy blocking at once:
 
-![Global Protect Mode toggle banner](/img/features/mode/monitoring.png)
+![Set all to Monitoring confirmation dialog](/img/features/mode/set-all-monitoring.png)
 
-| State | Banner Text |
-|---|---|
-| **OFF (default)** | "Protect mode is off - monitoring only, no blocking" |
-| **ON** | "Protect mode is on - all policies are enforcing" |
+Once confirmed, every TracingPolicy and TracingPolicyNamespaced in the cluster is set to Monitoring. Violations are still recorded, only no longer blocked; to block again, Protect has to be turned back on one policy at a time. The change is recorded in the [Audit Log](./audit-log.md).
 
-### Enable Global Protect Mode
+- The button needs Manage on Tracing Policy (see [Roles and Permissions](./roles.md)) and is not shown to an account limited to namespaces
+- The badge in the header and the **Policies in Protect** card on the Dashboard show how many policies are in Protect, for example `2 / 4 in Protect`
 
-**Action:** Click the **"Turn On"** button on the banner.
-
-**How it works:** The K8s Sentinel backend queries all TracingPolicy and TracingPolicyNamespaced resources in the cluster and batch-updates each Policy's `mode` field to `Protect`. The Tetragon Agent, upon detecting the CRD resource change event, immediately reloads the rules - no Agent restart required.
-
-### Disable Global Protect Mode
-
-**Action:** Click the **"Turn Off"** button on the banner.
-
-**How it works:** K8s Sentinel batch-reverts all TracingPolicy `mode` fields in the cluster to `Monitoring`. After the Tetragon Agent receives the update, it immediately switches back to record-only mode and stops blocking all behavior.
-
----
+:::note[A policy with no conditions does not go into Protect]
+A policy whose selector has no conditions (the shape of the "Monitor All Process Executions" template, which reports every call) stays in Monitoring when set to Protect, because killing on every call would stop every process in the pods it selects.
+:::
 
 :::warning
-Before enabling Global Protect Mode, make absolutely sure all TracingPolicies in the cluster have been thoroughly validated. If a rule is incorrectly configured (e.g., a Whitelist is missing a required executable path), switching to Protect mode may block legitimate business traffic or critical services, causing service outages. We recommend validating in a test environment first, or using Method 1 to switch Policies to Protect mode one by one to confirm no issues before enabling the global switch.
+Before switching a policy to Protect, make sure its rules have been validated. If a rule is wrong (a Whitelist missing a required executable path, for example), switching may block legitimate services. Watch it in Monitoring for a while first and switch once nothing is flagged by mistake.
 :::

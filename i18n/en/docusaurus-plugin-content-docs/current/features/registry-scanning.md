@@ -107,7 +107,7 @@ Clicking into a single registry shows each image's `Critical` / `High` / `Medium
 - **Credentials** are stored in K8s Sentinel's data directory together with the other settings and are never sent back to the browser. A scan Pod reads the credentials from a Secret that exists only for that Pod, and only as the login for that registry host, so the password is never written into a Job and never sent to the registry Trivy downloads its database from
 - Changing a registry's **URL** requires entering the password again, so that a saved password cannot be redirected to another host
 - **Settings and scan results are stored in the data directory** (`registries.json` and `registry-scans/`). With persistent storage mounted they survive a restart; on the default `emptyDir`, a restart clears the registry settings and results, see [Persistent Storage (PV / PVC)](../installation/persistent-storage.md)
-- **Permissions**: Viewers can view the results; adding, editing, deleting and starting scans are limited to Admins, and are all recorded in the [Audit Log](./audit-log.md)
+- **Permissions**: a role that views Vulnerabilities can read the results; adding, editing, deleting and starting scans need Manage (see [Roles and Permissions](./roles.md)), and are all recorded in the [Audit Log](./audit-log.md)
 
 ---
 

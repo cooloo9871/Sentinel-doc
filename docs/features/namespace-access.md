@@ -10,7 +10,7 @@ sidebar_position: 14
 
 v0.80.0 起，帳號可以被限制在指定的 Namespace 內：只看得到、也只能管理這些 Namespace 中的內容。可以在建立帳號時設定，也可以之後調整；既有的帳號維持整個叢集的存取範圍。
 
-角色在這些 Namespace 內仍然有效：**受限的 Admin** 可以在其中建立與編輯，**受限的 Viewer** 只能讀取。
+角色在這些 Namespace 內仍然有效：**受限的 Admin** 可以在其中建立與編輯，**受限的 Viewer** 只能讀取。v0.82.0 起的自訂角色也一樣：受限的帳號可以在自己的 Namespace 中建立與編輯角色所管理的內容，讀取角色可以查看的內容，見 [角色與權限](./roles.md)。本頁提到的「受限的 Admin」，在自訂角色下是指對該範圍有 Manage 權限的受限帳號。
 
 :::info[這是團隊內的分工，不是租戶隔離]
 限制由伺服器在**每一個請求與事件串流**上執行，而不是只把頁面藏起來。但 Network Topology 會顯示所有 Namespace 與工作負載的名稱，因此這個功能適合用來劃分團隊內的工作範圍，不適合用來隔離互不信任的租戶。
@@ -47,13 +47,14 @@ v0.80.0 起，帳號可以被限制在指定的 Namespace 內：只看得到、�
 | **Network Topology** | 完整顯示，因為一條連線有兩端，另一端通常不在自己的 Namespace。從拓撲圖執行隔離時，只能隔離自己 Namespace 中的 Pod |
 | **Templates** | 可以讀取，並用來建立 Policy。新增、編輯與刪除範本僅限整個叢集的 Admin，因為範本由所有人共用 |
 | **Admission Policy** | v0.81.0 起，受限的 Admin 可以為自己的 Namespace 建立 Policy 與 Binding，見下一節 |
-| **Registries**、**Event Sources**、**Audit Log**、所有 **Settings**、全域 Protect 模式 | 隱藏，API 也會拒絕 |
+| **Registries**、**Event Sources**、**Audit Log**、所有 **Settings**、Tracing Policy 列表的「Set all to Monitoring」按鈕 | 隱藏，API 也會拒絕。Notifications（Alerts、Syslog）與 System 屬於整個叢集，受限帳號不論角色為何都無法存取 |
 
 補充說明：
 
 - 叢集層級的 Policy 在受限帳號的 Pod 上觸發的事件**會顯示**，並附上該 Policy 的名稱
-- 受限帳號的側邊欄只會出現 Dashboard、Network Topology、Vulnerabilities → Workloads、Policies 與 Notifications（Security Events、Admission Events）；頁首也不會顯示全域模式的標示
+- 受限帳號的側邊欄只會出現 Dashboard、Network Topology、Vulnerabilities → Workloads、Policies 與 Notifications（Security Events、Admission Events）；頁首也不會顯示「N / M in Protect」的標示。v0.82.0 起，其中角色沒有 View 權限的項目同樣不會出現
 - 受限帳號直接開啟被隱藏頁面的網址時，會被導回 Dashboard
+- v0.81.2 起，Tracing Policy 與 Network Policy 列表的 Namespace 篩選器不再對受限帳號提供 `Cluster-wide` 選項
 
 ---
 
@@ -99,4 +100,4 @@ kubectl annotate validatingadmissionpolicy <name> sentinel.io/namespaces-
 ## 已知限制
 
 - 受限帳號看不到 Dashboard 上的事件來源警告
-- 升級到 v0.80 或 v0.81 只需要更新 Image，不需要重新套用 manifest
+- 升級到 v0.80、v0.81 或 v0.82 只需要更新 Image，不需要重新套用 manifest
