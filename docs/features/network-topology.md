@@ -22,19 +22,19 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 | 圖示 | 說明 |
 |---|---|
-| **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱；**被隔離（Quarantine）的 Pod 帶紅框與鎖頭圖示**；**自身 Image 有 Critical 弱點的 Pod，左上角帶紅色 bug 圖示**（v0.61+） |
+| **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱；**被隔離（Quarantine）的 Pod 帶紅框與鎖頭圖示**；**自身 Image 有 Critical 弱點的 Pod，左上角帶紅色 bug 圖示** |
 | **Node 節點** | Kubernetes Node（藍色），顯示節點名稱與 IP 位址 |
 | **Link-local 節點** | `169.254.0.0/16` 等本地鏈路位址（灰色），例如 Sidecar 對 cloud metadata（`169.254.169.254`）的探測，與外部流量區分開 |
 | **External 節點** | 叢集外部的連線來源或目標（琥珀色）；經節點 SNAT 進入的外部流量標為「world via 節點名」 |
 | **紅色虛線邊** | 被 Network Policy **拒絕**的連線；點擊可看到是哪一條 Policy 擋下的（default-deny 造成的丟棄無規則可歸因時會如實顯示，不會捏造） |
-| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Service（NodePort / LoadBalancer / externalIPs）、Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute，v0.41 起含 TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列、Contour HTTPProxy 與 hostNetwork / hostPort；未安裝的 CRD 會自動略過 |
+| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Service（NodePort / LoadBalancer / externalIPs）、Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute / TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列、Contour HTTPProxy 與 hostNetwork / hostPort；未安裝的 CRD 會自動略過 |
 | **×N 標籤** | 同一組來源/目標的連線彙整為一條邊，數字為連線次數，各 Port 明細在點擊後的詳情面板中 |
 
 ---
 
 ## Pod 詳情與隔離
 
-點擊任一個 Pod 節點，右側會開啟 **Pod Detail** 面板，顯示 Pod 名稱、Namespace、IP 與對外暴露的路徑。v0.76 起，Admin 可以直接在這個面板點擊「**Quarantine this pod**」隔離該 Pod，操作方式見 [Quarantine](./quarantine.md)。
+點擊任一個 Pod 節點，右側會開啟 **Pod Detail** 面板，顯示 Pod 名稱、Namespace、IP 與對外暴露的路徑。Admin 可以直接在這個面板點擊「**Quarantine this pod**」隔離該 Pod，操作方式見 [Quarantine](./quarantine.md)。
 
 ---
 
@@ -54,7 +54,7 @@ Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際�
 
 ## 弱點標示
 
-v0.61 起，若已安裝 Trivy Operator，Pod 自身的 Image 有 Critical 弱點時，節點**左上角**會出現紅色 bug 圖示，與另一個角落的網路狀態標示並存。點擊該 Pod，詳情面板會顯示 Critical 弱點數量，並在該 Pod 同時可從叢集外部觸及時特別註明。
+若已安裝 Trivy Operator，Pod 自身的 Image 有 Critical 弱點時，節點**左上角**會出現紅色 bug 圖示，與另一個角落的網路狀態標示並存。點擊該 Pod，詳情面板會顯示 Critical 弱點數量，並在該 Pod 同時可從叢集外部觸及時特別註明。
 
 標示依據的是**每個 Pod 自己正在執行的 Image**：仍在執行舊的、未掃描 Image 的 Pod，不會因為新版 Image 的掃描結果而被標示。完整的弱點清單見 [工作負載弱點](./vulnerabilities.md)。
 
@@ -93,7 +93,7 @@ v0.61 起，若已安裝 Trivy Operator，Pod 自身的 Image 有 Critical 弱�
 
 ## 運作原理
 
-Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。K8s Sentinel 後端（v0.43+）透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
+Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。K8s Sentinel 後端透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
 
 因此本功能需要 Cilium 啟用 `hubble.enabled=true`（流量觀測）**與** `hubble.relay.enabled=true`（K8s Sentinel 讀取的 `hubble-relay` 服務），詳見 [安裝與設定 Cilium](../installation/cilium-install.md)。
 

@@ -53,7 +53,7 @@ Click "**+ New Policy**" to open the graphical builder - the form is on the left
 | **Comment** | - | Free-form note to help your team understand the policy's purpose |
 | **Applies to** | ✅ | key=value labels selecting the target Pods this policy governs (`endpointSelector`); at least one label is required |
 
-:::tip[Live selector preview (v0.40+)]
+:::tip[Live selector preview]
 While editing **Applies to**, the form shows which pods the selector matches **right now** (e.g. `Selects 3 pods in demo: web-1, web-2, db-1`). It turns **red** when the selector matches nothing (usually a label typo) and **amber** when an empty selector is about to govern every pod - catching the most damaging policy mistake before Apply.
 :::
 
@@ -72,7 +72,7 @@ The Ingress and Egress sections are configured independently and share the same 
 
 | Field | Description |
 |---|---|
-| **From / To - kind** | Peer type: `Labels` (select peers by Pod label), `Entity` (a reserved Cilium identity), `IP / CIDR` (v0.40+), or `FQDN` (v0.40+, egress whitelist only) |
+| **From / To - kind** | Peer type: `Labels` (select peers by Pod label), `Entity` (a reserved Cilium identity), `IP / CIDR`, or `FQDN` (egress whitelist only) |
 | **From / To** | Labels: one or more key=value labels; Entity: choose from `world`, `cluster`, `host`, `remote-node`, `all`, `init`, `health`, `unmanaged`; IP / CIDR: an address or subnet (a bare IP is written as a single-host CIDR); FQDN: a domain name, wildcards supported (`github.com`, `*.github.com`) |
 | **Peer namespace** | (Labels only) the namespace the peer Pods live in. **A peer in another namespace has to name it**: a namespaced policy's label selector only matches its own namespace, so allowing egress to CoreDNS in `kube-system` without naming the namespace selects nothing and the traffic is dropped by the whitelist's default deny |
 | **Ports** | Optional; click "**+ Add Port**" to add a port and protocol (TCP / UDP). Leave empty for no port restriction |
@@ -111,7 +111,7 @@ Click "**+ New YAML**" to switch to a full-screen YAML editor and write or paste
 
 Scope is determined by the manifest kind - `CiliumNetworkPolicy` is namespaced, `CiliumClusterwideNetworkPolicy` is not. Click "**Apply**" when done.
 
-Since v0.81.3, creating a policy from YAML under a name that already exists is refused instead of overwriting the existing policy.
+Creating a policy from YAML under a name that already exists is refused instead of overwriting the existing policy.
 
 :::note[The quarantine policy is read-only in the list (v0.82.1+)]
 The `sentinel-quarantine` policy used by [Quarantine](./quarantine.md) appears in the Network Policy list but can only be viewed there, not edited. Otherwise an account that manages Network Policy but not Quarantine could have changed it and put every quarantined pod back on the network while the pages still showed them as quarantined.

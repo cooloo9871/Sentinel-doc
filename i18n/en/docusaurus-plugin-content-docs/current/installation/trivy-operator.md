@@ -8,14 +8,14 @@ sidebar_position: 5
 
 ## Why You Need It
 
-The [Vulnerabilities](../features/vulnerabilities.md) page added in v0.60 shows the scan results of [Trivy Operator](https://github.com/aquasecurity/trivy-operator). **K8s Sentinel itself does not scan the images of running workloads**: Trivy Operator does the scanning and writes `VulnerabilityReport` resources, and K8s Sentinel only reads and presents them.
+The [Vulnerabilities](../features/vulnerabilities.md) page shows the scan results of [Trivy Operator](https://github.com/aquasecurity/trivy-operator). **K8s Sentinel itself does not scan the images of running workloads**: Trivy Operator does the scanning and writes `VulnerabilityReport` resources, and K8s Sentinel only reads and presents them.
 
 Trivy Operator is an **optional component**. Without it, the Vulnerabilities page says that scanning is not enabled, and every other feature is completely unaffected.
 
 | Installation method | Installs Trivy Operator automatically? |
 |---|---|
-| [Kubernetes Job Installation](./job-install.md) | Yes (since v0.61), skipped when it already exists |
-| [Local Script Installation](./script-install.md) | Yes (since v0.61), skipped when it already exists |
+| [Kubernetes Job Installation](./job-install.md) | Yes, skipped when it already exists |
+| [Local Script Installation](./script-install.md) | Yes, skipped when it already exists |
 | Applying only `deploy/sentinel.yaml` | No, install it manually by following this page |
 
 Both installers put Trivy Operator into **`sentinel-system`** (the same namespace as K8s Sentinel), as the Helm release `trivy-operator`; they skip it whenever a Trivy Operator Deployment already exists in any namespace of the cluster.
@@ -66,20 +66,10 @@ kubectl get vulnerabilityreports -A
 
 ## Upgrade Notes
 
-### Upgrading From a Version Without the Vulnerabilities Page (v0.59 and Earlier)
-
-Re-apply `deploy/sentinel.yaml`. The ClusterRole gained read-only rules for `vulnerabilityreports` and `jobs`; without the former, the page reports that K8s Sentinel is not permitted to read reports.
+When upgrading K8s Sentinel, re-apply `deploy/sentinel.yaml` and upgrade the operator with the current values:
 
 ```bash
 kubectl apply -f deploy/sentinel.yaml
-```
-
-### Upgrading to a Version With Registry Scanning (v0.62+)
-
-1. Re-apply `deploy/sentinel.yaml`: it adds the Role `sentinel-registry-scan` in `sentinel-system` for the registry scan Jobs; without it every registry scan fails with a permission error
-2. Upgrade the operator with the current values so that it does not scan those Jobs:
-
-```bash
 helm upgrade trivy-operator aqua/trivy-operator \
   --namespace sentinel-system \
   --values deploy/trivy-operator-values.yaml
@@ -92,18 +82,6 @@ An operator installed with an older copy of the values runs without the Trivy se
 ```bash
 kubectl -n sentinel-system rollout restart deployment/trivy-operator
 ```
-
-### Moving an Operator That v0.61.0 Installed Into `trivy-system`
-
-The v0.61.0 installers put the operator into `trivy-system`; since v0.61.1 they put it into `sentinel-system`. To move it:
-
-```bash
-helm uninstall trivy-operator --namespace trivy-system
-kubectl delete namespace trivy-system
-bash deploy/install.sh
-```
-
-Existing vulnerability reports are stored in the namespaces of the workloads they belong to, so they are not lost by this.
 
 ### Clearing Reports Left Behind by the Other Scanners
 
@@ -121,7 +99,7 @@ Keep them if another tool reads these reports; K8s Sentinel does not use them.
 ## Air-gapped Clusters
 
 :::tip
-Since v0.71.0 every release carries an offline bundle that takes care of carrying the images, rewriting the manifests and setting the environment variables below; see [Offline Installation](./offline-install.md). This section covers the manual setup without the bundle.
+Every release carries an offline bundle that takes care of carrying the images, rewriting the manifests and setting the environment variables below; see [Offline Installation](./offline-install.md). This section covers the manual setup without the bundle.
 :::
 
 Trivy downloads its vulnerability database as an OCI artifact, and by default pulls the database and its own image from `mirror.gcr.io`. For a cluster with no outbound access, copy the following into a registry the cluster can reach:
@@ -157,7 +135,7 @@ helm install trivy-operator aqua/trivy-operator \
 |---|---|---|
 | `TRIVY_IMAGE` | `mirror.gcr.io/aquasec/trivy:0.76.1` | The Trivy image that registry scans run |
 | `TRIVY_DB_REPOSITORY` / `TRIVY_JAVA_DB_REPOSITORY` | Trivy's defaults | Where registry scans download the vulnerability databases from; in an air-gapped cluster point both at the internal mirror |
-| `TRIVY_INSECURE` (v0.72+) | unset | `true` has registry scans verify no certificate, neither the database mirror's nor the scanned registry's. For a mirror with a certificate Trivy cannot be made to trust |
+| `TRIVY_INSECURE` | unset | `true` has registry scans verify no certificate, neither the database mirror's nor the scanned registry's. For a mirror with a certificate Trivy cannot be made to trust |
 
 :::note
 The database is only as current as the copy in the internal registry, so schedule regular updates of the mirror. The operator's own image and the registries your workloads use need the same treatment; for private registries and credentials, see the [Trivy Operator documentation](https://aquasecurity.github.io/trivy-operator/).

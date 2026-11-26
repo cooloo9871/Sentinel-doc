@@ -39,9 +39,9 @@ After changing the mode, click **"Apply"**. The Tetragon Agent applies the chang
 
 ## Setting Everything Back to Monitoring
 
-Since v0.81.3 **Global Protect Mode is removed**: Protect is turned on one policy at a time (Method 1 or 2), and there is no longer a switch that puts every policy into Protect at once.
+Protect is turned on one policy at a time (Method 1 or 2), and there is no switch that puts every policy into Protect at once.
 
-The other direction can still be done in one step. While any policy is in Protect, the Tracing Policy list shows a **Set all to Monitoring** button at the top right, which stops every policy blocking at once:
+The other direction can be done in one step. While any policy is in Protect, the Tracing Policy list shows a **Set all to Monitoring** button at the top right, which stops every policy blocking at once:
 
 ![Set all to Monitoring confirmation dialog](/img/features/mode/set-all-monitoring.png)
 

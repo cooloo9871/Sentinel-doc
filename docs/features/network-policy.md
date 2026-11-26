@@ -53,7 +53,7 @@ Network Policy 頁面提供 **Cilium Network Policy** 的視覺化管理功能�
 | **Comment** | - | 註解說明，方便團隊了解此 Policy 的用途 |
 | **Applies to** | ✅ | 以 key=value Label 指定此 Policy 管轄的目標 Pod（`endpointSelector`），至少需一組 Label |
 
-:::tip[Selector 即時預覽（v0.40+）]
+:::tip[Selector 即時預覽]
 編輯 **Applies to** 時，表單會即時顯示目前選擇器**實際匹配到哪些 Pod**（例如 `Selects 3 pods in demo: web-1, web-2, db-1`）。選不到任何 Pod 時以**紅色**警示（通常是 Label 打錯字）、空選擇器將管轄全部 Pod 時以**橘色**警示，讓您在 Apply 之前就能發現「選錯對象」這類最危險的 Policy 錯誤。
 :::
 
@@ -72,7 +72,7 @@ Ingress 與 Egress 區段各自獨立設定，結構相同。**未新增任何�
 
 | 欄位 | 說明 |
 |---|---|
-| **From / To - kind** | 對象類型：`Labels`（以 Pod Label 選擇對象）、`Entity`（Cilium 保留身分）、`IP / CIDR`（v0.40+）或 `FQDN`（v0.40+，僅限 Egress 的 Whitelist） |
+| **From / To - kind** | 對象類型：`Labels`（以 Pod Label 選擇對象）、`Entity`（Cilium 保留身分）、`IP / CIDR` 或 `FQDN`（僅限 Egress 的 Whitelist） |
 | **From / To** | Labels：輸入一組以上的 key=value Label；Entity：從下拉選擇 `world`、`cluster`、`host`、`remote-node`、`all`、`init`、`health`、`unmanaged`；IP / CIDR：輸入 IP 或網段（單一 IP 會寫成 /32 單主機 CIDR）；FQDN：輸入網域名稱，支援萬用字元（`github.com`、`*.github.com`） |
 | **Peer namespace** | （Labels 時）指定對象 Pod 所屬的 Namespace。**跨 Namespace 的對象必須指名**：Namespaced Policy 的 Label 選擇器只比對自己的 Namespace，例如允許連往 `kube-system` 的 CoreDNS 時若未指名 Namespace，規則會選不到任何對象，流量將被 Whitelist 造成的 default-deny 丟棄 |
 | **Ports** | 選填；點擊「**+ Add Port**」新增 Port 與協定（TCP / UDP），留空表示不限制 Port |
@@ -111,7 +111,7 @@ Cilium 中只要某方向存在 allow 規則，該 Endpoint 在該方向就進�
 
 Policy 的作用範圍由 manifest 的 `kind` 決定：`CiliumNetworkPolicy` 為 Namespace 層級，`CiliumClusterwideNetworkPolicy` 為叢集層級。完成後點擊「**Apply**」套用。
 
-v0.81.3 起，以已存在的名稱從 YAML 建立 Policy 會被拒絕，不會覆蓋既有的 Policy。
+以已存在的名稱從 YAML 建立 Policy 會被拒絕，不會覆蓋既有的 Policy。
 
 :::note[隔離用的 Policy 在列表中為唯讀（v0.82.1+）]
 [Quarantine](./quarantine.md) 使用的 `sentinel-quarantine` 會出現在 Network Policy 列表中，但只能查看，不能從這裡編輯。否則只有 Network Policy 管理權限、沒有 Quarantine 權限的帳號可以修改它，讓所有被隔離的 Pod 恢復連線，而頁面仍顯示它們處於隔離狀態。

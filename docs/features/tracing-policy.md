@@ -42,7 +42,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 | **Created Time** | Policy 建立的完整時間戳記 |
 | **Actions** | `Edit`（進入編輯頁面）與 `Delete`（刪除）按鈕 |
 
-:::note[Edit 的開啟方式（v0.39.6+）]
+:::note[Edit 的開啟方式]
 - **K8s Sentinel 建立的 Policy**：表單能呈現時以表單編輯器開啟，否則以 YAML 編輯器開啟
 - **`kubectl apply` 建立的 Policy**（Created By 為 `k8s-apply`）：一律直接以 **YAML 編輯器**開啟，顯示原作者撰寫的 YAML，避免表單儲存時改寫欄位順序、引號與註解，導致 Git 中的檔案與叢集內容不一致
 :::
@@ -72,16 +72,16 @@ K8s Sentinel 提供兩種建立方式：
 
 **建立原理：** K8s Sentinel 根據表單內容自動產生對應的 TracingPolicy YAML，並透過 Kubernetes API Server 將資源建立至叢集，Tetragon Agent 會在數秒內套用新策略。
 
-:::note[v0.64 起的行為]
+:::note
 - 以已存在的名稱建立 Policy 會被拒絕，不會覆蓋既有的 Policy
-- 表單無法完整表示的 Policy 會改以 YAML 編輯器開啟，避免儲存時遺失欄位
+- 表單無法完整表示的 Policy 會以 YAML 編輯器開啟，避免儲存時遺失欄位
 :::
 
 ---
 
 ## 一次全部切回 Monitoring
 
-v0.81.3 起 Global Protect Mode 已移除：Protect 只能在列表的 **Mode** 欄位逐一為每個 Policy 開啟。
+Protect 只能在列表的 **Mode** 欄位逐一為每個 Policy 開啟。
 
 只要有任何 Policy 處於 Protect，列表右上角就會出現「**Set all to Monitoring**」按鈕，可以一次停止所有 Policy 的阻擋。頁首則會顯示有幾個 Policy 處於 Protect（例如 `2 / 4 in Protect`）。
 

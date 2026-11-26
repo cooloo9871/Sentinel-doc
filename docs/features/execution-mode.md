@@ -39,9 +39,9 @@ Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重�
 
 ## 一次全部切回 Monitoring
 
-v0.81.3 起，**Global Protect Mode 已移除**：Protect 只能逐一為每個 Policy 開啟（方法一或方法二），不再有把所有 Policy 一次切換成 Protect 的開關。
+Protect 只能逐一為每個 Policy 開啟（方法一或方法二），沒有把所有 Policy 一次切換成 Protect 的開關。
 
-相反的方向仍然可以一次完成。只要有任何 Policy 處於 Protect，Tracing Policy 列表右上角就會出現「**Set all to Monitoring**」按鈕，用來立刻停止所有 Policy 的阻擋：
+相反的方向可以一次完成。只要有任何 Policy 處於 Protect，Tracing Policy 列表右上角就會出現「**Set all to Monitoring**」按鈕，用來立刻停止所有 Policy 的阻擋：
 
 ![Set all to Monitoring 確認對話框](/img/features/mode/set-all-monitoring.png)
 

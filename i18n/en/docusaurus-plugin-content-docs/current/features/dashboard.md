@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## About This Page
 
-The Dashboard is the home page after logging in to K8s Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and global protection mode - letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, the current Quarantine state, and a vulnerability scan summary.
+The Dashboard is the home page after logging in to K8s Sentinel. It provides a real-time overview of cluster security monitoring status, including Tetragon Agent health, security event counts, and how many policies are in Protect - letting you assess the security posture of your entire cluster at a glance. It also previews the latest Tracing Policies, Admission Policies, Network Policies, the current Quarantine state, and a vulnerability scan summary.
 
 ---
 
@@ -20,12 +20,12 @@ After logging in, the top of the Dashboard displays four statistics cards provid
 
 | Card | Description |
 |---|---|
-| **Tetragon Agents** | Health ratio of Tetragon Agents in the cluster (e.g. `2 / 2`); since v0.49 this reflects **event stream state** rather than plain Pod readiness - a red banner appears the moment any stream fails |
+| **Tetragon Agents** | Health ratio of Tetragon Agents in the cluster (e.g. `2 / 2`); this reflects **event stream state** rather than plain Pod readiness - a red banner appears the moment any stream fails |
 | **Security Events** | Total number of security events (kprobe violations) recorded so far; includes both Warning and Critical events |
 | **Admission Events** | Total number of Kubernetes admission control violations recorded by ValidatingAdmissionPolicy (VAP) |
-| **Policies in Protect** | How many Tracing Policies are in Protect, out of how many (for example `2 / 4`); shown in red while any policy is in Protect. It replaces the Global Protect Mode card since v0.81.3 |
+| **Policies in Protect** | How many Tracing Policies are in Protect, out of how many (for example `2 / 4`); shown in red while any policy is in Protect |
 
-Since v0.82.0 the Dashboard shows only the cards and lists the account's [role](./roles.md) can view.
+The Dashboard shows only the cards and lists the account's [role](./roles.md) can view.
 
 ---
 
@@ -33,7 +33,7 @@ Since v0.82.0 the Dashboard shows only the cards and lists the account's [role](
 
 ![Vulnerabilities card on the Dashboard](/img/features/dashboard/vulnerabilities-card.png)
 
-Since v0.61, the Dashboard shows a **Vulnerabilities** card, with data from Trivy Operator's scan reports (see [Workload Vulnerabilities](./vulnerabilities.md)):
+The Dashboard shows a **Vulnerabilities** card, with data from Trivy Operator's scan reports (see [Workload Vulnerabilities](./vulnerabilities.md)):
 
 - **Critical and High vulnerability totals**
 - The number of workloads that have a Critical finding and are also **externally exposed** (shown in red when greater than 0)

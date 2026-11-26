@@ -53,7 +53,7 @@ cilium install \
 | Flag | Description |
 |---|---|
 | `hubble.enabled=true` | **Required by K8s Sentinel**: turns on flow observation, the only source for Network Topology and Cilium policy denials |
-| `hubble.relay.enabled=true` | **Required by K8s Sentinel (v0.43+)**: deploys **Hubble Relay**, which aggregates every node's flows behind one gRPC endpoint. K8s Sentinel connects to `hubble-relay` rather than reaching into each agent; without Relay there is no aggregated flow source to read |
+| `hubble.relay.enabled=true` | **Required by K8s Sentinel**: deploys **Hubble Relay**, which aggregates every node's flows behind one gRPC endpoint. K8s Sentinel connects to `hubble-relay` rather than reaching into each agent; without Relay there is no aggregated flow source to read |
 | `kubeProxyReplacement=true` | **Required by K8s Sentinel**: Cilium's socket-level load balancer rewrites a Service address to the backend pod *before* the flow is observed, so the topology sees the real endpoint. Left to kube-proxy, the flow carries the ClusterIP and K8s Sentinel drops that edge - a VIP is not an endpoint |
 | `k8sServiceHost` / `k8sServicePort` | Required *by Cilium* once kube-proxy is gone: the agents can no longer reach the API server through a Service VIP (kubeadm default port `6443`) |
 | `rollOutCiliumPods=true` / `operator.rollOutPods=true` | Nothing to do with K8s Sentinel, but worth having: they restart the agent and operator on a config change, so a `cilium upgrade` takes effect without a manual rollout |
@@ -71,7 +71,7 @@ K8s Sentinel is the only UI - **Relay is required, the Hubble UI is not**. Neith
 With this enabled, Hubble reports *which* policy denied a flow (`egress_denied_by` / `ingress_denied_by`). It is not required - without it K8s Sentinel infers the policy from which of yours govern that pod in that direction - but correlation is authoritative where the fallback is an inference. Note the limit: correlation only names a policy for an **explicit** `ingressDeny` / `egressDeny` rule; a whitelist denies by the *absence* of an allow rule, so the fallback is used either way. If your policies are mostly whitelists, this flag changes little.
 
 :::note
-If Cilium is already installed but missing these settings (most commonly Hubble Relay when upgrading to K8s Sentinel v0.43+), add them with `cilium upgrade --set <flag>` or Helm:
+If Cilium is already installed but missing these settings (most commonly Hubble Relay), add them with `cilium upgrade --set <flag>` or Helm:
 
 ```bash
 helm upgrade cilium cilium/cilium -n kube-system --reuse-values \

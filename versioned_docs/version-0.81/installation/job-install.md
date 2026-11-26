@@ -1,0 +1,109 @@
+---
+id: job-install
+title: Kubernetes Job 安裝
+sidebar_position: 2
+---
+
+# Kubernetes Job 安裝
+
+## 安裝原理說明
+
+以一個 Kubernetes Job（`sentinel-installer`，位於 **`kube-system`**）在叢集內部完成安裝，本機不需要 git、helm 或任何工具，只需要 `kubectl`。Job 依序執行三個步驟：
+
+1. **Tetragon**：若叢集任一 Namespace 已存在 Tetragon DaemonSet 則跳過（不限於 `kube-system`）；否則以 Helm 安裝，並設定 `tetragon.grpc.address=0.0.0.0:54321`（K8s Sentinel 收集事件所需），等待 DaemonSet 就緒
+   另外設定 `hostNetwork=false` 並套用 `deploy/tetragon-grpc-policy.yaml`，讓 Tetragon 的 gRPC 埠只有 K8s Sentinel 能連（原因見 [安裝 Tetragon](./tetragon-install.md)）；對先前已安裝在 host network 上的 Tetragon 不生效
+2. **K8s Sentinel**：直接從 GitHub 套用 `deploy/sentinel.yaml`（Namespace、RBAC、Deployment、Service 一個檔案全部包含，不使用 Kustomize），等待 Deployment 就緒
+3. **Trivy Operator**：若叢集任一 Namespace 已有 Trivy Operator 的 Deployment 則跳過；否則以 Helm 安裝至 `sentinel-system`（release 名稱 `trivy-operator`），套用 `deploy/trivy-operator-values.yaml`。此步驟排在最後，即使失敗 K8s Sentinel 本體也已安裝完成（詳見 [安裝 Trivy Operator](./trivy-operator.md)）
+
+安裝程序完全在叢集內部執行，不依賴本機環境，適合 CI/CD Pipeline 或無法在本機執行 bash 的情境。
+
+:::note[前置需求]
+- Job 在叢集內執行，需要能對外連線（無法連外的叢集請改用 [離線安裝](./offline-install.md)）至 `helm.cilium.io`、`raw.githubusercontent.com`、`aquasecurity.github.io` 與 `github.com`
+- 安裝 Job 以 `cluster-admin` 權限執行（建立 Namespace 與 ClusterRole 所需）；Job 的 ServiceAccount 位於 `kube-system`
+:::
+
+---
+
+## 步驟一：套用 install-job.yaml
+
+**操作**：直接以來源 URL 建立安裝 Job，不需要事先 clone 專案
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml
+```
+
+**原理**：此命令建立三個資源，全部位於 **`kube-system`**：ServiceAccount `sentinel-installer`、綁定 `cluster-admin` 的 ClusterRoleBinding，以及 Job `sentinel-installer`。Job 啟動一個 Pod 在叢集內執行安裝，網路環境一致，不受本機防火牆或 proxy 影響。
+
+---
+
+## 步驟二：追蹤安裝進度並確認完成
+
+```bash
+# 即時追蹤安裝日誌
+kubectl logs -n kube-system job/sentinel-installer -f
+
+# 確認 Job 完成
+kubectl get jobs -n kube-system
+```
+
+**原理**：Job 成功完成後 `COMPLETIONS` 顯示 `1/1`。日誌會依序輸出 `[1/3] Tetragon`、`[2/3] Deploying K8s Sentinel` 與 `[3/3] Trivy Operator` 三階段的進度。
+
+預期輸出範例：
+
+```
+NAME                 COMPLETIONS   DURATION   AGE
+sentinel-installer   1/1           45s        2m
+```
+
+:::note
+Job 的 Pod 設有 `ttlSecondsAfterFinished: 600`，完成 10 分鐘後會自動刪除，屆時將無法再查看日誌，屬正常現象。
+:::
+
+---
+
+## 步驟三：確認 K8s Sentinel 就緒
+
+K8s Sentinel 本體安裝於 **`sentinel-system`** Namespace（安裝 Job 則在 `kube-system`）：
+
+```bash
+kubectl get pods -n sentinel-system
+kubectl get svc -n sentinel-system
+```
+
+**預期輸出**：
+
+- `sentinel-XXXX` Pod 狀態為 `Running`
+- 由安裝 Job 安裝 Trivy Operator 時，另會看到 `trivy-operator` 與 `trivy-server` 的 Pod；剛安裝完出現的一批 `scan-vulnerabilityreport-*` Pod 是第一輪掃描，完成後會自動移除
+- Service `sentinel` 建立完成，顯示 ClusterIP
+
+```
+NAME                        READY   STATUS    RESTARTS   AGE
+sentinel-7d9f8b6c4-xxxxx    1/1     Running   0          3m
+
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+sentinel        ClusterIP   10.96.123.45    <none>        80/TCP     3m
+```
+
+若 Pod 狀態為 `Pending` 或 `CrashLoopBackOff`，請使用 `kubectl describe pod <pod-name> -n sentinel-system` 查看詳細事件。
+
+---
+
+:::note[Job 一律安裝 main 分支的內容]
+Job 從 GitHub 取得 `deploy/sentinel.yaml` 與 `deploy/trivy-operator-values.yaml`，不會讀取本機 clone 的檔案。若要安裝固定版本或修改過的 manifest，請改用[本機腳本安裝](./script-install.md)或直接套用 manifest。
+:::
+
+---
+
+## 清理安裝 Job（選用）
+
+安裝 Job 會在最後一步**自行移除**綁定 `cluster-admin` 的 ClusterRoleBinding，不會在 `kube-system` 留下一個永久持有 cluster-admin 的 ServiceAccount；Job 本身則在完成 10 分鐘後自動刪除。**失敗的 Job 會保留這個 binding 以便重試**，此時請用下列指令移除。若要一併清除剩下的 ServiceAccount，可執行（不影響已安裝的 K8s Sentinel）：
+
+```bash
+kubectl delete -f https://raw.githubusercontent.com/cooloo9871/K8s_Sentinel/main/deploy/install-job.yaml
+```
+
+---
+
+:::info[持久化儲存]
+預設部署使用 `emptyDir`，Pod 重啟後帳號、規則與事件資料會全部重置。正式環境請接著完成[設定永久儲存（PV / PVC）](./persistent-storage.md)。
+:::

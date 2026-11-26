@@ -18,7 +18,7 @@ Navigate to **"Settings → Alerts"** to see all configured alert rules.
 
 ![Alerts page](/img/features/alerts/overview.png)
 
-Since v0.64, Viewers and the log see only the **host** of a webhook URL; the full URL (including any token in it) is visible to Admins only. Since v0.82.0 Alerts and Syslog need the Notifications permission, and the built-in Viewer cannot read them through the API either, see [Roles and Permissions](./roles.md).
+Alerts and Syslog need the Notifications permission, which the built-in Viewer does not have, see [Roles and Permissions](./roles.md). An account with View only, and the log, see only the **host** of a webhook URL; the full URL (including any token in it) is shown to accounts with Manage.
 
 ---
 
@@ -52,9 +52,9 @@ When a new security event arrives and matches a rule's conditions, the backend:
 2. Verifies the rule is not within its cooldown period
 3. Constructs an alert payload and sends it via HTTP POST to the webhook URL
 
-**Throttling and retries (v0.51+):** all event-driven alerts (Security and Admission) go through a bounded queue to a **single sender**, which:
+**Throttling and retries:** all event-driven alerts (Security and Admission) go through a bounded queue to a **single sender**, which:
 
-- Paces each webhook to about **one message per second**, so a burst of events no longer becomes a burst of concurrent POSTs that trips the receiver's rate limit
+- Paces each webhook to about **one message per second**, so a burst of events does not become a burst of concurrent POSTs that trips the receiver's rate limit
 - On **HTTP 429**, honours `Retry-After` with bounded backoff and retries a few times; **5xx** responses (usually transient) are also retried; plain 4xx (e.g. a deleted webhook) is not
 - Drops with a log entry when the queue is full instead of growing memory without bound
 - The manual "**Test**" button bypasses the queue and posts synchronously, so the UI gets an immediate success/failure result

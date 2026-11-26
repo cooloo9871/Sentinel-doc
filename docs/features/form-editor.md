@@ -15,7 +15,7 @@ sidebar_position: 3
 ![TracingPolicy 表單編輯器](/img/features/policy/create.png)
 
 :::note
-Pod 的**網路存取規則**已從 TracingPolicy 表單中移除，改由 [Network Policy](./network-policy.md)（Cilium Network Policy）統一管理。唯一的例外：**綁定行程上下文的網路控制**（例如「非白名單內的 binary 一發起對外連線就終止」）是 CNP 無法表達的（CNP 以工作負載身分判斷，無法區分 Pod 內的行程），這類 `tcp_connect` kprobe 仍可透過 [YAML 編輯器](./yaml-editor.md)撰寫；含網路 kprobe 的 Policy 在編輯時會以 YAML 模式開啟，避免表單儲存時遺失規則。
+Pod 的**網路存取規則**不在 TracingPolicy 表單中，由 [Network Policy](./network-policy.md)（Cilium Network Policy）統一管理。唯一的例外：**綁定行程上下文的網路控制**（例如「非白名單內的 binary 一發起對外連線就終止」）是 CNP 無法表達的（CNP 以工作負載身分判斷，無法區分 Pod 內的行程），這類 `tcp_connect` kprobe 可透過 [YAML 編輯器](./yaml-editor.md)撰寫；含網路 kprobe 的 Policy 在編輯時會以 YAML 模式開啟，避免表單儲存時遺失規則。
 :::
 
 ---
@@ -46,7 +46,7 @@ Pod Selector 區段允許您將此 TracingPolicy 的規則限縮到特定 Pod，
 2. 可新增多組 Label；所有條件之間為 AND 邏輯（Pod 必須同時符合所有 Label 才受此 Policy 管轄）
 3. 若 Pod Selector 留空，則 Policy 套用至 Namespace 內全部 Pod（或 cluster-wide 時套用全叢集）
 
-:::tip[Selector 即時預覽（v0.40+）]
+:::tip[Selector 即時預覽]
 編輯 Pod Selector 時，表單會即時顯示目前選擇器**實際匹配到哪些 Pod**。選不到任何 Pod 時以紅色警示（通常是 Label 打錯字）、空選擇器將套用到全部 Pod 時以橘色警示，讓「選錯對象」在 Apply 之前就被發現。
 :::
 
@@ -79,7 +79,7 @@ Process Rules 用於控制 Pod 內可以執行的程式（process/binary）。
 
 ## File Rules（檔案規則）
 
-File Rules 用於控制 Pod 對檔案系統的存取行為。自 v0.52 起與 Process Rules 一樣提供 **Mode** 切換：
+File Rules 用於控制 Pod 對檔案系統的存取行為。與 Process Rules 一樣提供 **Mode** 切換：
 
 | Mode | 說明 |
 |---|---|
@@ -104,10 +104,10 @@ File Rules 用於控制 Pod 對檔案系統的存取行為。自 v0.52 起與 Pr
 | **Monitored access** | 選擇監控哪種存取：`Read & Write` / `Read only` / `Write only`（選 Read only 代表寫入完全不監控，不是「只允許讀」） |
 | **Exception processes** | 選填；這些行程的檔案存取完全不受監控 |
 
-**執行原理：** Tetragon 掛載 `security_file_permission` kprobe（LSM hook）監控檔案存取。Blacklist 為每條路徑一個 `Prefix` selector（Tetragon 的 selector 之間為 OR）；Whitelist 則產生**單一** selector，以一個 `NotPrefix` 涵蓋所有排除路徑、一個 `matchBinaries: NotIn` 涵蓋所有例外行程（v0.52.1 起，多 selector 的 OR 語意會讓排除失效，故必須合併為一組）。
+**執行原理：** Tetragon 掛載 `security_file_permission` kprobe（LSM hook）監控檔案存取。Blacklist 為每條路徑一個 `Prefix` selector（Tetragon 的 selector 之間為 OR）；Whitelist 則產生**單一** selector，以一個 `NotPrefix` 涵蓋所有排除路徑、一個 `matchBinaries: NotIn` 涵蓋所有例外行程（多 selector 的 OR 語意會讓排除失效，故必須合併為一組）。
 
 :::note[表單無法呈現的 YAML 不會被改寫]
-手寫 YAML 若使用表單無法表達的形態（混用 `Prefix` / `NotPrefix`、`Mask` 運算子、多值 permission 等），編輯時會維持以 YAML 編輯器開啟，不會被表單儲存時改寫（v0.52.4）。
+手寫 YAML 若使用表單無法表達的形態（混用 `Prefix` / `NotPrefix`、`Mask` 運算子、多值 permission 等），編輯時會維持以 YAML 編輯器開啟，不會被表單儲存時改寫。
 :::
 
 ---

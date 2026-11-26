@@ -42,7 +42,7 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 | **Created Time** | The creation timestamp of the Policy |
 | **Actions** | Available operations: Edit or Delete the Policy |
 
-:::note[How Edit opens (v0.39.6+)]
+:::note[How Edit opens]
 - **Policies created in K8s Sentinel**: open in the form editor when the form can represent them, otherwise in the YAML editor
 - **Policies applied with `kubectl`** (Created By is `k8s-apply`): always open directly in the **YAML editor**, showing the YAML as its author wrote it - a save from the form would rewrite field order, quoting and comments, leaving the file in git no longer matching the cluster
 :::
@@ -68,7 +68,7 @@ Click **"Apply"** when done.
 
 **How it works:** K8s Sentinel automatically generates the corresponding TracingPolicy or TracingPolicyNamespaced YAML from the form data and creates the resource in the cluster via the Kubernetes API Server. The Tetragon Agent applies the new policy within seconds.
 
-:::note[Behavior since v0.64]
+:::note
 - Creating a policy under a name that already exists is refused instead of replacing the existing policy
 - A policy the form cannot fully represent opens in the YAML editor, so no field is lost on save
 :::
@@ -77,7 +77,7 @@ Click **"Apply"** when done.
 
 ## Setting Everything Back to Monitoring
 
-Since v0.81.3 Global Protect Mode is removed: Protect is turned on one policy at a time, in the **Mode** column of the list.
+Protect is turned on one policy at a time, in the **Mode** column of the list.
 
 While any policy is in Protect, the list shows a **Set all to Monitoring** button at the top right, which stops every policy blocking at once. The header shows how many policies are in Protect (for example `2 / 4 in Protect`).
 

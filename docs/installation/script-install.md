@@ -13,7 +13,7 @@ sidebar_position: 3
 1. 偵測並安裝 Helm（若本機尚未安裝）
 2. 使用 Helm 安裝 Tetragon 至叢集（若叢集尚未部署）
 3. 透過 `kubectl apply` 將 K8s Sentinel 部署至 `sentinel-system` namespace
-4. 使用 Helm 安裝 Trivy Operator 至 `sentinel-system`（v0.61+，若叢集尚未部署）
+4. 使用 Helm 安裝 Trivy Operator 至 `sentinel-system`（若叢集尚未部署）
 
 整個安裝流程在本機執行，每個步驟均會輸出進度訊息，方便直接觀察安裝狀態，適合快速試用或開發測試環境。
 
@@ -49,7 +49,7 @@ chmod +x install.sh
 **原理**：腳本依序執行以下流程：
 
 1. **準備 Helm**：安裝 Tetragon 或 Trivy Operator 需要用到時，若本機未偵測到 `helm` 指令，腳本會自動下載最新穩定版到暫存目錄使用（不會安裝到系統，腳本結束時自動清除）
-2. **部署 Tetragon**：叢集任一 Namespace 已有 Tetragon DaemonSet 時跳過（v0.69 起不限於 `kube-system`）；否則以 Cilium 官方 Helm Chart 安裝為 Helm release（v0.64.1 起使用 `helm install`，之後可直接 `helm upgrade`），設定 `hostNetwork=false` 與 `tetragon.grpc.address=0.0.0.0:54321`。無論 Tetragon 是否為本次安裝，腳本都會套用 `tetragon-grpc-policy.yaml`，讓 gRPC 埠只有 K8s Sentinel 能連（原因見 [安裝 Tetragon](./tetragon-install.md)）
+2. **部署 Tetragon**：叢集任一 Namespace 已有 Tetragon DaemonSet 時跳過（不限於 `kube-system`）；否則以 Cilium 官方 Helm Chart 安裝為 Helm release（使用 `helm install`，之後可直接 `helm upgrade`），設定 `hostNetwork=false` 與 `tetragon.grpc.address=0.0.0.0:54321`。無論 Tetragon 是否為本次安裝，腳本都會套用 `tetragon-grpc-policy.yaml`，讓 gRPC 埠只有 K8s Sentinel 能連（原因見 [安裝 Tetragon](./tetragon-install.md)）
 3. **kubectl apply 部署 K8s Sentinel 清單**：建立 Namespace、ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service 等所需資源
 4. **部署 Trivy Operator**：叢集任一 Namespace 已有 Trivy Operator 的 Deployment 時跳過；否則以 `helm install` 安裝至 `sentinel-system`，套用同目錄下的 `trivy-operator-values.yaml`（詳見 [安裝 Trivy Operator](./trivy-operator.md)）
 

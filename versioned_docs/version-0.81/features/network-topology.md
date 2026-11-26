@@ -1,0 +1,102 @@
+---
+id: network-topology
+title: 網路拓撲（Network Topology）
+sidebar_position: 10
+---
+
+# 網路拓撲（Network Topology）
+
+## 功能說明
+
+Network Topology 以互動式圖形介面呈現叢集內各 Pod 之間的實際網路連線關係，資料來源為 **Cilium** 觀測到的網路流量（含 L7 應用層資訊，頁面右上角顯示「Cilium · L7」標示）。透過此視覺化圖形，維運人員無需解讀原始事件日誌，即可直觀掌握叢集內的流量走向，協助識別異常連線並作為制定 [Network Policy](./network-policy.md) 的依據。
+
+---
+
+## 查看網路拓撲圖
+
+進入「**Network Topology**」頁面後，叢集內已觀察到的網路連線會自動以節點圖形式呈現。圖上顯示的是**最近 15 分鐘視窗內**的即時流量：停止的連線會從圖上消失，恢復後重新出現。開啟 Auto refresh 時每 60 秒靜默更新（不會閃爍或重置視角）。
+
+![Network Topology 總覽](/img/features/network-topology/overview.png)
+
+**節點與圖例說明**（圖例只列出畫面上實際出現的類型）：
+
+| 圖示 | 說明 |
+|---|---|
+| **Pod 節點** | 叢集內的 Pod，顯示 Namespace 與 Pod 名稱；**被隔離（Quarantine）的 Pod 帶紅框與鎖頭圖示**；**自身 Image 有 Critical 弱點的 Pod，左上角帶紅色 bug 圖示** |
+| **Node 節點** | Kubernetes Node（藍色），顯示節點名稱與 IP 位址 |
+| **Link-local 節點** | `169.254.0.0/16` 等本地鏈路位址（灰色），例如 Sidecar 對 cloud metadata（`169.254.169.254`）的探測，與外部流量區分開 |
+| **External 節點** | 叢集外部的連線來源或目標（琥珀色）；經節點 SNAT 進入的外部流量標為「world via 節點名」 |
+| **紅色虛線邊** | 被 Network Policy **拒絕**的連線；點擊可看到是哪一條 Policy 擋下的（default-deny 造成的丟棄無規則可歸因時會如實顯示，不會捏造） |
+| **Exposed 連線** | 標示為 Exposed 的邊線，代表外部可直接觸及 Pod / Node 的暴露路徑。偵測來源涵蓋 Service（NodePort / LoadBalancer / externalIPs）、Kubernetes Ingress、Gateway API（HTTPRoute / GRPCRoute / TCPRoute / TLSRoute / UDPRoute）、Istio VirtualService / Gateway、Traefik IngressRoute 系列、Contour HTTPProxy 與 hostNetwork / hostPort；未安裝的 CRD 會自動略過 |
+| **×N 標籤** | 同一組來源/目標的連線彙整為一條邊，數字為連線次數，各 Port 明細在點擊後的詳情面板中 |
+
+---
+
+## Pod 詳情與隔離
+
+點擊任一個 Pod 節點，右側會開啟 **Pod Detail** 面板，顯示 Pod 名稱、Namespace、IP 與對外暴露的路徑。Admin 可以直接在這個面板點擊「**Quarantine this pod**」隔離該 Pod，操作方式見 [Quarantine](./quarantine.md)。
+
+---
+
+## 連線詳情（Connection Detail）
+
+點擊任一條邊線，右側會開啟 **Connection Detail** 面板，顯示該連線的完整資訊：
+
+![Connection Detail 面板](/img/features/network-topology/connection-detail.png)
+
+| 欄位 | 說明 |
+|---|---|
+| **來源 / 目標** | 連線兩端的 Pod 名稱與 IP 位址 |
+| **Connections** | 累計連線次數 |
+| **Ports** | 使用的目標 Port 及各 Port 的連線次數 |
+
+---
+
+## 弱點標示
+
+若已安裝 Trivy Operator，Pod 自身的 Image 有 Critical 弱點時，節點**左上角**會出現紅色 bug 圖示，與另一個角落的網路狀態標示並存。點擊該 Pod，詳情面板會顯示 Critical 弱點數量，並在該 Pod 同時可從叢集外部觸及時特別註明。
+
+標示依據的是**每個 Pod 自己正在執行的 Image**：仍在執行舊的、未掃描 Image 的 Pod，不會因為新版 Image 的掃描結果而被標示。完整的弱點清單見 [工作負載弱點](./vulnerabilities.md)。
+
+![帶弱點標示的 Pod 與詳情面板](/img/features/network-topology/vulnerability-marker.png)
+
+畫面上有這類 Pod 時，圖例會多出「Critical CVEs」一項。
+
+---
+
+## 篩選與檢視選項
+
+頁面頂部工具列提供以下篩選與檢視工具：
+
+| 元素 | 說明 |
+|---|---|
+| **All namespaces** | 選擇特定 Namespace，僅顯示該 Namespace 相關的連線 |
+| **Pod name...** | 輸入 Pod 名稱關鍵字，快速定位特定節點 |
+| **View 選單** | 勾選檢視選項：`Hide kube-system`（隱藏 kube-system，預設開啟）、`Hide health probes`（隱藏健康檢查流量，預設開啟）、`Exposed only`（僅顯示對外暴露的連線）、`Auto refresh`（自動更新，預設開啟） |
+| **Auto Layout** | 重新自動排列所有節點位置 |
+| **Refresh** | 立即重新查詢最新的連線資料 |
+
+---
+
+## 圖形操作
+
+| 操作 | 說明 |
+|---|---|
+| **拖曳節點** | 可自由移動節點位置，調整圖形佈局 |
+| **滾輪縮放** | 放大或縮小整體圖形 |
+| **Zoom In / Out** | 點擊左下角 +/- 按鈕精確縮放 |
+| **Fit View** | 將圖形縮放至完整顯示於視窗內 |
+| **Toggle Interactivity** | 鎖定/解鎖圖形互動 |
+| **Mini Map** | 右下角縮略圖，顯示整體拓撲的全局位置 |
+
+---
+
+## 運作原理
+
+Cilium 作為叢集的 CNI，在資料平面觀測所有 Pod 的網路流量（包含 L7 層的協定資訊），各節點的 flow 由 **Hubble Relay** 彙整在單一 gRPC 端點。K8s Sentinel 後端透過 Relay 的 `GetFlows` 串流持續讀取全叢集流量，依 Pod、Node 與外部端點進行彙整，並將最新的連線關係提供給前端圖形渲染。開啟 `Auto refresh` 時，拓撲圖會自動更新以反映最新流量。
+
+因此本功能需要 Cilium 啟用 `hubble.enabled=true`（流量觀測）**與** `hubble.relay.enabled=true`（K8s Sentinel 讀取的 `hubble-relay` 服務），詳見 [安裝與設定 Cilium](../installation/cilium-install.md)。
+
+:::tip
+建議讓工作負載正常運行一段時間、累積足夠的網路觀測資料後，再依拓撲圖上實際觀察到的連線（來源、目標與 Port）制定 Network Policy 的 Whitelist 規則，可有效避免遺漏必要連線。
+:::

@@ -14,7 +14,7 @@ K8s Sentinel offers three installation methods. Choose the one that best fits yo
 |---|---|---|---|
 | **Kubernetes Job** | Production / CI pipelines | kubectl access | Automated, no manual steps |
 | **Local Script (install.sh)** | Quick evaluation / development | bash + kubectl | Visible steps, easy to observe |
-| **Offline Installation** (v0.71+) | The cluster has no internet access | A private registry + kubectl | No Helm and no outbound access needed on the cluster side |
+| **Offline Installation** | The cluster has no internet access | A private registry + kubectl | No Helm and no outbound access needed on the cluster side |
 
 ## Common Prerequisites
 
@@ -26,58 +26,6 @@ Regardless of installation method, confirm the following before starting:
 - Tetragon is installed (see [Installing Tetragon](./tetragon-install.md))
 
 Complete all checks in the [Prerequisites](../prerequisites.md) page before proceeding.
-
-:::caution[Re-applying deploy/sentinel.yaml puts back what the file says]
-Most upgrades require re-applying `deploy/sentinel.yaml`. If you changed the Deployment or the Service **by editing that file** (a PVC in place of the `emptyDir`, `AUDIT_WEBHOOK_TOKEN`, a pinned image tag, a `NodePort`), carry those edits into the new file first, or apply your own copy.
-
-Applied as it comes, the data volume goes back to `emptyDir`, which is an empty K8s Sentinel with only the `admin` / `admin` account, and an audit webhook token set in the file is dropped. Changes made with `kubectl set env` or `kubectl patch`, and a `clusterIP` you chose, are kept.
-:::
-
-:::caution[Upgrading to v0.81.2 through v0.82]
-These releases need only the new image and no manifest re-applied, but behaviour changes:
-
-- **v0.81.3 removes Global Protect Mode**: Protect is turned on one Tracing Policy at a time, and **Set all to Monitoring** sets them all back at once, see [Execution Mode](../features/execution-mode.md). `GET /api/mode` now returns `{"protect": n, "total": m}` and `PUT /api/mode` accepts only `Monitoring`; scripts calling them need adjusting
-- **v0.82.0 adds roles of your own**: existing Admin and Viewer accounts need no change. Roles made here are kept in `roles.json` in the data directory and need [Persistent Storage](./persistent-storage.md) to survive a restart, see [Roles and Permissions](../features/roles.md)
-- Since v0.82.0 every API route checks the role for reads as well. The built-in Viewer can no longer read `GET /api/alerts`, `GET /api/rsyslog` or `GET /api/settings/session-ttl` directly
-- Since v0.81.2 and v0.81.3, creating an Admission Policy, a binding, or a Network Policy from YAML under a name that already exists is refused instead of replacing the existing object
-:::
-
-:::caution[Upgrading to v0.76 through v0.81]
-- **v0.79 needs `deploy/sentinel.yaml` re-applied**: it adds the Role and RoleBinding `sentinel-tetragon-exec` in `kube-system`, which lets Behavior Discovery list processes that were already running by the path they were started by. It is `pods/exec` in Tetragon's namespace and you can do without it, see [Behavior Discovery](../features/behavior-discovery.md)
-- **CRI-O clusters installed with v0.77.0**: two Tetragon settings have to be switched off, or Tracing Policies that name a namespace are not enforced, see [Installing Tetragon](./tetragon-install.md)
-- Since v0.76.1 the default Hubble Relay address is `hubble-relay.<ns>.svc:80`, so a cluster with a custom cluster domain no longer shows an empty Network Topology with `name resolver error: produced zero addresses`; the `HUBBLE_RELAY_ADDRESS` environment variable still overrides it
-- Since v0.80, resetting another account's password takes an Admin of the whole cluster, see [Limiting an Account to Namespaces](../features/namespace-access.md)
-- The other versions need nothing beyond the new image
-:::
-
-:::caution[Upgrading to v0.66 through v0.70 (refusing vulnerable images)]
-- **Re-apply `deploy/sentinel.yaml`, then restart K8s Sentinel**: it adds the `VulnerabilityGate` kind, which v0.67, v0.68 and v0.70 each extended. Without it the matching admission policies admit everything; see [Refusing Vulnerable Images](../features/vulnerability-admission.md) for what each version shows
-- The Deployment Gate page of v0.65.0 is gone, and the policy it made is removed on upgrade; make it again under Admission Policy
-- Vulnerability Limit, Blocked CVEs, Host Path Volumes and Environment Variables policies made before v0.69 are best made again in the form, see [Admission Policy](../features/admission-policy.md)
-- v0.71 and v0.72 have no manifest change
-:::
-
-:::caution[Upgrading from before v0.43?]
-Since v0.43, runtime events are collected over gRPC (no more `kubectl exec`). Existing clusters need three things before upgrading:
-
-1. **Expose Tetragon's gRPC**: `kubectl -n kube-system patch cm tetragon-config --type merge -p '{"data":{"server-address":"0.0.0.0:54321"}}'` then `rollout restart ds/tetragon` (see [Installing Tetragon](./tetragon-install.md))
-2. **Enable Hubble Relay on Cilium**: `--set hubble.relay.enabled=true` (see [Installing and Configuring Cilium](./cilium-install.md))
-3. **Re-apply the ClusterRole**: `kubectl apply -f deploy/sentinel.yaml` - the new version drops `pods/exec` (the largest privilege K8s Sentinel held) and adds read access to the resources exposure detection needs
-
-Fresh installs (install-job / install.sh) handle all of this automatically.
-:::
-
-:::caution[Upgrading to v0.64+]
-- **Everyone is signed out once**: since v0.64 a session is refused after its account is deleted or its password changes
-- Creating a Tracing Policy under a **name that already exists** is refused instead of replacing the existing policy
-- Re-apply `deploy/sentinel.yaml` to drop the unused cluster-wide `pods/log` permission (optional)
-- **An existing Tetragon is still on the host network**: since v0.64.1 the installers put Tetragon on the pod network and limit its gRPC port to K8s Sentinel with a NetworkPolicy, but they do not change a Tetragon that is already installed. See [Installing Tetragon](./tetragon-install.md) for how to move it
-:::
-
-:::caution[Upgrading to v0.60+ (vulnerability scanning)]
-- **Re-apply `deploy/sentinel.yaml`**: the ClusterRole adds read-only rules for `vulnerabilityreports` and `jobs` (v0.60), plus a Role in `sentinel-system` used by registry scanning (v0.62)
-- **Trivy Operator**: it is not installed automatically on existing environments; see [Installing Trivy Operator](./trivy-operator.md) for how to install and upgrade it
-:::
 
 After installation:
 
@@ -91,4 +39,25 @@ After installation:
 - **Production environments**: Use [Kubernetes Job Installation](./job-install.md). The Job runs inside the cluster, ensuring network consistency and making it easy to audit and integrate with automation.
 - **Quick evaluation or development**: Use [Local Script Installation](./script-install.md). The script prints installation progress step by step, making it easy to observe and debug.
 - **A cluster with no internet access**: Use [Offline Installation](./offline-install.md). Carry the images to a private registry first, then install from the offline bundle.
+:::
+
+## Upgrading to v0.82
+
+Upgrading from v0.81 needs only the new image: no manifest to re-apply and no data migration. Behaviour changes as follows:
+
+- **Roles of your own**: existing Admin and Viewer accounts need no change. Roles made here are kept in `roles.json` in the data directory and need [Persistent Storage](./persistent-storage.md) to survive a restart, see [Roles and Permissions](../features/roles.md)
+- **Every API route checks the role for reads as well**: the built-in Viewer can no longer read `GET /api/alerts`, `GET /api/rsyslog` or `GET /api/settings/session-ttl` directly
+- The `sentinel-quarantine` policy that isolates quarantined pods is read-only in the Network Policy list (v0.82.1)
+
+When upgrading from a release before v0.81, re-apply `deploy/sentinel.yaml`, restart K8s Sentinel, and make sure Tetragon, Cilium (Hubble Relay) and Trivy Operator are set up as the pages of this chapter describe. For the upgrade notes of another release, switch to that version's docs with the version menu at the top of the page.
+
+```bash
+kubectl apply -f deploy/sentinel.yaml
+kubectl -n sentinel-system rollout restart deployment/sentinel
+```
+
+:::caution[Re-applying deploy/sentinel.yaml puts back what the file says]
+If you changed the Deployment or the Service **by editing that file** (a PVC in place of the `emptyDir`, `AUDIT_WEBHOOK_TOKEN`, a pinned image tag, a `NodePort`), carry those edits into the new file first, or apply your own copy.
+
+Applied as it comes, the data volume goes back to `emptyDir`, which is an empty K8s Sentinel with only the `admin` / `admin` account, and an audit webhook token set in the file is dropped. Changes made with `kubectl set env` or `kubectl patch`, and a `clusterIP` you chose, are kept.
 :::

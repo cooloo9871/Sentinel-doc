@@ -8,9 +8,9 @@ sidebar_position: 19
 
 ## Overview
 
-The Audit Log (v0.45+) records **every operation performed through K8s Sentinel**, answering who did what, when, and to which target: quarantine and release, Tracing Policy mode changes (Set all to Monitoring included), create/update/delete across all three policy types, user management, alert and syslog config, retention changes, plus every sign-in attempt and password change.
+The Audit Log records **every operation performed through K8s Sentinel**, answering who did what, when, and to which target: quarantine and release, Tracing Policy mode changes (Set all to Monitoring included), create/update/delete across all three policy types, user management, alert and syslog config, retention changes, plus every sign-in attempt and password change.
 
-Open "**Notifications → Audit Log**" to view it (moved from Settings to the Notifications menu in v0.50.2; it needs View on System, see [Roles and Permissions](./roles.md); the built-in Viewer does not see the menu item):
+Open "**Notifications → Audit Log**" to view it (it needs View on System, see [Roles and Permissions](./roles.md); the built-in Viewer does not see the menu item):
 
 ![Audit Log page](/img/features/audit/list.png)
 
@@ -33,7 +33,7 @@ Open "**Notifications → Audit Log**" to view it (moved from Settings to the No
 ## Filtering and Export
 
 - **Filter**: the "Filter by user, action or target..." box narrows the list live
-- **Export CSV** (v0.46+): writes out **what is on screen** (Time, User, Action, Target, Status, Method, Path), so an active filter narrows the file too. The CSV carries a UTF-8 BOM, so Excel opens it correctly
+- **Export CSV**: writes out **what is on screen** (Time, User, Action, Target, Status, Method, Path), so an active filter narrows the file too. The CSV carries a UTF-8 BOM, so Excel opens it correctly
 
 ---
 

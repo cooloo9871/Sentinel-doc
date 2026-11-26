@@ -15,7 +15,7 @@ Click "**+ New Policy**" on the Tracing Policy list page to open the form editor
 ![TracingPolicy form editor](/img/features/policy/create.png)
 
 :::note
-Pod **network access rules** have been removed from the TracingPolicy form - they are now managed by [Network Policy](./network-policy.md) (Cilium Network Policy). The one exception: **process-bound network control** (e.g. "kill any binary outside an allow-list the moment it opens an outbound connection") cannot be expressed in CNP, which judges by workload identity and cannot distinguish processes inside a pod. Such a `tcp_connect` kprobe can still be written in the [YAML editor](./yaml-editor.md); a policy carrying network kprobes opens as YAML on edit so a form save cannot drop those rules.
+Pod **network access rules** are not part of the TracingPolicy form - they are managed by [Network Policy](./network-policy.md) (Cilium Network Policy). The one exception: **process-bound network control** (e.g. "kill any binary outside an allow-list the moment it opens an outbound connection") cannot be expressed in CNP, which judges by workload identity and cannot distinguish processes inside a pod. Such a `tcp_connect` kprobe can be written in the [YAML editor](./yaml-editor.md); a policy carrying network kprobes opens as YAML on edit so a form save cannot drop those rules.
 :::
 
 ---
@@ -46,7 +46,7 @@ The Pod Selector section narrows the policy to specific Pods instead of every Po
 2. Multiple labels combine with AND logic (a Pod must match all labels to be governed by this policy)
 3. Leave the selector empty to apply the policy to every Pod in the namespace (or the whole cluster for a cluster-wide policy)
 
-:::tip[Live selector preview (v0.40+)]
+:::tip[Live selector preview]
 While editing the Pod Selector, the form shows which pods the selector matches **right now**. It turns red when nothing matches (usually a label typo) and amber when an empty selector is about to govern every pod - catching a mis-aimed selector before Apply.
 :::
 
@@ -79,7 +79,7 @@ Paths are **absolute and matched exactly** - a program name on its own (e.g. `cu
 
 ## File Rules
 
-File Rules control filesystem access from the Pods. Since v0.52 they have the same **Mode** switch as Process Rules:
+File Rules control filesystem access from the Pods. They have the same **Mode** switch as Process Rules:
 
 | Mode | Description |
 |---|---|
@@ -104,10 +104,10 @@ The two modes present different forms:
 | **Monitored access** | Which access kind is monitored at all: `Read & Write` / `Read only` / `Write only` (Read only means writes are not monitored anywhere, not "reads allowed") |
 | **Exception processes** | Optional; these processes' file access is not monitored at all |
 
-**How it works:** Tetragon hooks the `security_file_permission` kprobe (an LSM hook). Blacklist emits one `Prefix` selector per path (Tetragon ORs selectors); Whitelist emits a **single** selector with one `NotPrefix` over all excluded paths and one `matchBinaries: NotIn` over all exception processes (since v0.52.1: multiple OR-ed selectors would make the exclusions silently ineffective, so they must be merged into one set).
+**How it works:** Tetragon hooks the `security_file_permission` kprobe (an LSM hook). Blacklist emits one `Prefix` selector per path (Tetragon ORs selectors); Whitelist emits a **single** selector with one `NotPrefix` over all excluded paths and one `matchBinaries: NotIn` over all exception processes (multiple OR-ed selectors would make the exclusions silently ineffective, so they must be merged into one set).
 
 :::note[Hand-written YAML the form cannot represent is never rewritten]
-YAML using shapes the form cannot express (mixed `Prefix` / `NotPrefix`, the `Mask` operator, multi-value permissions, etc.) keeps opening in the YAML editor on edit, so a form save cannot rewrite it (v0.52.4).
+YAML using shapes the form cannot express (mixed `Prefix` / `NotPrefix`, the `Mask` operator, multi-value permissions, etc.) keeps opening in the YAML editor on edit, so a form save cannot rewrite it.
 :::
 
 ---

@@ -8,7 +8,7 @@ sidebar_position: 12
 
 ## Overview
 
-The [Workloads](./vulnerabilities.md) page covers the images that are **running**; "**Vulnerabilities → Registries**" (since v0.62) covers the images that **could be deployed**: the images stored in a registry are scanned before any workload uses them.
+The [Workloads](./vulnerabilities.md) page covers the images that are **running**; "**Vulnerabilities → Registries**" covers the images that **could be deployed**: the images stored in a registry are scanned before any workload uses them.
 
 Trivy Operator only looks at workloads in the cluster, so here the scans are **started by K8s Sentinel itself**: each image is scanned by one short-lived Trivy Pod in `sentinel-system`.
 
@@ -39,7 +39,7 @@ Open "**Vulnerabilities → Registries**" and click "**+ Add Registry**" in the 
 | **Filters** | ✅ | Decide which images are scanned, see the next section |
 | **Scan every N days** | - | The schedule interval, 1 to 30 days |
 | **Skip TLS certificate verification** | - | Accept any certificate, that is, do not check the registry's identity at all |
-| **CA certificate** | - | Paste the contents of your own CA's `ca.pem` (v0.63+); this field is hidden when skipping verification is checked |
+| **CA certificate** | - | Paste the contents of your own CA's `ca.pem`; this field is hidden when skipping verification is checked |
 
 After you click "**Save**", the registry's first scan starts immediately.
 
@@ -47,13 +47,13 @@ After you click "**Save**", the registry's first scan starts immediately.
 
 ### A Registry With a Certificate Issued by Your Own CA
 
-Since v0.63 you no longer need to check **Skip TLS certificate verification**: paste the contents of the CA's `ca.pem` into **CA certificate**, and the registry is verified against this CA both when K8s Sentinel lists the registry contents and when the scan Pods pull images. The CA is **added to** the list of publicly trusted CAs, not swapped for it, so a scan can still download the vulnerability database.
+You do not need to check **Skip TLS certificate verification**: paste the contents of the CA's `ca.pem` into **CA certificate**, and the registry is verified against this CA both when K8s Sentinel lists the registry contents and when the scan Pods pull images. The CA is **added to** the list of publicly trusted CAs, not swapped for it, so a scan can still download the vulnerability database.
 
 ---
 
 ## Filters Syntax
 
-Filters are written as `repository` or `repository:tag`, with `*` as a wildcard; they can be one per line or separated by commas (v0.63.1+), for example `library/*, team/*, ops/app:v1.*`.
+Filters are written as `repository` or `repository:tag`, with `*` as a wildcard; they can be one per line or separated by commas, for example `library/*, team/*, ops/app:v1.*`.
 
 | Example | Meaning |
 |---|---|
@@ -75,7 +75,7 @@ Before saving you can click "**Test filters**": it only lists the registry conte
 | **When scans run** | When the registry is added, after every edit, and then at the configured interval (1 to 30 days); you can also click "**Scan now**" at any time |
 | **500 images per scan** | Every image is a Pod that has to download the vulnerability database, so a single scan stops at 500. When the Filters match more, the page shows how many were skipped; narrow the Filters or split them across several registry entries |
 | **3 scans run at a time** | Across all registries combined, so a large registry takes a while. Results appear as each image finishes, and the previous results are kept until then |
-| **13 minutes per image scan** | Since v0.63.3; earlier versions used Trivy's default of 5 minutes, and larger images failed with `context deadline exceeded` |
+| **13 minutes per image scan** | The scan of a single image is given at most 13 minutes |
 
 ---
 
@@ -87,7 +87,7 @@ The Registries list columns are `Registry`, `Filters`, `Schedule`, `Last scan`, 
 
 Clicking into a single registry shows each image's `Critical` / `High` / `Medium` / `Low` / `Unknown` / `Fixable` counts and scan time:
 
-- **Expand an image** to see the finding details, in the same layout as the Workloads page and likewise ordered worst first (v0.62.1+)
+- **Expand an image** to see the finding details, in the same layout as the Workloads page and likewise ordered worst first
 - Search with **Search image...**; filter with **Severity** and **Show only** (`Fix available`, `Scan failed`)
 - Export with **Export CSV**
 
@@ -113,6 +113,6 @@ Clicking into a single registry shows each image's `Critical` / `High` / `Medium
 
 ## Prerequisites
 
-- `deploy/sentinel.yaml` is from v0.62 or later: its Role `sentinel-registry-scan` lets K8s Sentinel create scan Jobs in `sentinel-system`; without it scans fail with a permission error
+- The Role `sentinel-registry-scan` in `deploy/sentinel.yaml` lets K8s Sentinel create scan Jobs in `sentinel-system`; without it scans fail with a permission error
 - If Trivy Operator is installed, it has to be upgraded with the current `deploy/trivy-operator-values.yaml` so that the operator does not in turn scan these scan Jobs, see [Installing Trivy Operator](../installation/trivy-operator.md)
 - Air-gapped clusters need the `TRIVY_IMAGE`, `TRIVY_DB_REPOSITORY` and `TRIVY_JAVA_DB_REPOSITORY` environment variables set, also covered on the page above; an [offline installation](../installation/offline-install.md) sets them for you

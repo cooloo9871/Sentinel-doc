@@ -8,14 +8,14 @@ sidebar_position: 5
 
 ## 為什麼需要
 
-v0.60 起新增的 [Vulnerabilities](../features/vulnerabilities.md) 頁面，顯示的是 [Trivy Operator](https://github.com/aquasecurity/trivy-operator) 的掃描結果。**K8s Sentinel 本身不掃描執行中工作負載的 Image**：Trivy Operator 負責掃描並寫出 `VulnerabilityReport` 資源，K8s Sentinel 只負責讀取與呈現。
+[Vulnerabilities](../features/vulnerabilities.md) 頁面顯示的是 [Trivy Operator](https://github.com/aquasecurity/trivy-operator) 的掃描結果。**K8s Sentinel 本身不掃描執行中工作負載的 Image**：Trivy Operator 負責掃描並寫出 `VulnerabilityReport` 資源，K8s Sentinel 只負責讀取與呈現。
 
 Trivy Operator 是**選用元件**。沒有安裝時，Vulnerabilities 頁面會顯示掃描尚未啟用，其餘功能完全不受影響。
 
 | 安裝方式 | 是否自動安裝 Trivy Operator |
 |---|---|
-| [Kubernetes Job 安裝](./job-install.md) | 是（v0.61 起），已存在時跳過 |
-| [本機腳本安裝](./script-install.md) | 是（v0.61 起），已存在時跳過 |
+| [Kubernetes Job 安裝](./job-install.md) | 是，已存在時跳過 |
+| [本機腳本安裝](./script-install.md) | 是，已存在時跳過 |
 | 只套用 `deploy/sentinel.yaml` | 否，需依本頁手動安裝 |
 
 兩種安裝程式都把 Trivy Operator 裝進 **`sentinel-system`**（與 K8s Sentinel 同一個 Namespace），Helm release 名稱為 `trivy-operator`；只要叢集任一 Namespace 已存在 Trivy Operator 的 Deployment 就會跳過。
@@ -66,20 +66,10 @@ kubectl get vulnerabilityreports -A
 
 ## 升級注意事項
 
-### 從沒有 Vulnerabilities 頁面的版本升級（v0.59 以前）
-
-重新套用 `deploy/sentinel.yaml`。ClusterRole 新增了 `vulnerabilityreports` 與 `jobs` 的唯讀規則；缺少前者時，頁面會顯示 K8s Sentinel 沒有讀取報告的權限。
+升級 K8s Sentinel 時，重新套用 `deploy/sentinel.yaml`，並以目前的 values 升級 Operator：
 
 ```bash
 kubectl apply -f deploy/sentinel.yaml
-```
-
-### 升級到含 Registry 掃描的版本（v0.62+）
-
-1. 重新套用 `deploy/sentinel.yaml`：新增了 `sentinel-system` 內的 Role `sentinel-registry-scan`，供 Registry 掃描的 Job 使用；缺少時每一次 Registry 掃描都會以權限錯誤失敗
-2. 以目前的 values 升級 Operator，讓它不要去掃描那些 Job：
-
-```bash
 helm upgrade trivy-operator aqua/trivy-operator \
   --namespace sentinel-system \
   --values deploy/trivy-operator-values.yaml
@@ -92,18 +82,6 @@ helm upgrade trivy-operator aqua/trivy-operator \
 ```bash
 kubectl -n sentinel-system rollout restart deployment/trivy-operator
 ```
-
-### 搬移 v0.61.0 裝在 `trivy-system` 的 Operator
-
-v0.61.0 的安裝程式把 Operator 裝在 `trivy-system`，v0.61.1 起改裝在 `sentinel-system`。搬移方式：
-
-```bash
-helm uninstall trivy-operator --namespace trivy-system
-kubectl delete namespace trivy-system
-bash deploy/install.sh
-```
-
-既有的弱點報告存放在各工作負載所屬的 Namespace，不會因此消失。
 
 ### 清除其他掃描器留下的報告
 
@@ -121,7 +99,7 @@ kubectl delete clustersbomreports,clusterconfigauditreports,clusterrbacassessmen
 ## 離線（Air-gapped）叢集
 
 :::tip
-v0.71.0 起每個 release 都附帶離線套件，會一併處理 Image 搬運、manifest 改寫與下列環境變數，見 [離線安裝](./offline-install.md)。本節說明的是不使用離線套件時的手動設定。
+每個 release 都附帶離線套件，會一併處理 Image 搬運、manifest 改寫與下列環境變數，見 [離線安裝](./offline-install.md)。本節說明的是不使用離線套件時的手動設定。
 :::
 
 Trivy 以 OCI artifact 的形式下載弱點資料庫，預設從 `mirror.gcr.io` 拉取資料庫與自身的 Image。無法連外的叢集，請把下列內容複製到叢集可存取的 Registry：
@@ -157,7 +135,7 @@ helm install trivy-operator aqua/trivy-operator \
 |---|---|---|
 | `TRIVY_IMAGE` | `mirror.gcr.io/aquasec/trivy:0.76.1` | Registry 掃描所執行的 Trivy Image |
 | `TRIVY_DB_REPOSITORY` / `TRIVY_JAVA_DB_REPOSITORY` | Trivy 的預設值 | Registry 掃描下載弱點資料庫的位置；離線叢集請兩者都指向內部 mirror |
-| `TRIVY_INSECURE`（v0.72+） | 未設定 | 設為 `true` 時，Registry 掃描不驗證任何憑證，包含資料庫 mirror 與被掃描的 Registry。用於 mirror 的憑證無法讓 Trivy 信任的情況 |
+| `TRIVY_INSECURE` | 未設定 | 設為 `true` 時，Registry 掃描不驗證任何憑證，包含資料庫 mirror 與被掃描的 Registry。用於 mirror 的憑證無法讓 Trivy 信任的情況 |
 
 :::note
 資料庫的新舊取決於內部 Registry 中的副本，請排程定期更新 mirror。Operator 自身的 Image 與工作負載所使用的 Registry 也需要同樣處理，私有 Registry 與認證的設定請參考 [Trivy Operator 官方文件](https://aquasecurity.github.io/trivy-operator/)。

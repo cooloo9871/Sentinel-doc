@@ -202,8 +202,6 @@ If no events show up, check in order: (1) the ClusterIP in `audit-webhook.yaml` 
 
 ## Protecting the Endpoint (Recommended)
 
-*Requires K8s Sentinel v0.39.1+; the token-in-URL scheme requires v0.39.4+.*
-
 Without a token the webhook endpoint is an open write path - anything in the cluster could forge admission events, and since retention evicts the oldest first, flooding fakes pushes the real ones out. Protect it with a shared token.
 
 ### 1. Create the token Secret

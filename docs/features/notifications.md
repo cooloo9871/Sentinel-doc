@@ -16,7 +16,7 @@ Security Events 頁面以即時串流方式顯示兩類安全事件：**Tetragon
 
 ## 即時串流原理
 
-K8s Sentinel 後端（v0.43+）透過各節點 Tetragon Agent 的 **gRPC `GetEvents` 串流**收集執行期事件（因此 Tetragon 需將 gRPC 綁定至 Pod 網路，見 [安裝 Tetragon](../installation/tetragon-install.md)），再以 **Server-Sent Events（SSE）** 建立一條從伺服器到瀏覽器的單向持久連線，持續將新事件推送至前端頁面，無需定期輪詢（polling），確保事件以最低延遲呈現。
+K8s Sentinel 後端透過各節點 Tetragon Agent 的 **gRPC `GetEvents` 串流**收集執行期事件（因此 Tetragon 需將 gRPC 綁定至 Pod 網路，見 [安裝 Tetragon](../installation/tetragon-install.md)），再以 **Server-Sent Events（SSE）** 建立一條從伺服器到瀏覽器的單向持久連線，持續將新事件推送至前端頁面，無需定期輪詢（polling），確保事件以最低延遲呈現。
 
 ---
 
@@ -36,7 +36,7 @@ K8s Sentinel 後端（v0.43+）透過各節點 Tetragon Agent 的 **gRPC `GetEve
 
 **事件統計列：** 顯示目前資料庫中的事件總數、Warning 數量與 Critical 數量。
 
-重複發生的事件會**留在列表中原本的位置**，並更新其次數與時間（v0.64.2+；v0.64.0 與 v0.64.1 會在每次重複時跳到最上方，造成列表不斷重排）。v0.64.1 起，Tetragon 寫入自身匯出 log（`/var/log/tetragon/`）的動作不再被回報為安全事件。
+重複發生的事件會**留在列表中原本的位置**，並更新其次數與時間。Tetragon 寫入自身匯出 log（`/var/log/tetragon/`）的動作不會被回報為安全事件。
 
 ---
 

@@ -202,8 +202,6 @@ eff3881e1f2fc       c3994bc6961024...   3 seconds ago       Running   kube-apise
 
 ## 保護 Webhook 端點（建議）
 
-*此功能需 K8s Sentinel v0.39.1 以上；Token 放入 URL 的方式需 v0.39.4 以上。*
-
 Webhook 端點在未設定 Token 時是開放的寫入路徑：叢集內任何工作負載都可以偽造 admission 事件，而事件保留機制會先淘汰最舊的資料，灌入假事件就能把真實事件擠掉。建議以共用 Token 保護端點。
 
 ### 1. 建立 Token Secret

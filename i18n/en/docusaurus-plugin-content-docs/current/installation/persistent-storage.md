@@ -22,8 +22,8 @@ An `emptyDir` lives and dies with the Pod - **every restart or reschedule wipes 
 - Alert rules and Syslog forwarding configs
 - Custom Policy Templates
 - Security Events / Admission Events history
-- The registry settings (including credentials) and scan results of [Registry Scanning](../features/registry-scanning.md) (`registries.json` and `registry-scans/`, v0.62+)
-- The [roles](../features/roles.md) you make (`roles.json`, v0.82+)
+- The registry settings (including credentials) and scan results of [Registry Scanning](../features/registry-scanning.md) (`registries.json` and `registry-scans/`)
+- The [roles](../features/roles.md) you make (`roles.json`)
 - System settings such as Session Timeout
 
 For production, mount `/data/sentinel` on a **PersistentVolume**.
@@ -236,7 +236,7 @@ Data previously stored in the `emptyDir` is **not** migrated when you switch to 
 
 ## Only Want Sessions to Survive Restarts? (JWT_SECRET)
 
-The session-signing key lives in `/data/sentinel/.jwt-secret` by default. Without a PV it is regenerated on every Pod restart, **logging every user out**. Since v0.53 the **`JWT_SECRET`** environment variable (at least 32 characters) can pin the key, injected from a Kubernetes Secret:
+The session-signing key lives in `/data/sentinel/.jwt-secret` by default. Without a PV it is regenerated on every Pod restart, **logging every user out**. The **`JWT_SECRET`** environment variable (at least 32 characters) can pin the key, injected from a Kubernetes Secret:
 
 ```bash
 kubectl -n sentinel-system create secret generic sentinel-jwt \

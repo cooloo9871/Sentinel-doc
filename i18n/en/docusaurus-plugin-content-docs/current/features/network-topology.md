@@ -22,19 +22,19 @@ Open the "**Network Topology**" page and the observed connections render automat
 
 | Item | Description |
 |---|---|
-| **Pod node** | A Pod in the cluster, showing its namespace and Pod name; **a quarantined Pod carries a red border and a lock icon**; **a Pod whose own images have Critical vulnerabilities carries a red bug icon in its top-left corner** (v0.61+) |
+| **Pod node** | A Pod in the cluster, showing its namespace and Pod name; **a quarantined Pod carries a red border and a lock icon**; **a Pod whose own images have Critical vulnerabilities carries a red bug icon in its top-left corner** |
 | **Node node** | A Kubernetes node (blue), showing its name and IP address |
 | **Link-local node** | Link-local addresses such as `169.254.0.0/16` (slate), e.g. a sidecar probing cloud metadata (`169.254.169.254`), kept distinct from external traffic |
 | **External node** | A connection source or destination outside the cluster (amber); external traffic SNATed through a node is labelled "world via node" |
 | **Red dashed edge** | A connection **denied** by a Network Policy; click it to see which policy blocked it (a default-deny drop with no rule to attribute says so rather than inventing one) |
-| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside. Detection sources cover Services (NodePort / LoadBalancer / externalIPs), Kubernetes Ingress, Gateway API (HTTPRoute / GRPCRoute, plus TCPRoute / TLSRoute / UDPRoute since v0.41), Istio VirtualService / Gateway, Traefik IngressRoute variants, Contour HTTPProxy and hostNetwork / hostPort; CRDs that are not installed are skipped silently |
+| **Exposed edge** | An edge marked Exposed represents a path where a Pod / Node is directly reachable from outside. Detection sources cover Services (NodePort / LoadBalancer / externalIPs), Kubernetes Ingress, Gateway API (HTTPRoute / GRPCRoute / TCPRoute / TLSRoute / UDPRoute), Istio VirtualService / Gateway, Traefik IngressRoute variants, Contour HTTPProxy and hostNetwork / hostPort; CRDs that are not installed are skipped silently |
 | **×N label** | Connections are aggregated per source/destination pair; the number is the connection count, with the per-port breakdown in the detail panel |
 
 ---
 
 ## Pod Detail and Quarantine
 
-Click any pod node to open the **Pod Detail** panel on the right, with the pod's name, namespace, IP and the ways in from outside the cluster. Since v0.76 an Admin can quarantine the pod straight from this panel with **Quarantine this pod**; see [Quarantine](./quarantine.md).
+Click any pod node to open the **Pod Detail** panel on the right, with the pod's name, namespace, IP and the ways in from outside the cluster. An Admin can quarantine the pod straight from this panel with **Quarantine this pod**; see [Quarantine](./quarantine.md).
 
 ---
 
@@ -54,7 +54,7 @@ Click any edge to open the **Connection Detail** panel:
 
 ## Vulnerability Marks
 
-Since v0.61, if Trivy Operator is installed, a red bug icon appears in the **top-left corner** of a node when the Pod's own images have Critical vulnerabilities, alongside the network state mark in the other corner. Click the Pod and the detail panel shows the number of Critical vulnerabilities, and notes it specifically when the Pod is also reachable from outside the cluster.
+If Trivy Operator is installed, a red bug icon appears in the **top-left corner** of a node when the Pod's own images have Critical vulnerabilities, alongside the network state mark in the other corner. Click the Pod and the detail panel shows the number of Critical vulnerabilities, and notes it specifically when the Pod is also reachable from outside the cluster.
 
 The mark follows **the image each Pod is itself running**: a Pod still running an old, unscanned image is not marked on the strength of the scan results of the new image. For the full list of vulnerabilities, see [Workload Vulnerabilities](./vulnerabilities.md).
 
@@ -93,7 +93,7 @@ The toolbar at the top offers:
 
 ## How It Works
 
-Cilium, as the cluster CNI, observes all Pod traffic in the data plane, including L7 protocol information; every node's flows are aggregated behind one gRPC endpoint by **Hubble Relay**. The K8s Sentinel backend (v0.43+) reads the cluster-wide traffic from Relay's `GetFlows` stream, aggregates it by Pod, node and external endpoint, and serves the latest connection graph to the frontend. With `Auto refresh` enabled, the topology updates automatically as new traffic is observed.
+Cilium, as the cluster CNI, observes all Pod traffic in the data plane, including L7 protocol information; every node's flows are aggregated behind one gRPC endpoint by **Hubble Relay**. The K8s Sentinel backend reads the cluster-wide traffic from Relay's `GetFlows` stream, aggregates it by Pod, node and external endpoint, and serves the latest connection graph to the frontend. With `Auto refresh` enabled, the topology updates automatically as new traffic is observed.
 
 This feature therefore requires Cilium with both `hubble.enabled=true` (flow observation) **and** `hubble.relay.enabled=true` (the `hubble-relay` service K8s Sentinel reads) - see [Installing and Configuring Cilium](../installation/cilium-install.md).
 

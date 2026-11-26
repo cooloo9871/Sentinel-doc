@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## Overview
 
-Since v0.82.0, what an account may do is decided by its **role**. A role grants each of eight parts of the product separately, at **None**, **View** or **Manage**, so you can make a role that only views events, or one that manages Network Policy and views events, instead of choosing between Admin and Viewer only.
+What an account may do is decided by its **role**. A role grants each of eight parts of the product separately, at **None**, **View** or **Manage**, so you can make a role that only views events, or one that manages Network Policy and views events, instead of choosing between Admin and Viewer only.
 
 - **Admin** and **Viewer** are built in and keep their meaning, so existing accounts need no change
 - Other roles are made under **Settings → Roles**
@@ -53,7 +53,7 @@ A page the role does not grant is not merely hidden: it is absent from the sideb
 Built-in roles cannot be edited or deleted. The list marks them **Built-in** and offers **View** only.
 
 :::note[A Viewer cannot read notifications or settings]
-No page ever showed Alerts, Syslog or Settings to a Viewer. Since v0.82.0 the API refuses them too (`GET /api/alerts`, `GET /api/rsyslog`, `GET /api/settings/session-ttl`), because the URL of a notification target is itself a credential.
+No page shows Alerts, Syslog or Settings to a Viewer, and the API refuses them too (`GET /api/alerts`, `GET /api/rsyslog`, `GET /api/settings/session-ttl`), because the URL of a notification target is itself a credential.
 :::
 
 ---
@@ -98,7 +98,7 @@ The last account with the Admin role and the whole cluster cannot be deleted, gi
 
 ## Roles and the Namespace Limit
 
-The limit described in [Limiting an Account to Namespaces](./namespace-access.md) is unchanged and applies **on top of the role**: inside its namespaces, a limited account creates and edits what its role manages and reads what its role views.
+The limit described in [Limiting an Account to Namespaces](./namespace-access.md) applies **on top of the role**: inside its namespaces, a limited account creates and edits what its role manages and reads what its role views.
 
 Notifications and System belong to the cluster and stay out of reach of a limited account whatever its role.
 

@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## 功能說明
 
-Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及全域保護模式的開關狀態，並預覽最新的 Tracing Policy、Admission Policy、Network Policy、Quarantine 隔離狀態與弱點掃描摘要。
+Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈現叢集安全狀態的即時快照。您可以快速掌握 Tetragon Agent 健康狀況、安全事件數量與 Admission 違規情況，以及處於 Protect 模式的 Policy 數量，並預覽最新的 Tracing Policy、Admission Policy、Network Policy、Quarantine 隔離狀態與弱點掃描摘要。
 
 ---
 
@@ -20,12 +20,12 @@ Dashboard 是登入 K8s Sentinel 後的首頁，以「**Overview**」頁面呈�
 
 | 卡片名稱 | 說明 |
 |---|---|
-| **Tetragon Agents** | 顯示叢集中 Tetragon Agent 的健康比例（例如 `2 / 2`）與整體狀態；v0.49 起反映的是**事件串流狀態**而非單純的 Pod readiness，任一串流中斷時 Dashboard 會出現紅色警示 banner |
+| **Tetragon Agents** | 顯示叢集中 Tetragon Agent 的健康比例（例如 `2 / 2`）與整體狀態；反映的是**事件串流狀態**而非單純的 Pod readiness，任一串流中斷時 Dashboard 會出現紅色警示 banner |
 | **Security Events** | Tetragon 偵測到的 kprobe 安全事件總數，細分 `Critical: N / Warning: N` |
 | **Admission Events** | ValidatingAdmissionPolicy 違規事件總數，細分 `Critical: N / Warning: N` |
-| **Policies in Protect** | 處於 Protect 模式的 Tracing Policy 數量與總數（例如 `2 / 4`）；有任何 Policy 處於 Protect 時以紅色顯示。v0.81.3 起取代原本的 Global Protect Mode 卡片 |
+| **Policies in Protect** | 處於 Protect 模式的 Tracing Policy 數量與總數（例如 `2 / 4`）；有任何 Policy 處於 Protect 時以紅色顯示 |
 
-v0.82.0 起，Dashboard 只會顯示帳號的 [角色](./roles.md) 可以查看的卡片與清單。
+Dashboard 只會顯示帳號的 [角色](./roles.md) 可以查看的卡片與清單。
 
 ---
 
@@ -33,7 +33,7 @@ v0.82.0 起，Dashboard 只會顯示帳號的 [角色](./roles.md) 可以查看�
 
 ![Dashboard 的 Vulnerabilities 卡片](/img/features/dashboard/vulnerabilities-card.png)
 
-v0.61 起，Dashboard 會顯示 **Vulnerabilities** 卡片，資料來自 Trivy Operator 的掃描報告（見 [工作負載弱點](./vulnerabilities.md)）：
+Dashboard 會顯示 **Vulnerabilities** 卡片，資料來自 Trivy Operator 的掃描報告（見 [工作負載弱點](./vulnerabilities.md)）：
 
 - **Critical 與 High 弱點總數**
 - 同時具有 Critical 弱點且**對外暴露**的工作負載數（大於 0 時以紅色顯示）

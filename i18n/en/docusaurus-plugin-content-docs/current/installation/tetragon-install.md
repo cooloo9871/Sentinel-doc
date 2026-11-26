@@ -25,8 +25,8 @@ helm install tetragon cilium/tetragon -n kube-system \
 kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-- **`tetragon.grpc.address=0.0.0.0:54321`** is required: K8s Sentinel (v0.43+) collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321`, reachable only from inside the pod
-- **`hostNetwork=false` and the NetworkPolicy** (how it is installed since v0.64.1) are what keep that API to K8s Sentinel. Tetragon's gRPC server has **no authentication and no TLS**: whoever can connect reads every process started on the node, command line included, and can list, disable or delete tracing policies. On the host network, which is the chart's default, the port is open on every node's address to every pod in the cluster, and a NetworkPolicy does not apply to a hostNetwork pod; off the host network it is an ordinary pod port, and `deploy/tetragon-grpc-policy.yaml` (NetworkPolicy `tetragon-grpc`) admits only the K8s Sentinel pod. A NetworkPolicy governs traffic between pods: a process on the node itself, or a pod on the host network of that node, can still reach the port. Edit the namespaces in that file if Tetragon or K8s Sentinel is installed elsewhere
+- **`tetragon.grpc.address=0.0.0.0:54321`** is required: K8s Sentinel collects runtime events over the Tetragon gRPC API, and the agent's default bind is `localhost:54321`, reachable only from inside the pod
+- **`hostNetwork=false` and the NetworkPolicy** are what keep that API to K8s Sentinel. Tetragon's gRPC server has **no authentication and no TLS**: whoever can connect reads every process started on the node, command line included, and can list, disable or delete tracing policies. On the host network, which is the chart's default, the port is open on every node's address to every pod in the cluster, and a NetworkPolicy does not apply to a hostNetwork pod; off the host network it is an ordinary pod port, and `deploy/tetragon-grpc-policy.yaml` (NetworkPolicy `tetragon-grpc`) admits only the K8s Sentinel pod. A NetworkPolicy governs traffic between pods: a process on the node itself, or a pod on the host network of that node, can still reach the port. Edit the namespaces in that file if Tetragon or K8s Sentinel is installed elsewhere
 
 Everything else can stay at defaults: the Kubernetes metadata enrichment K8s Sentinel needs (associating events with Pods / Namespaces / Containers, `tetragon.enableK8sAPIAccess`) is enabled by default. `deploy/install-job.yaml` and `deploy/install.sh` do all of this for you.
 
@@ -34,11 +34,11 @@ Everything else can stay at defaults: the Kubernetes metadata enrichment K8s Sen
 Off the host network Tetragon starts once the node's CNI is up, so the first seconds of a node's boot are not observed.
 :::
 
-### Nodes on CRI-O (v0.78+)
+### Nodes on CRI-O
 
 Nothing extra to set up: install the same way.
 
-On CRI-O with crun, the processes of a container sit in a cgroup one level below the one named after the container, and Tetragon, which reads the pod from that name, reports every event without one. Since v0.78 K8s Sentinel places those processes itself (from the container ID on the command line of the container runtime that started them): Tracing Policies are enforced as on any other runtime, and Behavior Discovery and Security Events name the pod. Nothing changes on containerd.
+On CRI-O with crun, the processes of a container sit in a cgroup one level below the one named after the container, and Tetragon, which reads the pod from that name, reports every event without one. K8s Sentinel places those processes itself (from the container ID on the command line of the container runtime that started them): Tracing Policies are enforced as on any other runtime, and Behavior Discovery and Security Events name the pod. Nothing changes on containerd.
 
 v0.82.1 fixes several cases on CRI-O:
 
@@ -51,7 +51,7 @@ Known limit: an event may still arrive without a pod in the first seconds after 
 :::warning[Leave tetragon.cri.enabled and tetragon.cgidmap.enabled off]
 They are Tetragon's own answer to this, and with Tetragon 1.8.0 they place only some processes while stopping Tracing Policies that name a namespace or a pod selector from being enforced **at all**: nothing a policy says to kill is killed.
 
-**The v0.77.0 installers switched them on for CRI-O clusters.** If yours was installed with that release, or you set them by hand, switch them back with the version of the chart that is installed (`helm -n kube-system list`):
+If they are on in your cluster, switch them back with the version of the chart that is installed (`helm -n kube-system list`):
 
 ```bash
 helm repo update cilium
@@ -61,13 +61,11 @@ helm -n kube-system upgrade tetragon cilium/tetragon --version <installed versio
 kubectl -n kube-system rollout status daemonset/tetragon
 kubectl -n sentinel-system rollout restart deployment/sentinel
 ```
-
-An offline install made with the v0.77.0 bundle applied `tetragon-crio.yaml`; apply `manifests/tetragon.yaml` from the current bundle over it instead.
 :::
 
 ### Moving an existing Tetragon off the host network
 
-The installers skip Tetragon when its DaemonSet is already present (looked for in every namespace since v0.69, not only `kube-system`), so one installed earlier is still on the host network with its gRPC port open to the cluster.
+The installers skip Tetragon when its DaemonSet is already present (looked for in every namespace, not only `kube-system`), so one installed earlier is still on the host network with its gRPC port open to the cluster.
 
 Installed as a Helm release (`helm list -n kube-system` shows `tetragon`):
 
@@ -78,7 +76,7 @@ helm upgrade tetragon cilium/tetragon -n kube-system --reset-then-reuse-values \
 kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-Installed by a `deploy/install.sh` from v0.64.0 or earlier (which applied rendered templates and left no release):
+Not installed as a Helm release (rendered templates were applied and left no release):
 
 ```bash
 helm template tetragon cilium/tetragon -n kube-system \

@@ -16,7 +16,7 @@ Events are **deduplicated by content over a 30-second window** (the client-side 
 
 ## Real-Time Streaming
 
-The K8s Sentinel backend (v0.43+) collects runtime events from each node's Tetragon Agent over its **gRPC `GetEvents` stream** (which is why Tetragon must bind its gRPC to the pod network - see [Installing Tetragon](../installation/tetragon-install.md)), then uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing new events to the frontend - no polling required, ensuring events appear with minimal latency.
+The K8s Sentinel backend collects runtime events from each node's Tetragon Agent over its **gRPC `GetEvents` stream** (which is why Tetragon must bind its gRPC to the pod network - see [Installing Tetragon](../installation/tetragon-install.md)), then uses **Server-Sent Events (SSE)** to establish a persistent one-way connection from the server to the browser, continuously pushing new events to the frontend - no polling required, ensuring events appear with minimal latency.
 
 ---
 
@@ -36,7 +36,7 @@ Navigate to the **"Security Events"** page. Events are listed in reverse chronol
 
 **Event statistics row:** Shows the total event count in the database, broken down by Warning and Critical.
 
-A repeated event **keeps its place in the list** and takes its new count and time (v0.64.2+; in v0.64.0 and v0.64.1 it jumped to the top on every repeat, which kept the list reshuffling). Since v0.64.1, Tetragon appending to its own export log (`/var/log/tetragon/`) is no longer reported as a security event.
+A repeated event **keeps its place in the list** and takes its new count and time. Tetragon appending to its own export log (`/var/log/tetragon/`) is not reported as a security event.
 
 ---
 

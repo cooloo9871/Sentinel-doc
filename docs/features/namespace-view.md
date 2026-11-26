@@ -8,7 +8,7 @@ sidebar_position: 9
 
 ## 功能說明
 
-Event Sources 頁面（v0.49 起，由原「Tetragon Agents」頁擴充改名）回答一個安全主控台最關鍵的問題：**K8s Sentinel 現在真的收得到事件嗎？** 頁面同時呈現兩個事件來源的即時狀態：每個節點的 Tetragon Agent，以及 Hubble Relay。v0.61 起另外列出弱點掃描器 **Trivy Operator** 的狀態。
+Event Sources 頁面回答一個安全主控台最關鍵的問題：**K8s Sentinel 現在真的收得到事件嗎？** 頁面同時呈現兩個事件來源的即時狀態：每個節點的 Tetragon Agent，以及 Hubble Relay。另外也列出弱點掃描器 **Trivy Operator** 的狀態。
 
 Pod 的 Kubernetes readiness 只能說明 Agent 活著，**不代表事件串流是通的**：NetworkPolicy 擋住、gRPC 位址設錯、TLS 不符，都會讓 Agent 看似健康卻一筆事件也進不來。本頁顯示的是**串流連線的真實狀態**，避免「看起來在監控、實際上是瞎的」這種最糟的失效模式。
 
@@ -43,7 +43,7 @@ Pod 的 Kubernetes readiness 只能說明 Agent 活著，**不代表事件串流
 
 ### Vulnerability scanner 區塊
 
-v0.61 起，頁面下方的 **Vulnerability scanner** 區塊以一張 **Trivy Operator** 卡片顯示弱點掃描器的狀態（資料來源為 `VulnerabilityReport` 資源）：
+頁面下方的 **Vulnerability scanner** 區塊以一張 **Trivy Operator** 卡片顯示弱點掃描器的狀態（資料來源為 `VulnerabilityReport` 資源）：
 
 | 狀態 | 說明 |
 |---|---|
@@ -61,7 +61,7 @@ v0.61 起，頁面下方的 **Vulnerability scanner** 區塊以一張 **Trivy Op
 ## 串流異常時的行為
 
 - **任一串流中斷時，Dashboard 會立即出現紅色警示 banner**，Tetragon 統計卡片反映的也是串流狀態而非單純的 Pod readiness
-- v0.64 起，單一 Tetragon Agent 無法連線**不再中斷其他節點的事件收集**，之後才加入的節點也會自動連上；已下線縮編的節點會自動從清單移除
+- 單一 Tetragon Agent 無法連線**不會中斷其他節點的事件收集**，之後才加入的節點也會自動連上；已下線縮編的節點會自動從清單移除
 - 串流恢復後，該來源的失敗計數自動歸零
 - 程式化存取：`GET /api/ingestion/health` 回傳所有來源的即時狀態
 

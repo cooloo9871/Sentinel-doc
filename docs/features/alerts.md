@@ -18,7 +18,7 @@ Alerts 頁面允許使用者設定 **Webhook 告警規則**，當 Security Event
 
 ![Alerts 頁面](/img/features/alerts/overview.png)
 
-v0.64 起，Viewer 角色與系統 log 只會看到 Webhook URL 的**主機名稱**，完整 URL（含其中的 token）僅 Admin 可見。v0.82.0 起，Alerts 與 Syslog 需要 Notifications 權限，內建的 Viewer 連 API 也無法讀取，見 [角色與權限](./roles.md)。
+Alerts 與 Syslog 需要 Notifications 權限，內建的 Viewer 無法讀取，見 [角色與權限](./roles.md)。只有 View 權限的帳號與系統 log 只會看到 Webhook URL 的**主機名稱**，完整 URL（含其中的 token）需要 Manage 權限才看得到。
 
 ---
 
@@ -52,7 +52,7 @@ v0.64 起，Viewer 角色與系統 log 只會看到 Webhook URL 的**主機名�
 2. 檢查是否在 Cooldown 期間內（避免重複推送）
 3. 構建告警訊息 Payload 並以 HTTP POST 方式送出至 Webhook URL
 
-**推送節流與重試（v0.51+）：** 所有事件觸發的告警（Security 與 Admission）都會經過一個有界佇列，交由**單一送信程序**依序送出：
+**推送節流與重試：** 所有事件觸發的告警（Security 與 Admission）都會經過一個有界佇列，交由**單一送信程序**依序送出：
 
 - 每個 Webhook 約**每秒一則**，事件爆量不會變成大量並發 POST 而觸發對方的速率限制
 - 收到 **HTTP 429** 時依 `Retry-After` 退避並重試數次；**5xx** 也會重試（通常是暫時性錯誤）；4xx（例如 Webhook 已被刪除）不重試

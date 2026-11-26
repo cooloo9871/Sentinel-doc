@@ -8,7 +8,7 @@ sidebar_position: 14
 
 ## 功能說明
 
-v0.82.0 起，帳號的權限由**角色（Role）**決定。一個角色對產品的八個部分分別授予 **None**、**View** 或 **Manage** 其中一級，因此可以建立「只能看事件」或「管理 Network Policy、但只能看事件」這類角色，而不再只有 Admin 與 Viewer 兩種選擇。
+帳號的權限由**角色（Role）**決定。一個角色對產品的八個部分分別授予 **None**、**View** 或 **Manage** 其中一級，因此可以建立「只能看事件」或「管理 Network Policy、但只能看事件」這類角色，而不是只有 Admin 與 Viewer 兩種選擇。
 
 - **Admin** 與 **Viewer** 是內建角色，意義與之前相同，既有帳號不需要任何調整
 - 其他角色在「**Settings → Roles**」建立
@@ -53,7 +53,7 @@ v0.82.0 起，帳號的權限由**角色（Role）**決定。一個角色對產�
 內建角色不能修改或刪除，在列表中以 **Built-in** 標示，只能點擊「**View**」查看內容。
 
 :::note[Viewer 不能讀取通知與設定]
-Viewer 一直以來都看不到 Alerts、Syslog 與 Settings 的頁面。v0.82.0 起連 API 也不能直接讀取這些資料（`GET /api/alerts`、`GET /api/rsyslog`、`GET /api/settings/session-ttl`），因為通知目標的 URL 本身就是憑證。
+Viewer 看不到 Alerts、Syslog 與 Settings 的頁面，API 也不能直接讀取這些資料（`GET /api/alerts`、`GET /api/rsyslog`、`GET /api/settings/session-ttl`），因為通知目標的 URL 本身就是憑證。
 :::
 
 ---
@@ -98,7 +98,7 @@ Viewer 一直以來都看不到 Alerts、Syslog 與 Settings 的頁面。v0.82.0
 
 ## 與 Namespace 限制的關係
 
-[依 Namespace 限制帳號存取](./namespace-access.md) 的設定沒有改變，並且**疊加在角色之上**：受限的帳號在自己的 Namespace 中，可以建立與編輯角色所管理的內容，讀取角色可以查看的內容。
+[依 Namespace 限制帳號存取](./namespace-access.md) 的設定**疊加在角色之上**：受限的帳號在自己的 Namespace 中，可以建立與編輯角色所管理的內容，讀取角色可以查看的內容。
 
 Notifications 與 System 屬於整個叢集，受限的帳號不論角色為何都無法存取。
 

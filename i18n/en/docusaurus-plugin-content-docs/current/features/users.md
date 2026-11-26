@@ -23,11 +23,11 @@ Navigate to **"Settings → Users"** to see all current user accounts.
 | Column | Description |
 |---|---|
 | **Username** | The login account name |
-| **Role** | The account's role: the built-in `Admin` or `Viewer`, or a role of your own (v0.82+), see [Roles and Permissions](./roles.md) |
-| **Namespace badges** | The namespaces an account is limited to, when it is (v0.80+) |
+| **Role** | The account's role: the built-in `Admin` or `Viewer`, or a role of your own, see [Roles and Permissions](./roles.md) |
+| **Namespace badges** | The namespaces an account is limited to, when it is |
 | **Created date** | When the account was created |
 | **Change Password** | Button to update the account's login password |
-| **Access** | Sets whether the account reaches the whole cluster or selected namespaces (v0.80+), see [Limiting an Account to Namespaces](./namespace-access.md) |
+| **Access** | Changes the account's role, and sets whether the account reaches the whole cluster or selected namespaces, see [Limiting an Account to Namespaces](./namespace-access.md) |
 | **Delete** | Deletes the account |
 
 ---
@@ -38,11 +38,11 @@ Click "**Change Password**" on an account row to open the dialog:
 
 ![Change Password dialog](/img/features/users/change-password.png)
 
-Password security rules (v0.47+):
+Password security rules:
 
 - **New passwords must be at least 8 characters** (enforced server-side)
-- **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out (one exception: the forced first-login change screen skips it, v0.58.1)
-- An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same. Since v0.80 it takes an **Admin of the whole cluster**; an Admin limited to namespaces cannot
+- **Changing your own password requires the current password**, so a hijacked session cannot silently lock the owner out (one exception: the forced first-login change screen skips it)
+- An admin **resetting another account's** password is a separate action that does not need the old one, but is audited all the same. It takes an **Admin of the whole cluster**; an Admin limited to namespaces cannot
 - Every password change, including an attempt rejected for a wrong current password, is recorded in the [Audit Log](./audit-log.md)
 
 Also note: the first sign-in with the default `admin` / `admin` **forces a password change** - see [Sign In to K8s Sentinel](../login.md).
@@ -51,7 +51,7 @@ Also note: the first sign-in with the default `admin` / `admin` **forces a passw
 
 ## Creating a New User
 
-Click **"+ New User"** in the top-right corner to open the new-user page (since v0.42 every editor has its own URL - bookmarkable, and F5 stays on the editor).
+Click **"+ New User"** in the top-right corner to open the new-user page (every editor has its own URL - bookmarkable, and F5 stays on the editor).
 
 ![New user form](/img/features/users/new-user.png)
 
@@ -61,8 +61,8 @@ Click **"+ New User"** in the top-right corner to open the new-user page (since 
 |---|---|---|
 | **Username** | ✅ | Login account name - cannot be changed after creation |
 | **Password** | ✅ | Initial password - recommend the user change it after first login |
-| **Role** | ✅ | Choose the role from the select: `Admin`, `Viewer`, or a role made under Settings → Roles (v0.82+). The default is `Viewer` |
-| **Access** | - | `Whole cluster` (default) or `Selected namespaces` (v0.80+). With the latter, tick the namespaces the account may reach, see [Limiting an Account to Namespaces](./namespace-access.md) |
+| **Role** | ✅ | Choose the role from the select: `Admin`, `Viewer`, or a role made under Settings → Roles. The default is `Viewer` |
+| **Access** | - | `Whole cluster` (default) or `Selected namespaces`. With the latter, tick the namespaces the account may reach, see [Limiting an Account to Namespaces](./namespace-access.md) |
 
 Click **"Create"** to create the account.
 
@@ -75,9 +75,9 @@ Click **"Create"** to create the account.
 | **admin** | Full system access - can create, modify, and delete all policies, manage users, and change system settings |
 | **viewer** | Read-only access - can browse policies, events and vulnerabilities but cannot add, modify, or delete anything, and does not see Alerts, Syslog or Settings |
 
-Since v0.82.0 you can also make roles of your own under **Settings → Roles**, granting each part of the product separately at None, View or Manage. See [Roles and Permissions](./roles.md).
+You can also make roles of your own under **Settings → Roles**, granting each part of the product separately at None, View or Manage. See [Roles and Permissions](./roles.md).
 
-### Changing an Account's Role (v0.82+)
+### Changing an Account's Role
 
 Click **Access** on the account's row, choose the new role in the **Role** select and click **Save**. It takes effect at once, in sessions the account already has open too.
 
@@ -86,7 +86,7 @@ Click **Access** on the account's row, choose the new role in the **Role** selec
 - Managing accounts (creating, deleting, changing roles, resetting passwords) needs Manage on System
 - The last account with the Admin role and the whole cluster cannot be deleted, given another role or limited to namespaces
 
-Any role can further be limited to selected namespaces (v0.80+); the role still applies inside them. See [Limiting an Account to Namespaces](./namespace-access.md).
+Any role can further be limited to selected namespaces; the role still applies inside them. See [Limiting an Account to Namespaces](./namespace-access.md).
 
 ---
 
@@ -103,5 +103,5 @@ Click **"Save"** to apply the new value.
 :::warning
 Session Timeout changes take effect on the **next login**. Active sessions are not affected - users must log out and back in for the new timeout to apply.
 
-Since v0.64, when an account is **deleted** or its **password changes**, its existing sessions end immediately and return to the sign-in page; the role is also read from the account as it is now, not from the role recorded in the token.
+When an account is **deleted** or its **password changes**, its existing sessions end immediately and return to the sign-in page; the role is also read from the account as it is now, not from the role recorded in the token.
 :::

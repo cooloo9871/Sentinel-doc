@@ -23,7 +23,7 @@ sidebar_position: 5
 
 輸入後點擊 **Sign in** 按鈕完成登入。
 
-## 首次登入需設定新密碼（v0.47+）
+## 首次登入需設定新密碼
 
 以預設的 `admin` / `admin` 首次登入時，系統會**強制要求先設定新密碼**才能進入主控台：
 
@@ -36,7 +36,7 @@ sidebar_position: 5
 
 填寫完成後點擊「**Set password and continue**」即進入主控台。
 
-v0.58.1 起此畫面**不再要求輸入目前密碼**：它只會在以公開的預設密碼登入後數秒內出現，再問一次目前密碼證明不了任何事。此簡化**僅適用於強制變更旗標生效期間**；旗標清除後，變更自己的密碼仍需輸入目前密碼（防止被劫持的 Session 竄改密碼）。
+此畫面**不會要求輸入目前密碼**：它只會在以公開的預設密碼登入後數秒內出現，再問一次目前密碼證明不了任何事。此簡化**僅適用於強制變更旗標生效期間**；旗標清除後，變更自己的密碼仍需輸入目前密碼（防止被劫持的 Session 竄改密碼）。
 
 此限制由**伺服器端強制執行**：在旗標尚未清除前，後端僅允許查詢自身帳號資訊與變更自身密碼兩個 API，無法以任何方式略過。密碼變更完成後旗標即清除。
 
@@ -48,10 +48,10 @@ v0.58.1 起此畫面**不再要求輸入目前密碼**：它只會在以公開�
 
 | 機制 | 說明 |
 |---|---|
-| **登入速率限制**（v0.47+） | 同一來源 IP 的失敗登入每分鐘最多 5 次，超過即短暫封鎖。以來源 IP 而非帳號計數，攻擊者無法藉由故意輸錯密碼將真實使用者鎖在門外 |
-| **登入稽核**（v0.48+） | 每一次登入嘗試（成功、密碼錯誤、被限流）都會記錄在 [Audit Log](./features/audit-log.md)，包含目標帳號與來源 IP；密碼本身不會被記錄 |
-| **JWT 認證** | 登入成功後 token 存於瀏覽器 `localStorage`，後續每次 API 請求自動帶入 `Authorization` header。Token 逾期（預設 Session Timeout 為 3600 秒）將自動登出。v0.53 起可用 [`JWT_SECRET` 環境變數](./installation/persistent-storage.md#只想讓-session-不因重啟登出jwt_secret)固定簽署金鑰，Pod 重啟不再造成全員登出 |
+| **登入速率限制** | 同一來源 IP 的失敗登入每分鐘最多 5 次，超過即短暫封鎖。以來源 IP 而非帳號計數，攻擊者無法藉由故意輸錯密碼將真實使用者鎖在門外 |
+| **登入稽核** | 每一次登入嘗試（成功、密碼錯誤、被限流）都會記錄在 [Audit Log](./features/audit-log.md)，包含目標帳號與來源 IP；密碼本身不會被記錄 |
+| **JWT 認證** | 登入成功後 token 存於瀏覽器 `localStorage`，後續每次 API 請求自動帶入 `Authorization` header。Token 逾期（預設 Session Timeout 為 3600 秒）將自動登出。可用 [`JWT_SECRET` 環境變數](./installation/persistent-storage.md#只想讓-session-不因重啟登出jwt_secret)固定簽署金鑰，Pod 重啟不會造成全員登出 |
 
 :::note[部署在 Proxy / Ingress 後方？]
-速率限制與稽核記錄的來源 IP 預設取自連線本身（`RemoteAddr`）。若 K8s Sentinel 部署在會設定 `X-Forwarded-For` 的 Proxy 或 Ingress 後方，請在 Sentinel 容器設定環境變數 **`TRUST_PROXY_HEADERS=true`**，來源 IP 才會正確反映真實用戶端（v0.50+）。
+速率限制與稽核記錄的來源 IP 預設取自連線本身（`RemoteAddr`）。若 K8s Sentinel 部署在會設定 `X-Forwarded-For` 的 Proxy 或 Ingress 後方，請在 Sentinel 容器設定環境變數 **`TRUST_PROXY_HEADERS=true`**，來源 IP 才會正確反映真實用戶端。
 :::

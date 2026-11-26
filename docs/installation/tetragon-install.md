@@ -25,8 +25,8 @@ helm install tetragon cilium/tetragon -n kube-system \
 kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-- **`tetragon.grpc.address=0.0.0.0:54321`** 為必要設定：K8s Sentinel（v0.43+）透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到
-- **`hostNetwork=false` 與 NetworkPolicy**（v0.64.1 起的安裝方式）用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。NetworkPolicy 管的是 Pod 之間的流量：節點本身的行程，或該節點上使用 host network 的 Pod，仍然連得到這個埠。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
+- **`tetragon.grpc.address=0.0.0.0:54321`** 為必要設定：K8s Sentinel 透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到
+- **`hostNetwork=false` 與 NetworkPolicy** 用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。NetworkPolicy 管的是 Pod 之間的流量：節點本身的行程，或該節點上使用 host network 的 Pod，仍然連得到這個埠。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
 
 其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。`deploy/install-job.yaml` 與 `deploy/install.sh` 會自動完成以上全部設定。
 
@@ -34,11 +34,11 @@ kubectl apply -f deploy/tetragon-grpc-policy.yaml
 離開 host network 後，Tetragon 要等節點的 CNI 就緒才會啟動，因此節點開機最初幾秒的行為不會被觀測到。
 :::
 
-### 使用 CRI-O 的節點（v0.78+）
+### 使用 CRI-O 的節點
 
 不需要額外設定，以相同方式安裝即可。
 
-在 CRI-O 搭配 crun 的節點上，容器內的行程位於比容器名稱低一層的 cgroup，而 Tetragon 是從 cgroup 名稱判斷 Pod，因此回報的每一個事件都沒有 Pod 資訊。v0.78 起，K8s Sentinel 會自行判斷這些行程屬於哪個 Pod（依據啟動它們的 container runtime 命令列上的容器 ID），Tracing Policy 與其他 runtime 一樣生效，Behavior Discovery 與 Security Events 也會顯示 Pod。使用 containerd 的節點沒有任何改變。
+在 CRI-O 搭配 crun 的節點上，容器內的行程位於比容器名稱低一層的 cgroup，而 Tetragon 是從 cgroup 名稱判斷 Pod，因此回報的每一個事件都沒有 Pod 資訊。K8s Sentinel 會自行判斷這些行程屬於哪個 Pod（依據啟動它們的 container runtime 命令列上的容器 ID），Tracing Policy 與其他 runtime 一樣生效，Behavior Discovery 與 Security Events 也會顯示 Pod。使用 containerd 的節點沒有任何改變。
 
 v0.82.1 修正了 CRI-O 上的幾個情況：
 
@@ -51,7 +51,7 @@ v0.82.1 修正了 CRI-O 上的幾個情況：
 :::warning[請保持 tetragon.cri.enabled 與 tetragon.cgidmap.enabled 關閉]
 這兩個設定是 Tetragon 自己對這個問題的解法，但在 Tetragon 1.8.0 上只能判斷部分行程，而且會讓指定 Namespace 或 Pod selector 的 Tracing Policy **完全不生效**：Policy 要求終止的行程不會被終止。
 
-**v0.77.0 的安裝程式曾在 CRI-O 叢集上開啟這兩個設定。** 若你的叢集是用該版本安裝的，或曾手動開啟，請以目前安裝的 chart 版本（`helm -n kube-system list` 可查詢）關閉：
+若這兩個設定在你的叢集上是開啟的，請以目前安裝的 chart 版本（`helm -n kube-system list` 可查詢）關閉：
 
 ```bash
 helm repo update cilium
@@ -61,13 +61,11 @@ helm -n kube-system upgrade tetragon cilium/tetragon --version <已安裝的版�
 kubectl -n kube-system rollout status daemonset/tetragon
 kubectl -n sentinel-system rollout restart deployment/sentinel
 ```
-
-以 v0.77.0 離線套件安裝者當時套用的是 `tetragon-crio.yaml`，請改以新版離線套件的 `manifests/tetragon.yaml` 覆蓋套用。
 :::
 
 ### 把既有的 Tetragon 移出 host network
 
-安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝（v0.69 起會在所有 Namespace 中尋找，不限於 `kube-system`），因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
+安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝（會在所有 Namespace 中尋找，不限於 `kube-system`），因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
 
 以 Helm release 安裝者（`helm list -n kube-system` 看得到 `tetragon`）：
 
@@ -78,7 +76,7 @@ helm upgrade tetragon cilium/tetragon -n kube-system --reset-then-reuse-values \
 kubectl apply -f deploy/tetragon-grpc-policy.yaml
 ```
 
-由 v0.64.0 以前的 `deploy/install.sh` 安裝者（當時是套用 render 出來的 manifest，沒有留下 release）：
+不是以 Helm release 安裝者（套用 render 出來的 manifest，沒有留下 release）：
 
 ```bash
 helm template tetragon cilium/tetragon -n kube-system \

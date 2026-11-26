@@ -22,8 +22,8 @@ K8s Sentinel 官方 manifest 中的資料目錄 `/data/sentinel` 預設掛載的
 - Alerts 告警規則與 Syslog 轉送設定
 - 自訂 Policy Templates
 - Security Events / Admission Events 歷史事件
-- [Registry 掃描](../features/registry-scanning.md)的 Registry 設定（含認證）與掃描結果（`registries.json` 與 `registry-scans/`，v0.62+）
-- 自訂的 [角色](../features/roles.md)（`roles.json`，v0.82+）
+- [Registry 掃描](../features/registry-scanning.md)的 Registry 設定（含認證）與掃描結果（`registries.json` 與 `registry-scans/`）
+- 自訂的 [角色](../features/roles.md)（`roles.json`）
 - Session Timeout 等系統設定
 
 正式環境請務必將 `/data/sentinel` 改掛 **PersistentVolume**。
@@ -236,7 +236,7 @@ Pod 重啟後重新登入，若剛才的變更仍然存在，代表永久儲存�
 
 ## 只想讓 Session 不因重啟登出？（JWT_SECRET）
 
-Session 簽署金鑰預設存在 `/data/sentinel/.jwt-secret`。未掛 PV 時每次 Pod 重啟金鑰都會重生，**所有使用者被強制登出**。v0.53 起可改用 **`JWT_SECRET`** 環境變數（至少 32 字元）固定金鑰，從 Kubernetes Secret 注入：
+Session 簽署金鑰預設存在 `/data/sentinel/.jwt-secret`。未掛 PV 時每次 Pod 重啟金鑰都會重生，**所有使用者被強制登出**。可改用 **`JWT_SECRET`** 環境變數（至少 32 字元）固定金鑰，從 Kubernetes Secret 注入：
 
 ```bash
 kubectl -n sentinel-system create secret generic sentinel-jwt \

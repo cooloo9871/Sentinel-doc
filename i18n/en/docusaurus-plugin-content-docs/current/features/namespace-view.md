@@ -8,7 +8,7 @@ sidebar_position: 9
 
 ## Overview
 
-The Event Sources page (since v0.49, an expansion and rename of the former "Tetragon Agents" page) answers the most important question for a security console: **is K8s Sentinel actually receiving events right now?** It shows the live state of both event sources: the Tetragon agent on every node, and Hubble Relay. Since v0.61 it also lists the status of the vulnerability scanner, **Trivy Operator**.
+The Event Sources page answers the most important question for a security console: **is K8s Sentinel actually receiving events right now?** It shows the live state of both event sources: the Tetragon agent on every node, and Hubble Relay. It also lists the status of the vulnerability scanner, **Trivy Operator**.
 
 A Pod's Kubernetes readiness only says the agent is up - **not that the event stream is connected**. A blocking NetworkPolicy, a wrong gRPC address, or a TLS mismatch all leave the agent looking healthy while not a single event arrives. This page shows the **real state of the streams**, avoiding the worst failure mode: looking like it is monitoring while it is blind.
 
@@ -43,7 +43,7 @@ On a cluster without Cilium, this section reads as a muted "Not detected": that 
 
 ### Vulnerability scanner section
 
-Since v0.61, the **Vulnerability scanner** section at the bottom of the page shows the status of the vulnerability scanner in a **Trivy Operator** card (the data source is the `VulnerabilityReport` resources):
+The **Vulnerability scanner** section at the bottom of the page shows the status of the vulnerability scanner in a **Trivy Operator** card (the data source is the `VulnerabilityReport` resources):
 
 | Status | Description |
 |---|---|
@@ -61,7 +61,7 @@ The card also shows `Reports` (the number of reports), `Newest report` (the time
 ## Behavior When a Stream Fails
 
 - **A red banner appears on the Dashboard the moment any stream has failed**, and the Tetragon stat card reflects streams rather than plain Pod readiness
-- Since v0.64, one unreachable Tetragon agent **no longer interrupts event collection from the other nodes**, and nodes that join later are connected to automatically; scaled-down nodes are pruned automatically
+- One unreachable Tetragon agent **does not interrupt event collection from the other nodes**, and nodes that join later are connected to automatically; scaled-down nodes are pruned automatically
 - A recovered source clears its failure streak
 - Programmatic access: `GET /api/ingestion/health` returns every source's status
 

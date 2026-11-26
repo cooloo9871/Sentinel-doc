@@ -8,7 +8,7 @@ sidebar_position: 17
 解除安裝會刪除 `sentinel-system` Namespace 內的所有資料，包含設定、使用者帳號與已儲存的事件。請在執行前確認已備份必要資料。
 :::
 
-## 使用 uninstall.sh（建議，v0.64.1+）
+## 使用 uninstall.sh（建議）
 
 `deploy/uninstall.sh` 會移除 `deploy/install.sh` 與 `deploy/install-job.yaml` 所安裝的全部內容。於 K8s Sentinel 原始碼目錄下執行（以 [離線安裝](./installation/offline-install.md) 部署者，請使用離線套件內的 `uninstall.sh`）：
 
@@ -23,21 +23,21 @@ bash deploy/uninstall.sh             # 詢問確認後移除
 - Trivy Operator 與其 Trivy server
 - Tetragon（含 NetworkPolicy `tetragon-grpc`）
 - 安裝 Job 留在 `kube-system` 的資源
-- Role 與 RoleBinding `sentinel-tetragon-exec`（v0.79.1+）。若曾以較早的腳本解除安裝 v0.79.0，請手動移除：`kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec`，否則之後任何以相同名稱建立 ServiceAccount 的人都會取得 Tetragon Namespace 的 exec 權限
-- K8s Sentinel 存放掃描結果的物件 `sentinel-vulnerability-gate`（v0.69 起在 K8s Sentinel 移除之後才刪除）
+- Role 與 RoleBinding `sentinel-tetragon-exec`
+- K8s Sentinel 存放掃描結果的物件 `sentinel-vulnerability-gate`（在 K8s Sentinel 移除之後才刪除）
 - **Quarantine policy 與 Pod 上的隔離 Label**：若留下隔離規則卻沒有 K8s Sentinel 可以解除，被隔離的 Pod 會永遠維持隔離
 
 | 選項 | 效果 |
 |---|---|
 | `--dry-run` | 列出會被刪除的項目，不實際刪除 |
-| `--keep-tetragon` | 保留 Tetragon，適用於 Tetragon 早於 K8s Sentinel 安裝的叢集。v0.69 起仍會移除 NetworkPolicy `tetragon-grpc`，因為它只放行 K8s Sentinel，留著會讓任何人都連不上；移除後 Tetragon 的 gRPC API 不再受限，而它本身沒有認證 |
+| `--keep-tetragon` | 保留 Tetragon，適用於 Tetragon 早於 K8s Sentinel 安裝的叢集。仍會移除 NetworkPolicy `tetragon-grpc`，因為它只放行 K8s Sentinel，留著會讓任何人都連不上；移除後 Tetragon 的 gRPC API 不再受限，而它本身沒有認證 |
 | `--purge` | 另外刪除在 K8s Sentinel 中建立或編輯過的 Tracing、Network 與 Admission Policy、所有弱點報告，以及 Tetragon 與 Trivy 的 CRD |
 | `--yes` | 不詢問確認 |
 
 Tetragon 不在 `kube-system` 時，請設定環境變數 `TETRAGON_NAMESPACE`。
 
 :::note[不是 K8s Sentinel 安裝的元件不會被移除]
-v0.69 起，不在 `sentinel-system` 的 Trivy Operator，以及不在 `kube-system`（或 `TETRAGON_NAMESPACE`）的 Tetragon，視為不是 K8s Sentinel 安裝的，會連同它們的叢集層級物件、報告與 CRD 一起保留，加上 `--purge` 也一樣。
+不在 `sentinel-system` 的 Trivy Operator，以及不在 `kube-system`（或 `TETRAGON_NAMESPACE`）的 Tetragon，視為不是 K8s Sentinel 安裝的，會連同它們的叢集層級物件、報告與 CRD 一起保留，加上 `--purge` 也一樣。
 :::
 
 ## 未使用 --purge 時會保留的內容

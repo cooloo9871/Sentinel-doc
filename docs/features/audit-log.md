@@ -8,9 +8,9 @@ sidebar_position: 19
 
 ## 功能說明
 
-Audit Log（v0.45+）記錄**每一筆透過 K8s Sentinel 執行的操作**，回答「誰、在什麼時候、對什麼對象、做了什麼」：Pod 隔離與解除、Tracing Policy 的模式切換（含 Set all to Monitoring）、三種 Policy 的建立/修改/刪除、使用者管理、Alerts 與 Syslog 設定、Event Retention 變更，以及每一次登入嘗試與密碼變更。
+Audit Log 記錄**每一筆透過 K8s Sentinel 執行的操作**，回答「誰、在什麼時候、對什麼對象、做了什麼」：Pod 隔離與解除、Tracing Policy 的模式切換（含 Set all to Monitoring）、三種 Policy 的建立/修改/刪除、使用者管理、Alerts 與 Syslog 設定、Event Retention 變更，以及每一次登入嘗試與密碼變更。
 
-進入「**Notifications → Audit Log**」即可查看（v0.50.2 起由 Settings 移至 Notifications 選單；需要 System 的 View 權限，見 [角色與權限](./roles.md)；內建的 Viewer 不會看到此選單項目）：
+進入「**Notifications → Audit Log**」即可查看（需要 System 的 View 權限，見 [角色與權限](./roles.md)；內建的 Viewer 不會看到此選單項目）：
 
 ![Audit Log 頁面](/img/features/audit/list.png)
 
@@ -33,7 +33,7 @@ Audit Log（v0.45+）記錄**每一筆透過 K8s Sentinel 執行的操作**，�
 ## 篩選與匯出
 
 - **篩選**：頂部的「Filter by user, action or target...」輸入框可依使用者、操作或對象即時過濾
-- **Export CSV**（v0.46+）：將**目前畫面上顯示**的紀錄匯出為 CSV（Time、User、Action、Target、Status、Method、Path），套用中的篩選條件也會反映在匯出檔中。CSV 帶有 UTF-8 BOM，Excel 可直接正確開啟
+- **Export CSV**：將**目前畫面上顯示**的紀錄匯出為 CSV（Time、User、Action、Target、Status、Method、Path），套用中的篩選條件也會反映在匯出檔中。CSV 帶有 UTF-8 BOM，Excel 可直接正確開啟
 
 ---
 

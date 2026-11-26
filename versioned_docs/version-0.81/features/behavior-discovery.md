@@ -1,0 +1,92 @@
+---
+id: behavior-discovery
+title: 行為發現（Behavior Discovery）
+sidebar_position: 6
+---
+
+# 行為發現（Behavior Discovery）
+
+## 功能說明
+
+Behavior Discovery 是 K8s Sentinel 的自動化學習功能，能夠在不預先建立任何 TracingPolicy 的情況下，自動收集並分析叢集中各 Pod 的實際執行行為（process 呼叫），讓您基於真實的工作負載行為來建立精準的安全策略，而非靠人工猜測應該允許哪些程式。
+
+---
+
+## 運作原理
+
+Tetragon 安裝後，其 **base sensor**（基礎感測器）會預設啟動並記錄叢集內所有 Pod 的 process 事件，包含每個 process 的執行路徑、呼叫的父程序以及所屬的 Namespace 與 Pod 資訊。K8s Sentinel 持續收集這些原始事件，並依工作負載（Deployment / DaemonSet / Pod）進行分組與統計。
+
+此功能不需要事先建立 TracingPolicy，即可在背景持續累積觀察資料。
+
+### Tetragon 啟動前就在執行的行程
+
+Process 規則比對的是行程**被啟動時使用的路徑**。對於 Tetragon 啟動之前就已經在執行的行程，Tetragon 只知道 kernel 實際載入的檔案（連結已被解開）：連結到 `coreutils` 的 `sleep` 會顯示為 `coreutils`，`/bin/sh` 會顯示為 `busybox` 或 `dash`。用這些名稱建立的白名單，會在 Pod 下次啟動時拒絕真正的名稱。
+
+K8s Sentinel 會以啟動時的路徑列出這些行程（`/usr/bin/sleep`、`/bin/sh`）。K8s Sentinel 執行期間才安裝或重啟 Tetragon，或有新節點加入時，原本就在執行的行程也會在一分鐘內被學習到。
+
+Tetragon 的 API 不提供啟動路徑，因此 K8s Sentinel 會在節點上讀取：在 `tetragon` 容器中執行一支固定的腳本，只接收行程 ID。這需要 `deploy/sentinel.yaml` 中的 Role 與 RoleBinding **`sentinel-tetragon-exec`**（位於 `kube-system`，授予 `pods/exec`）。
+
+:::warning[這個權限的範圍]
+Kubernetes 無法只針對某一種 Pod 授予 exec，因此這是該 Namespace 中**所有 Pod** 的 exec，包含 Tetragon 具特權的 Pod：取得 K8s Sentinel 控制權的人可以藉此進入節點。若不想授予，可以刪除：
+
+```bash
+kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
+```
+
+其餘功能照常運作，這些行程會以 kernel 載入的檔案名稱列出，K8s Sentinel 的 log 會註明。把 profile 轉成白名單之前，請先檢查這些項目。
+:::
+
+- Tetragon 安裝在 `kube-system` 以外的 Namespace 時，請在該 Namespace 建立這組 Role 與 RoleBinding，並刪除 `kube-system` 中的那一組
+- 已知缺口：以 `#!` 行啟動的腳本，在這種情況下會被列為直譯器而不是腳本本身
+- 啟動路徑只有在確實指向該行程正在執行的檔案時才會被採用，行程無法讓自己以其他程式的名稱列出；container runtime（`crun`、`/dev/fd/3`）也不會出現在 Pod 的行程中
+
+---
+
+## 查看 Behavior Discovery 頁面
+
+進入「**Behavior Discovery**」頁面後，觀察結果會以卡片網格形式呈現，每張卡片代表一個工作負載。
+
+![Behavior Discovery 頁面](/img/features/discovery/overview.png)
+
+**頁面元素說明：**
+
+| 元素 | 說明 |
+|---|---|
+| **統計列** | 右上方顯示「N workloads · N pods total」，提供目前觀察到的工作負載與 Pod 總數 |
+| **Namespace 選單** | 選擇特定 Namespace 縮小顯示範圍 |
+| **Search pod...** | 輸入 Pod 名稱關鍵字，快速篩選包含該 Pod 的工作負載卡片 |
+| **Group by namespace** | 切換是否依 Namespace 分組顯示卡片 |
+| **Clear All** | 清除所有已累積的 Behavior Discovery 觀察資料，重新開始學習 |
+
+**工作負載卡片說明：**
+
+每張卡片包含以下資訊：
+
+- **資源類型標籤**：`Deployment`、`DaemonSet` 或 `Pod`
+- **工作負載名稱**：Deployment / DaemonSet / Pod 的名稱
+- **Namespace · Pod 數量**：所屬 Namespace 與受管理的 Pod 數
+- **Process 列表**：觀察期間偵測到的不重複執行檔路徑（顯示二進位名稱，滑鼠懸停可見完整路徑）及各路徑的執行次數
+- **since X ago**：本卡片的觀察資料從多久前開始累積
+
+---
+
+## 從行為發現結果建立 Policy
+
+確認工作負載的行為摘要符合預期後，可直接從 Behavior Discovery 頁面一鍵產生 TracingPolicy。
+
+![Create Policy 按鈕](/img/features/discovery/generate-policy.png)
+
+**操作步驟：**
+
+1. 在卡片網格中找到目標工作負載卡片
+2. 點擊卡片右上角的「**Create Policy**」按鈕
+3. K8s Sentinel 自動產生一份 TracingPolicy 草稿並帶入表單編輯器：Policy Name 與 Namespace 已預先填妥，Pod Selector 自動帶入該工作負載的 Label，Process Rules 以 **Whitelist** 模式列出所有觀察到的執行檔路徑
+4. 審閱並視需要調整規則後，點擊「**Apply**」套用
+
+**執行原理：** K8s Sentinel 根據觀察期間記錄到的所有不重複 process 執行路徑，自動產生一條 **Whitelist（白名單）** 模式的 Process Rules，僅允許這些已被觀察且認定為正常的執行路徑。任何未曾出現的程式，在切換至 Protect 模式後都將被阻擋執行。
+
+---
+
+:::tip
+建議讓工作負載在完整的正常業務流程下持續運行 **24 至 48 小時**後，再從 Behavior Discovery 的觀察結果建立 Policy。過短的觀察期可能遺漏部分合法但不常執行的程式（例如排程任務、備份腳本），導致 Whitelist 不完整，切換至 Protect 模式後誤擋正常服務。
+:::

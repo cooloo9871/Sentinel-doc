@@ -8,7 +8,7 @@ sidebar_position: 11
 
 ## 功能說明
 
-「**Vulnerabilities → Workloads**」頁面（v0.60 起）列出叢集內每一個**執行中的工作負載**，以及其 Image 中已知的弱點（CVE）。
+「**Vulnerabilities → Workloads**」頁面列出叢集內每一個**執行中的工作負載**，以及其 Image 中已知的弱點（CVE）。
 
 **K8s Sentinel 不自行掃描這些 Image。** 掃描由 [Trivy Operator](https://github.com/aquasecurity/trivy-operator) 執行，K8s Sentinel 讀取它寫出的 `VulnerabilityReport` 資源。Trivy Operator 為選用元件，安裝方式見 [安裝 Trivy Operator](../installation/trivy-operator.md)。
 
@@ -38,7 +38,7 @@ Trivy Operator 掃描的是工作負載的 **Pod template**。若 template 已�
 
 ### 沒有自己報告的容器
 
-v0.62 起，容器沒有自己的報告時，會採用**相同 Image** 的報告，因為掃描結果屬於 Image 本身，與它在哪裡執行無關。這涵蓋兩種情況：
+容器沒有自己的報告時，會採用**相同 Image** 的報告，因為掃描結果屬於 Image 本身，與它在哪裡執行無關。這涵蓋兩種情況：
 
 - 同一個工作負載內多個容器共用同一個 Image（例如 Cilium agent），Operator 有時只完成其中一部分掃描
 - 准入階段才注入的 Sidecar（例如 service mesh proxy），不在 Operator 掃描的 template 內，但該 Image 通常已在宣告它的地方被掃描過
@@ -68,7 +68,7 @@ Image 必須相同：相同的 repository 與 tag（或 digest）；若取自其
 
 ## 資料更新時機
 
-- 工作負載清單快取 1 分鐘，掃描報告摘要快取 5 分鐘（v0.61+）。因此剛完成的掃描最多可能要 5 分鐘才會出現；按 **Refresh** 可立即讀取
+- 工作負載清單快取 1 分鐘，掃描報告摘要快取 5 分鐘。因此剛完成的掃描最多可能要 5 分鐘才會出現；按 **Refresh** 可立即讀取
 - 包含 init container；已結束的 Pod（完成的 Job）與 Trivy Operator 自己的掃描 Job 不列入
 
 ---
@@ -87,7 +87,7 @@ Image 必須相同：相同的 repository 與 tag（或 digest）；若取自其
 
 ## 同一份結果出現在其他頁面
 
-v0.61 起，弱點掃描結果同時呈現在三個地方：
+弱點掃描結果同時呈現在三個地方：
 
 | 頁面 | 呈現方式 |
 |---|---|

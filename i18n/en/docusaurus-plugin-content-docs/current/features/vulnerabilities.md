@@ -8,7 +8,7 @@ sidebar_position: 11
 
 ## Overview
 
-The "**Vulnerabilities → Workloads**" page (since v0.60) lists every **running workload** in the cluster together with the known vulnerabilities (CVEs) in its images.
+The "**Vulnerabilities → Workloads**" page lists every **running workload** in the cluster together with the known vulnerabilities (CVEs) in its images.
 
 **K8s Sentinel does not scan these images itself.** [Trivy Operator](https://github.com/aquasecurity/trivy-operator) does the scanning, and K8s Sentinel reads the `VulnerabilityReport` resources it writes. Trivy Operator is an optional component; see [Installing Trivy Operator](../installation/trivy-operator.md) for how to install it.
 
@@ -38,7 +38,7 @@ Trivy Operator scans a workload's **Pod template**. If the template has been upd
 
 ### Containers Without a Report of Their Own
 
-Since v0.62, a container without a report of its own uses a report of the **same image**, because what a scan finds belongs to the image itself, wherever it runs. This covers two cases:
+A container without a report of its own uses a report of the **same image**, because what a scan finds belongs to the image itself, wherever it runs. This covers two cases:
 
 - Several containers in one workload share the same image (for example the Cilium agent), where the operator sometimes completes only some of the scans
 - A sidecar injected at admission (for example a service mesh proxy), which is not in the template the operator scans, but whose image has usually been scanned where it is declared
@@ -68,7 +68,7 @@ If a report cannot be read at the moment you expand the row (Trivy Operator rewr
 
 ## When the Data Updates
 
-- The workload list is cached for 1 minute and the scan report summaries for 5 minutes (v0.61+). A scan that has just finished can therefore take up to 5 minutes to appear; click **Refresh** to read it immediately
+- The workload list is cached for 1 minute and the scan report summaries for 5 minutes. A scan that has just finished can therefore take up to 5 minutes to appear; click **Refresh** to read it immediately
 - Init containers are included; finished Pods (completed Jobs) and Trivy Operator's own scan Jobs are not listed
 
 ---
@@ -87,7 +87,7 @@ The page says why directly:
 
 ## The Same Results on Other Pages
 
-Since v0.61, the vulnerability scan results also appear in three places:
+The vulnerability scan results also appear in three places:
 
 | Page | How it is shown |
 |---|---|

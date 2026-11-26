@@ -29,13 +29,13 @@ Click **"+ New Policy"** in the top-right corner to open the visual builder.
 
 ![Create Admission Policy form](/img/features/admission-policy/new-form.png)
 
-:::note[A taken name is refused (v0.81.2+)]
-Creating a policy or a binding under a name that already exists is refused with `An admission policy named "..." already exists. Choose another name.` (or `A binding named ...`) instead of replacing the existing one without a prompt. Editing an existing policy from the list is unchanged.
+:::note[A taken name is refused]
+Creating a policy or a binding under a name that already exists is refused with `An admission policy named "..." already exists. Choose another name.` (or `A binding named ...`) instead of replacing the existing one. Editing an existing policy from the list is not affected.
 :::
 
 ### Supported Rule Types
 
-K8s Sentinel provides fourteen built-in rule types, chosen from the **Rule Type** dropdown (a dropdown instead of a row of buttons since v0.66.1):
+K8s Sentinel provides fourteen built-in rule types, chosen from the **Rule Type** dropdown:
 
 ![The fourteen rule types in the Rule Type dropdown](/img/features/admission-policy/rule-types.png)
 
@@ -43,18 +43,18 @@ K8s Sentinel provides fourteen built-in rule types, chosen from the **Rule Type*
 |---|---|
 | **Label Check** | Require or forbid specific label key=value pairs; multiple rules supported |
 | **Annotation Check** | Require or forbid specific annotation key=value pairs |
-| **Image Policy** | Forbid the `:latest` tag and require images from named registries. Since v0.59 it covers **initContainers and ephemeral (debug) containers**, the registry prefix compares case-insensitively, and an untagged image with a registry port (`myreg:5000/app`) is correctly refused |
-| **Replica Limit** | Cap replicas on Deployments / StatefulSets. Since v0.59 **`kubectl scale` and HPA via the scale subresource are capped too** |
-| **Resource Limits** | Require CPU / Memory limits, covering every workload type and initContainers. Since v0.68 an optional **Max CPU limit** and **Max memory limit** can cap them (written as Kubernetes writes quantities: `2`, `500m`, `4Gi`); with a ceiling given, a container over it **or with no such limit set** is refused |
-| **Security Context** | Forbid privileged containers and require runAsNonRoot (honouring pod- and container-level inheritance). Covers ephemeral (debug) containers since v0.59. Since v0.68 it can require `allowPrivilegeEscalation: false` (**No Privilege Escalation**), which has to be written out since unset means allowed |
+| **Image Policy** | Forbid the `:latest` tag and require images from named registries. It covers **initContainers and ephemeral (debug) containers**, the registry prefix compares case-insensitively, and an untagged image with a registry port (`myreg:5000/app`) is refused |
+| **Replica Limit** | Cap replicas on Deployments / StatefulSets. **`kubectl scale` and HPA via the scale subresource are capped too** |
+| **Resource Limits** | Require CPU / Memory limits, covering every workload type and initContainers. An optional **Max CPU limit** and **Max memory limit** can cap them (written as Kubernetes writes quantities: `2`, `500m`, `4Gi`); with a ceiling given, a container over it **or with no such limit set** is refused |
+| **Security Context** | Forbid privileged containers and require runAsNonRoot (honouring pod- and container-level inheritance). Covers ephemeral (debug) containers. It can require `allowPrivilegeEscalation: false` (**No Privilege Escalation**), which has to be written out since unset means allowed |
 | **Host Access** | Forbid hostNetwork, hostPID and hostIPC host-sharing options |
-| **ConfigMap Size** (v0.55+) | Cap a ConfigMap's **total size** (KB; `data` plus `binaryData`, key names included). A new object must fit the cap; an existing oversized one may stay or shrink but **not grow** |
-| **Secret Size** (v0.57+) | The same total-size cap for Secrets, with `data` measured base64-**decoded**; managed types (`kubernetes.io/service-account-token`, `bootstrap.kubernetes.io/token`, `helm.sh/release.v1`) are exempt |
-| **Vulnerability Limit** (v0.66+) | Refuse images with more Critical or High vulnerabilities than allowed, by K8s Sentinel's own scan results. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
-| **Blocked CVEs** (v0.68+) | Refuse images that have any of the vulnerabilities named, whatever their severity. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
-| **Scanned Images** (v0.70+) | Refuse images K8s Sentinel has no scan result for. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
-| **Host Path Volumes** (v0.68+) | Forbid `hostPath` volumes: all of them (**Every hostPath volume**), or those that reach given paths. With `/var/run` given, `/var/run/docker.sock` is refused, and so are `/var` and `/`, which contain it, and a path written to dodge the comparison (`//var/run`) |
-| **Environment Variables** (v0.68+) | Require variables in every container (**Required in every container**) and forbid others (**Not allowed**), both separated by commas. A forbidden name is matched **whole and in any capitalisation** (`pass` refuses `PASS` and `Pass`, not `DB_PASS`); a required name has to be exact |
+| **ConfigMap Size** | Cap a ConfigMap's **total size** (KB; `data` plus `binaryData`, key names included). A new object must fit the cap; an existing oversized one may stay or shrink but **not grow** |
+| **Secret Size** | The same total-size cap for Secrets, with `data` measured base64-**decoded**; managed types (`kubernetes.io/service-account-token`, `bootstrap.kubernetes.io/token`, `helm.sh/release.v1`) are exempt |
+| **Vulnerability Limit** | Refuse images with more Critical or High vulnerabilities than allowed, by K8s Sentinel's own scan results. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
+| **Blocked CVEs** | Refuse images that have any of the vulnerabilities named, whatever their severity. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
+| **Scanned Images** | Refuse images K8s Sentinel has no scan result for. See [Refusing Vulnerable Images](./vulnerability-admission.md) |
+| **Host Path Volumes** | Forbid `hostPath` volumes: all of them (**Every hostPath volume**), or those that reach given paths. With `/var/run` given, `/var/run/docker.sock` is refused, and so are `/var` and `/`, which contain it, and a path written to dodge the comparison (`//var/run`) |
+| **Environment Variables** | Require variables in every container (**Required in every container**) and forbid others (**Not allowed**), both separated by commas. A forbidden name is matched **whole and in any capitalisation** (`pass` refuses `PASS` and `Pass`, not `DB_PASS`); a required name has to be exact |
 
 ### Form Fields
 
@@ -62,7 +62,7 @@ K8s Sentinel provides fourteen built-in rule types, chosen from the **Rule Type*
 |---|---|
 | **Policy Name** | The `ValidatingAdmissionPolicy` resource name - must follow Kubernetes naming conventions |
 | **Rule Type** | Choose one of the fourteen rule types above from the dropdown |
-| **Apply To** | Choose which resource types this policy applies to (All Workloads, Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob, and since v0.59 Namespaces); workload rules also match ReplicationControllers |
+| **Apply To** | Choose which resource types this policy applies to (All Workloads, Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob, Namespaces); workload rules also match ReplicationControllers |
 | **Rule details** | Fields specific to the selected rule type appear below; a blank Violation Message uses a concrete default (previewed live as the field placeholder) |
 
 :::note[Known coverage limits]
@@ -86,10 +86,6 @@ For finer-grained control, click **"+ New YAML"** to paste a complete `Validatin
 A policy built with the form reopens in the **form** (defaults the kube-apiserver adds on persist, such as `matchPolicy: Equivalent`, don't affect this); a policy applied with `kubectl` or carrying explicit non-default settings the form cannot represent opens in the **YAML editor**, so a form save cannot erase them. Bindings behave the same way.
 :::
 
-:::caution[Four rule types made before v0.69]
-**Vulnerability Limit**, **Blocked CVEs**, **Host Path Volumes** and **Environment Variables** policies made before v0.69 keep working as they were written, but `Edit` opens them in the YAML editor. **Make them again** in the form to get the corrected rules, of which the first two matter most: the earlier ones could be passed by a manifest that names an owner for itself.
-:::
-
 ---
 
 ## Managing Bindings
@@ -100,7 +96,7 @@ Switch to the **"Bindings"** tab to manage `ValidatingAdmissionPolicyBinding` re
 
 A Binding associates an existing ValidatingAdmissionPolicy with a scope and configures the action on violation (Deny / Audit / Warn).
 
-The **namespace scope** (v0.54+) offers three modes, all multi-selectable:
+The **namespace scope** offers three modes, all multi-selectable:
 
 | Mode | Description |
 |---|---|
@@ -114,7 +110,7 @@ Pair the ConfigMap / Secret Size rules with an "All except" binding that exclude
 
 **How it works:** K8s Sentinel creates `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding` resources via the Kubernetes API Server. For each resource request matching `matchConstraints`, the API Server evaluates the CEL expression and, based on `failurePolicy`, either rejects or warns.
 
-## An Admin Limited to Namespaces (v0.81+)
+## An Admin Limited to Namespaces
 
 An Admin limited to namespaces can make policies and bindings for its own namespaces, and a limited Viewer sees them. Such a policy is marked with the namespaces it is for and held to them (the binding can only be "Only these namespaces", only namespaced resources are matched, and more); see [Limiting an Account to Namespaces](./namespace-access.md).
 

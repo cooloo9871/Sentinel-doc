@@ -10,7 +10,7 @@ sidebar_position: 4
 
 叢集無法連上網際網路時，[Kubernetes Job 安裝](./job-install.md) 與 [本機腳本安裝](./script-install.md) 都無法使用，因為兩者都需要從 GitHub、Helm repository 與公開 Registry 下載內容。
 
-v0.71.0 起，每一個 [release](https://github.com/cooloo9871/K8s_Sentinel/releases) 都附帶兩個檔案：
+每一個 [release](https://github.com/cooloo9871/K8s_Sentinel/releases) 都附帶兩個檔案：
 
 | 檔案 | 內容 |
 |---|---|
@@ -34,13 +34,13 @@ v0.71.0 起，每一個 [release](https://github.com/cooloo9871/K8s_Sentinel/rel
 | **私有 Registry** | 叢集節點可以拉取的 Registry（例如 Harbor）。使用 Harbor 時，請先建立要存放 Image 的 project（下方範例為 `sentinel`） |
 | **不需認證即可拉取** | 節點與 Trivy 都必須能在**沒有認證**的情況下從該 Registry 拉取。離線套件不會設定 image pull secret |
 | **節點信任 Registry 的憑證** | 這是每個節點上 container runtime 的設定（containerd 的 `certs.d`），離線套件不會更動。若其他工作負載已經從這個 Registry 拉取 Image，表示已經設定完成 |
-| **搬運 Image 的工具** | 可連網與離線兩端的機器都只需要 `docker` 或 `podman`（v0.74+），兩者都有時使用 `docker`，腳本會顯示實際使用的是哪一個。Trivy 的弱點資料庫是 OCI artifact，`docker` 與 `podman` 都無法當成 Image 拉取或推送，因此腳本會以容器 Image（`quay.io/skopeo/stable:v1.18`）執行 `skopeo` 來搬運；`save` 會把這個 Image 一併存下來，讓 `push` 在離線環境也能使用。它只是腳本的工具，不會被推送到你的 Registry |
+| **搬運 Image 的工具** | 可連網與離線兩端的機器都只需要 `docker` 或 `podman`，兩者都有時使用 `docker`，腳本會顯示實際使用的是哪一個。Trivy 的弱點資料庫是 OCI artifact，`docker` 與 `podman` 都無法當成 Image 拉取或推送，因此腳本會以容器 Image（`quay.io/skopeo/stable:v1.18`）執行 `skopeo` 來搬運；`save` 會把這個 Image 一併存下來，讓 `push` 在離線環境也能使用。它只是腳本的工具，不會被推送到你的 Registry |
 | **先登入 Registry** | 執行 `push` 之前，請先在該機器上登入 Registry（`docker login`、`podman login`） |
 | **CPU 架構** | Image 是依執行 `save` 那台機器的 CPU 架構儲存的，請在與叢集節點相同架構的機器上執行 |
 | **叢集前置需求** | 與線上安裝相同：Kubernetes 1.32+、Cilium（啟用 kube-proxy replacement 與 Hubble），見 [前置需求](../prerequisites.md)。Cilium 不在離線套件內，需自行以離線方式安裝 |
 
 :::caution[沒有弱點資料庫就無法掃描]
-Registry 中缺少 Trivy 的兩個資料庫時，K8s Sentinel 仍可安裝並正常運作，但**沒有任何 Image 能被掃描**。v0.73 以前的 `mirror-images.sh` 需要機器上另外裝有 `skopeo` 或 `oras` 才能搬運資料庫；v0.74 起腳本會自行處理，只需要 `docker` 或 `podman`。
+Registry 中缺少 Trivy 的兩個資料庫時，K8s Sentinel 仍可安裝並正常運作，但**沒有任何 Image 能被掃描**。
 :::
 
 ---
@@ -64,7 +64,7 @@ bash mirror-images.sh save        # 約 2 GB，存入 ./images
 | `mirror-images.sh` | 儲存（`save`）與推送（`push`）Image |
 | `install.sh` | 離線安裝腳本 |
 | `uninstall.sh` | 解除安裝腳本，見 [解除安裝](../uninstall.md) |
-| `manifests/` | `sentinel.yaml`、`tetragon.yaml`、`tetragon-grpc-policy.yaml`、`trivy-operator.yaml`、`trivy-operator-crds.yaml`（v0.75+） |
+| `manifests/` | `sentinel.yaml`、`tetragon.yaml`、`tetragon-grpc-policy.yaml`、`trivy-operator.yaml`、`trivy-operator-crds.yaml` |
 | `VERSION` | 套件版本 |
 
 以 v0.82.1 為例，`images.txt` 列出的內容為：
@@ -95,7 +95,7 @@ bash mirror-images.sh push harbor.example.com/sentinel
 
 Registry 參數是「主機加路徑」，不含 `http://` 或 `https://`。
 
-Registry 使用 HTTP，或憑證不被這台機器信任（出現 `x509: certificate signed by unknown authority`）時，加上 `--insecure-registry`（v0.73+）：
+Registry 使用 HTTP，或憑證不被這台機器信任（出現 `x509: certificate signed by unknown authority`）時，加上 `--insecure-registry`：
 
 ```bash
 bash mirror-images.sh push harbor.example.com/sentinel --insecure-registry
@@ -121,7 +121,7 @@ bash mirror-images.sh save && bash mirror-images.sh push harbor.example.com/sent
 
 | 環境變數 | 說明 |
 |---|---|
-| `INSECURE=1` | 效果與 `push` 的 `--insecure-registry` 相同（v0.72 以前只有這個寫法） |
+| `INSECURE=1` | 效果與 `push` 的 `--insecure-registry` 相同 |
 | `CONTAINER_CLI` | 指定要使用的指令，取代自動偵測的 `docker` / `podman`，例如 `CONTAINER_CLI=podman` 或 `CONTAINER_CLI="sudo podman"` |
 | `IMAGES_DIR` | Image 的存放目錄，預設為套件內的 `./images` |
 
@@ -139,11 +139,7 @@ bash install.sh --registry harbor.example.com/sentinel
 
 1. **Tetragon**：叢集任一 Namespace 已有 Tetragon DaemonSet 時跳過；否則套用 `tetragon.yaml` 並等待就緒。接著套用 NetworkPolicy `tetragon-grpc`
 2. **K8s Sentinel**：套用 `sentinel.yaml` 並等待 Deployment 就緒
-3. **Trivy Operator**：叢集任一 Namespace 已有 Trivy Operator 時跳過；否則安裝至 `sentinel-system`。v0.75 起會先套用 CRD 並等待 API Server 開始提供，再套用其餘物件
-
-:::note[v0.74 以前出現 no matches for kind "ClusterComplianceReport"]
-在沒有 Trivy Operator 的叢集上，v0.74 以前的 `install.sh` 會以 `no matches for kind "ClusterComplianceReport"` 結束，並在等待 Operator 就緒之前停止。這樣結束的安裝，K8s Sentinel 會用到的部分都已完成，不需要重新執行；v0.75.0 已修正。
-:::
+3. **Trivy Operator**：叢集任一 Namespace 已有 Trivy Operator 時跳過；否則安裝至 `sentinel-system`。會先套用 CRD 並等待 API Server 開始提供，再套用其餘物件
 
 與線上安裝程式相同，**叢集中既有的 Tetragon 或 Trivy Operator 不會被更動**。既有的 Tetragon 需要自行設定 K8s Sentinel 所需的 gRPC 位址，見 [安裝 Tetragon](./tetragon-install.md)。
 
@@ -151,7 +147,7 @@ bash install.sh --registry harbor.example.com/sentinel
 |---|---|
 | `--registry <主機/路徑>` | 必填。`mirror-images.sh push` 推送的位置 |
 | `--render-only <目錄>` | 把將要套用的 manifest 寫入該目錄，**不套用任何內容**。適合先檢視，或以自己的方式套用 |
-| `--insecure-registry` | v0.72.0+。Registry 的憑證由自有 CA 簽發、或使用 HTTP 時使用，見下一節 |
+| `--insecure-registry` | Registry 的憑證由自有 CA 簽發、或使用 HTTP 時使用，見下一節 |
 
 離線套件中的 K8s Sentinel 與線上安裝有三處不同：
 
@@ -182,7 +178,7 @@ kubectl port-forward -n sentinel-system svc/sentinel 8080:80
 bash install.sh --registry harbor.example.com/sentinel --insecure-registry
 ```
 
-加上 `--insecure-registry`（v0.72.0+）後，Trivy 下載資料庫與讀取要掃描的 Image 時都**不驗證憑證**。
+加上 `--insecure-registry` 後，Trivy 下載資料庫與讀取要掃描的 Image 時都**不驗證憑證**。
 
 :::warning
 這會關閉 Trivy **所有**的憑證驗證，包含它掃描的其他 Registry，而不只是存放資料庫的這一台。

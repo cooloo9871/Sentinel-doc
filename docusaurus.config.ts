@@ -45,6 +45,13 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
           exclude: ['**/superpowers/**'],
+          // 每個中間版本號一個文件版本。docs/ 是最新版本，舊版本在 versioned_docs/。
+          // 出新的中間版本時：npm run docusaurus docs:version <目前版本>，再把下方 current 的 label 改成新版本。
+          lastVersion: 'current',
+          versions: {
+            current: {label: 'v0.82'},
+            '0.81': {label: 'v0.81', path: 'v0.81', banner: 'none'},
+          },
         },
         blog: false,
         theme: {
@@ -72,6 +79,10 @@ const config: Config = {
           sidebarId: 'sentinelSidebar',
           position: 'left',
           label: '文件',
+        },
+        {
+          type: 'docsVersionDropdown',
+          position: 'right',
         },
         {
           type: 'localeDropdown',

@@ -23,7 +23,7 @@ Use the default account for the first login:
 
 Enter them and click **Sign in**.
 
-## First Login Requires a New Password (v0.47+)
+## First Login Requires a New Password
 
 On the first sign-in with the default `admin` / `admin`, the console **forces you to set a new password** before it opens:
 
@@ -36,7 +36,7 @@ On the first sign-in with the default `admin` / `admin`, the console **forces yo
 
 Click "**Set password and continue**" to enter the console.
 
-Since v0.58.1 this screen **no longer asks for the current password**: it only appears seconds after signing in with the public bootstrap password, so asking again proved nothing. The skip applies **only while the forced-change flag is set**; once it clears, changing your own password requires the current one as before (protecting against a hijacked session).
+This screen **does not ask for the current password**: it only appears seconds after signing in with the public bootstrap password, so asking again would prove nothing. The skip applies **only while the forced-change flag is set**; once it clears, changing your own password requires the current one (protecting against a hijacked session).
 
 This gate is **enforced server-side**: while the flag is set, the backend only allows reading your own account info and changing your own password; there is no way around it. The flag clears once the password changes.
 
@@ -48,10 +48,10 @@ Without [Persistent Storage (PV / PVC)](./installation/persistent-storage.md) co
 
 | Mechanism | Description |
 |---|---|
-| **Login rate limit** (v0.47+) | Failed logins are throttled per source IP (5 per minute, then a brief block). Keyed on the source rather than the username, so an attacker cannot lock a real user out by deliberately failing their login |
-| **Login auditing** (v0.48+) | Every sign-in attempt (success, wrong credentials, rate-limited) is recorded in the [Audit Log](./features/audit-log.md) with the targeted account and the source IP; the password is never recorded |
-| **JWT authentication** | On success a token is stored in the browser's `localStorage` and sent as the `Authorization` header on every API request. When it expires (Session Timeout defaults to 3600 seconds) you are logged out automatically. Since v0.53 the [`JWT_SECRET` environment variable](./installation/persistent-storage.md#only-want-sessions-to-survive-restarts-jwt_secret) can pin the signing key so a Pod restart no longer logs everyone out |
+| **Login rate limit** | Failed logins are throttled per source IP (5 per minute, then a brief block). Keyed on the source rather than the username, so an attacker cannot lock a real user out by deliberately failing their login |
+| **Login auditing** | Every sign-in attempt (success, wrong credentials, rate-limited) is recorded in the [Audit Log](./features/audit-log.md) with the targeted account and the source IP; the password is never recorded |
+| **JWT authentication** | On success a token is stored in the browser's `localStorage` and sent as the `Authorization` header on every API request. When it expires (Session Timeout defaults to 3600 seconds) you are logged out automatically. The [`JWT_SECRET` environment variable](./installation/persistent-storage.md#only-want-sessions-to-survive-restarts-jwt_secret) can pin the signing key so a Pod restart does not log everyone out |
 
 :::note[Behind a proxy or Ingress?]
-The source IP for rate limiting and audit records is taken from the connection itself (`RemoteAddr`) by default. If K8s Sentinel runs behind a proxy or Ingress that sets `X-Forwarded-For`, set the environment variable **`TRUST_PROXY_HEADERS=true`** on the Sentinel container so the real client IP is used (v0.50+).
+The source IP for rate limiting and audit records is taken from the connection itself (`RemoteAddr`) by default. If K8s Sentinel runs behind a proxy or Ingress that sets `X-Forwarded-For`, set the environment variable **`TRUST_PROXY_HEADERS=true`** on the Sentinel container so the real client IP is used.
 :::
