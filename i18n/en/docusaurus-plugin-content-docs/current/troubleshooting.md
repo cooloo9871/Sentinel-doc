@@ -38,6 +38,7 @@ flowchart TD
 | UI not loading (connection refused) | `port-forward` not running or interrupted | Re-run `kubectl port-forward -n sentinel-system svc/sentinel 8080:80` |
 | Login failed (wrong credentials) | Default account has been changed or forgotten | Reset `users.json` (see steps below) |
 | Policy has no effect after applying | Mode is Monitoring (not Protect) | Switch the policy's Mode to Protect on the Tracing Policy list (Protect is turned on one policy at a time, see [Execution Mode](./features/execution-mode.md)) |
+| A policy in the Tracing Policy list is marked **Not active** | Tetragon did not load it, most often because the cluster is past the limit of 127 Tracing Policies | Hover over the mark for the reason. Past the limit, delete the policies you do not need, then **delete that policy and create it again**, see [Not active](./features/tracing-policy.md#not-active) |
 | No data in Behavior Discovery | Tetragon Agent not running normally | Check `tetragon` DaemonSet status (see steps below) |
 | Security Events page is empty | No TracingPolicy created, or a Tetragon event stream is down | Check "Cluster → Event Sources" first: every node should show Ingestion `Connected` (on `Stream Down`, check the Tetragon gRPC bind and network), then confirm a TracingPolicy exists |
 | The Vulnerabilities page shows `Trivy Operator was not found in this cluster.` | Trivy Operator is not installed yet (applying only `deploy/sentinel.yaml` does not install it) | Install it by following [Installing Trivy Operator](./installation/trivy-operator.md) |

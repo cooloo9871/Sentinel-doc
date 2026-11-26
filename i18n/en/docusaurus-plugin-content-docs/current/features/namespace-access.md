@@ -52,7 +52,7 @@ In the user list, click **Access** on the account, choose **Whole cluster** or *
 Further notes:
 
 - An event caused by a cluster-wide policy on one of its pods **is shown**, with the policy's name
-- A limited account's sidebar holds only Dashboard, Network Topology, Vulnerabilities → Workloads, Policies and Notifications (Security Events, Admission Events); the header does not show the "N / M in Protect" badge either. Entries the role cannot view are absent as well
+- A limited account's sidebar holds only Dashboard, Network Topology, Vulnerabilities → Workloads, Policies and Notifications (Security Events, Admission Events). Entries the role cannot view are absent as well
 - Opening the address of a hidden page directly sends a limited account back to the Dashboard
 - The namespace filter on the Tracing Policy and Network Policy lists does not offer `Cluster-wide` to a limited account
 
@@ -100,4 +100,3 @@ A binding an Admin of the whole cluster limits to namespaces still applies its p
 ## Known Limits
 
 - A limited account does not see the event source warnings on the Dashboard
-- Upgrading to v0.82 needs nothing beyond the new image; no manifest has to be re-applied

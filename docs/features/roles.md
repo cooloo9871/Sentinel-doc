@@ -104,8 +104,7 @@ Notifications 與 System 屬於整個叢集，受限的帳號不論角色為何�
 
 ---
 
-## 儲存位置與升級
+## 儲存位置
 
-- 升級到 v0.82.0 不需要資料移轉，也不需要重新套用 manifest
 - 自訂的角色存放在資料目錄的 `roles.json`。與其他設定一樣，需要 [持久化儲存](../installation/persistent-storage.md) 才能在 Pod 重啟後保留
 - 建立、修改、刪除角色，以及變更帳號的角色，都需要 System 的 Manage 權限

@@ -1,0 +1,136 @@
+---
+id: tetragon-install
+title: 安裝 Tetragon
+sidebar_position: 3
+---
+
+# 安裝 Tetragon
+
+**Tetragon** 是 Cilium 生態系的 eBPF 安全觀測與執行元件，以 DaemonSet 形式部署於每個節點，負責在 Kernel 層捕捉行程執行與檔案存取事件。K8s Sentinel 的 TracingPolicy 管理、Security Events、Behavior Discovery 等核心功能皆以 Tetragon 為基礎。
+
+:::note
+請先完成 [Cilium 的安裝與設定](./cilium-install.md) 再安裝 Tetragon。
+:::
+
+---
+
+## 步驟一：以 Helm 安裝
+
+```bash
+helm repo add cilium https://helm.cilium.io/
+helm repo update
+helm install tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
+```
+
+- **`tetragon.grpc.address=0.0.0.0:54321`** 為必要設定：K8s Sentinel 透過 Tetragon 的 gRPC API 收集執行期事件，而 agent 預設綁定 `localhost:54321`，只有 Pod 內部連得到
+- **`hostNetwork=false` 與 NetworkPolicy** 用來把這個 API 限制為只有 K8s Sentinel 能連。Tetragon 的 gRPC server **沒有認證也沒有 TLS**：連得上的人就能讀到節點上每一個啟動的行程（含命令列），並能列出、停用或刪除 Tracing Policy。使用 chart 預設的 host network 時，這個埠會開在每個節點的位址上、叢集內任何 Pod 都連得到，而且 NetworkPolicy 對 hostNetwork Pod 不生效；離開 host network 後它只是一般的 Pod 埠，`deploy/tetragon-grpc-policy.yaml`（NetworkPolicy `tetragon-grpc`）只放行 K8s Sentinel 的 Pod。NetworkPolicy 管的是 Pod 之間的流量：節點本身的行程，或該節點上使用 host network 的 Pod，仍然連得到這個埠。若 Tetragon 或 K8s Sentinel 安裝在其他 Namespace，請修改該檔案中的 Namespace
+
+其餘用預設值即可，K8s Sentinel 需要的 Kubernetes metadata enrichment（將事件關聯到 Pod / Namespace / Container，`tetragon.enableK8sAPIAccess`）預設已啟用。`deploy/install-job.yaml` 與 `deploy/install.sh` 會自動完成以上全部設定。
+
+:::note
+離開 host network 後，Tetragon 要等節點的 CNI 就緒才會啟動，因此節點開機最初幾秒的行為不會被觀測到。
+:::
+
+### 使用 CRI-O 的節點
+
+不需要額外設定，以相同方式安裝即可。
+
+在 CRI-O 搭配 crun 的節點上，容器內的行程位於比容器名稱低一層的 cgroup，而 Tetragon 是從 cgroup 名稱判斷 Pod，因此回報的每一個事件都沒有 Pod 資訊。K8s Sentinel 會自行判斷這些行程屬於哪個 Pod（依據啟動它們的 container runtime 命令列上的容器 ID），Tracing Policy 與其他 runtime 一樣生效，Behavior Discovery 與 Security Events 也會顯示 Pod。使用 containerd 的節點沒有任何改變。
+
+在 CRI-O 上另有以下行為：
+
+- 透過 `$(...)`、subshell 或背景 fork 執行的指令，同樣會歸屬到正確的 Pod
+- CRI-O 搭配 runc 時，runtime 啟動自己的封存副本（`/proc/self/fd/N`）不會被列為 Pod 執行的程式
+- K8s Sentinel 在 Tetragon agent 中執行的指令（用來取得行程的啟動路徑）不會出現在 Security Events，這在所有 runtime 上都適用
+
+已知限制：K8s Sentinel 剛啟動或重新連上 agent 的前幾秒，事件仍可能沒有 Pod 資訊。上游的量測環境為 CRI-O 1.37（crun 與 runc）、Tetragon 1.8.0、cgroup v2。
+
+:::warning[請保持 tetragon.cri.enabled 與 tetragon.cgidmap.enabled 關閉]
+這兩個設定是 Tetragon 自己對這個問題的解法，但在 Tetragon 1.8.0 上只能判斷部分行程，而且會讓指定 Namespace 或 Pod selector 的 Tracing Policy **完全不生效**：Policy 要求終止的行程不會被終止。
+
+若這兩個設定在你的叢集上是開啟的，請以目前安裝的 chart 版本（`helm -n kube-system list` 可查詢）關閉：
+
+```bash
+helm repo update cilium
+helm -n kube-system upgrade tetragon cilium/tetragon --version <已安裝的版本> --reuse-values \
+  --set tetragon.cri.enabled=false \
+  --set tetragon.cgidmap.enabled=false
+kubectl -n kube-system rollout status daemonset/tetragon
+kubectl -n sentinel-system rollout restart deployment/sentinel
+```
+:::
+
+### 把既有的 Tetragon 移出 host network
+
+安裝程式偵測到 Tetragon DaemonSet 已存在時會跳過安裝（會在所有 Namespace 中尋找，不限於 `kube-system`），因此較早安裝的 Tetragon 仍在 host network 上，gRPC 埠對整個叢集開放。
+
+以 Helm release 安裝者（`helm list -n kube-system` 看得到 `tetragon`）：
+
+```bash
+helm upgrade tetragon cilium/tetragon -n kube-system --reset-then-reuse-values \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
+```
+
+不是以 Helm release 安裝者（套用 render 出來的 manifest，沒有留下 release）：
+
+```bash
+helm template tetragon cilium/tetragon -n kube-system \
+  --set hostNetwork=false \
+  --set tetragon.grpc.address=0.0.0.0:54321 | kubectl apply -f -
+kubectl apply -f deploy/tetragon-grpc-policy.yaml
+```
+
+K8s Sentinel 會在半分鐘內自行找到 agent 的新位址。驗證方式：從任一其他 Pod 執行 `nc -zv <tetragon Pod IP> 54321`，應該要逾時。
+
+:::tip
+K8s Sentinel 預設假設 Tetragon 安裝於 `kube-system` Namespace。若安裝於其他 Namespace（例如 `-n tetragon`），部署 K8s Sentinel 時需將環境變數 `TETRAGON_NAMESPACE` 設為對應值。
+:::
+
+---
+
+## 步驟二：驗證安裝
+
+確認每個節點都有一個 Tetragon Pod 且狀態為 `Running`：
+
+```bash
+kubectl get pods -n kube-system -l app.kubernetes.io/name=tetragon -o wide
+```
+
+確認 TracingPolicy CRD 已註冊：
+
+```bash
+kubectl get crd | grep tetragon
+```
+
+預期輸出包含：
+
+- `tracingpolicies.cilium.io`
+- `tracingpoliciesnamespaced.cilium.io`
+
+（選用）以 `tetra` CLI 直接觀察事件流，確認 eBPF 感測器運作正常：
+
+```bash
+kubectl exec -it -n kube-system ds/tetragon -c tetragon -- \
+  tetra getevents -o compact
+```
+
+看到叢集內的 process 事件持續輸出即代表 Tetragon 已正常捕捉事件。
+
+---
+
+## 安裝後與 K8s Sentinel 的整合
+
+K8s Sentinel 部署完成後：
+
+- 「**Cluster → Event Sources**」頁面會顯示每個節點 Agent 的健康狀態、重啟次數與事件串流（Ingestion）狀態
+- 「**Behavior Discovery**」會立即開始透過 Tetragon base sensor 累積各工作負載的行為觀察
+- 於「**Tracing Policy**」建立的 Policy 會由 Tetragon Agent 在數秒內載入生效
+
+:::info
+升級 Tetragon 可使用 `helm upgrade tetragon cilium/tetragon -n kube-system`。升級期間各節點的 Agent 會滾動重啟，短暫離線的節點在 K8s Sentinel 的 Event Sources 頁面上可能暫時顯示為 Unhealthy 或 Stream Down，屬正常現象。
+:::

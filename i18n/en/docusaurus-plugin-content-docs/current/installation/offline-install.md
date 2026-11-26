@@ -47,12 +47,12 @@ Without Trivy's two databases in the registry, K8s Sentinel still installs and r
 
 ## Step 1: Download and Save the Images (Online Machine)
 
-Download the bundle from the release page (v0.82.1 is used below; replace it with the version you are installing):
+Download the bundle from the release page (v0.84.1 is used below; replace it with the version you are installing):
 
 ```bash
-curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.82.1/sentinel-offline-v0.82.1.tar.gz
-tar xzf sentinel-offline-v0.82.1.tar.gz
-cd sentinel-offline-v0.82.1
+curl -LO https://github.com/cooloo9871/K8s_Sentinel/releases/download/v0.84.1/sentinel-offline-v0.84.1.tar.gz
+tar xzf sentinel-offline-v0.84.1.tar.gz
+cd sentinel-offline-v0.84.1
 bash mirror-images.sh save        # about 2 GB, into ./images
 ```
 
@@ -67,10 +67,10 @@ What the bundle contains:
 | `manifests/` | `sentinel.yaml`, `tetragon.yaml`, `tetragon-grpc-policy.yaml`, `trivy-operator.yaml`, `trivy-operator-crds.yaml` |
 | `VERSION` | The bundle's version |
 
-For v0.82.1, `images.txt` lists:
+For v0.84.1, `images.txt` lists:
 
 ```text
-ghcr.io/cooloo9871/sentinel:v0.82.1
+ghcr.io/cooloo9871/sentinel:v0.84.1
 mirror.gcr.io/aquasec/trivy:0.76.1
 mirror.gcr.io/aquasec/trivy-operator:0.36.1
 quay.io/cilium/hubble-export-stdout:v1.1.1
@@ -108,7 +108,7 @@ It only affects the pushing machine and **does not change what the cluster trust
 | Original location | Location after the push |
 |---|---|
 | `quay.io/cilium/tetragon:v1.8.0` | `harbor.example.com/sentinel/cilium/tetragon:v1.8.0` |
-| `ghcr.io/cooloo9871/sentinel:v0.82.1` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.82.1` |
+| `ghcr.io/cooloo9871/sentinel:v0.84.1` | `harbor.example.com/sentinel/cooloo9871/sentinel:v0.84.1` |
 | `mirror.gcr.io/aquasec/trivy-db:2` | `harbor.example.com/sentinel/aquasec/trivy-db:2` |
 
 A machine that reaches both the internet and the registry can do it in one go:
@@ -218,7 +218,7 @@ bash uninstall.sh
 To produce a bundle yourself (for an unreleased version, say), run this from the K8s Sentinel source directory on a machine with internet access and Helm:
 
 ```bash
-bash deploy/offline/build.sh v0.82.1
+bash deploy/offline/build.sh v0.84.1
 ```
 
 The two files are written to `dist/`. The Tetragon and Trivy Operator chart versions are defined in `deploy/offline/versions.env`.

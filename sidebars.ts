@@ -48,6 +48,7 @@ const sidebars: SidebarsConfig = {
             'features/form-editor',
             'features/yaml-editor',
             'features/execution-mode',
+            'features/image-lockdown',
             'features/behavior-discovery',
             'features/templates',
           ],

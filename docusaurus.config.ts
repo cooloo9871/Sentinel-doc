@@ -49,7 +49,9 @@ const config: Config = {
           // 出新的中間版本時：npm run docusaurus docs:version <目前版本>，再把下方 current 的 label 改成新版本。
           lastVersion: 'current',
           versions: {
-            current: {label: 'v0.82'},
+            current: {label: 'v0.84'},
+            '0.83': {label: 'v0.83', path: 'v0.83', banner: 'none'},
+            '0.82': {label: 'v0.82', path: 'v0.82', banner: 'none'},
             '0.81': {label: 'v0.81', path: 'v0.81', banner: 'none'},
           },
         },

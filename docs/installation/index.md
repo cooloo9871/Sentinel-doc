@@ -41,15 +41,17 @@ K8s Sentinel 提供三種安裝方式，可依據使用場景與需求選擇最�
 - **叢集無法連上網際網路**時使用 [離線安裝](./offline-install.md)：先把 Image 搬到私有 Registry，再以離線套件安裝。
 :::
 
-## 升級到 v0.82
+## 升級到 v0.84
 
-從 v0.81 升級只需要更新 Image，不需要重新套用 manifest，也沒有資料移轉。行為有以下改變：
+從 v0.83 升級只需要更新 Image，不需要重新套用 manifest，也沒有資料移轉。行為有以下改變：
 
-- **新增自訂角色**：既有的 Admin 與 Viewer 帳號不需要調整。自訂角色存放在資料目錄的 `roles.json`，需要 [持久化儲存](./persistent-storage.md) 才能在重啟後保留，見 [角色與權限](../features/roles.md)
-- **每一個 API 的讀取也會檢查角色**：內建的 Viewer 不能再直接讀取 `GET /api/alerts`、`GET /api/rsyslog` 與 `GET /api/settings/session-ttl`
-- 隔離用的 `sentinel-quarantine` Policy 在 Network Policy 列表中改為唯讀（v0.82.1）
+- **Lock to Image 改名為 Image Lockdown**：既有的 `image-lock-*` Policy 不受影響
+- **Not active 標示**：Tetragon 沒有成功載入的 Tracing Policy 會在列表中標示 **Not active**。一個叢集最多 127 個 Tracing Policy，見 [Not active](../features/tracing-policy.md#not-active)
+- **頁首不再顯示處於 Protect 的 Policy 數量**：這個數字仍可在 Dashboard 的 **Policies in Protect** 卡片查看
+- **Behavior Discovery 固定依 Namespace 分組**
+- 建立 Tracing Policy 不再等待 Tetragon 載入，寫入後立即回應（v0.84.1）
 
-從 v0.81 以前的版本升級時，請重新套用 `deploy/sentinel.yaml` 再重啟 K8s Sentinel，並確認 Tetragon、Cilium（Hubble Relay）與 Trivy Operator 都已依本章各頁面的方式設定。其他版本的升級說明，請以頁面上方的版本選單切換到該版本的文件。
+從 v0.83 以前的版本升級時，請重新套用 `deploy/sentinel.yaml` 再重啟 K8s Sentinel，並確認 Tetragon、Cilium（Hubble Relay）與 Trivy Operator 都已依本章各頁面的方式設定。其他版本的升級說明，請以頁面上方的版本選單切換到該版本的文件。
 
 ```bash
 kubectl apply -f deploy/sentinel.yaml

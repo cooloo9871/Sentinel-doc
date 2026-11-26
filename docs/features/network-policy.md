@@ -113,7 +113,7 @@ Policy 的作用範圍由 manifest 的 `kind` 決定：`CiliumNetworkPolicy` 為
 
 以已存在的名稱從 YAML 建立 Policy 會被拒絕，不會覆蓋既有的 Policy。
 
-:::note[隔離用的 Policy 在列表中為唯讀（v0.82.1+）]
+:::note[隔離用的 Policy 在列表中為唯讀]
 [Quarantine](./quarantine.md) 使用的 `sentinel-quarantine` 會出現在 Network Policy 列表中，但只能查看，不能從這裡編輯。否則只有 Network Policy 管理權限、沒有 Quarantine 權限的帳號可以修改它，讓所有被隔離的 Pod 恢復連線，而頁面仍顯示它們處於隔離狀態。
 :::
 

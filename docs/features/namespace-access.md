@@ -52,7 +52,7 @@ sidebar_position: 14
 補充說明：
 
 - 叢集層級的 Policy 在受限帳號的 Pod 上觸發的事件**會顯示**，並附上該 Policy 的名稱
-- 受限帳號的側邊欄只會出現 Dashboard、Network Topology、Vulnerabilities → Workloads、Policies 與 Notifications（Security Events、Admission Events）；頁首也不會顯示「N / M in Protect」的標示。其中角色沒有 View 權限的項目同樣不會出現
+- 受限帳號的側邊欄只會出現 Dashboard、Network Topology、Vulnerabilities → Workloads、Policies 與 Notifications（Security Events、Admission Events）。其中角色沒有 View 權限的項目同樣不會出現
 - 受限帳號直接開啟被隱藏頁面的網址時，會被導回 Dashboard
 - Tracing Policy 與 Network Policy 列表的 Namespace 篩選器不對受限帳號提供 `Cluster-wide` 選項
 
@@ -100,4 +100,3 @@ kubectl annotate validatingadmissionpolicy <name> sentinel.io/namespaces-
 ## 已知限制
 
 - 受限帳號看不到 Dashboard 上的事件來源警告
-- 升級到 v0.82 只需要更新 Image，不需要重新套用 manifest

@@ -44,7 +44,7 @@ kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
 
 ## 查看 Behavior Discovery 頁面
 
-進入「**Behavior Discovery**」頁面後，觀察結果會以卡片網格形式呈現，每張卡片代表一個工作負載。
+進入「**Behavior Discovery**」頁面後，觀察結果會依 Namespace 分組，以卡片網格形式呈現，每張卡片代表一個工作負載。
 
 ![Behavior Discovery 頁面](/img/features/discovery/overview.png)
 
@@ -55,7 +55,6 @@ kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
 | **統計列** | 右上方顯示「N workloads · N pods total」，提供目前觀察到的工作負載與 Pod 總數 |
 | **Namespace 選單** | 選擇特定 Namespace 縮小顯示範圍 |
 | **Search pod...** | 輸入 Pod 名稱關鍵字，快速篩選包含該 Pod 的工作負載卡片 |
-| **Group by namespace** | 切換是否依 Namespace 分組顯示卡片 |
 | **Clear All** | 清除所有已累積的 Behavior Discovery 觀察資料，重新開始學習 |
 
 **工作負載卡片說明：**
@@ -64,8 +63,8 @@ kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
 
 - **資源類型標籤**：`Deployment`、`DaemonSet` 或 `Pod`
 - **工作負載名稱**：Deployment / DaemonSet / Pod 的名稱
-- **Namespace · Pod 數量**：所屬 Namespace 與受管理的 Pod 數
-- **Process 列表**：觀察期間偵測到的不重複執行檔路徑（顯示二進位名稱，滑鼠懸停可見完整路徑）及各路徑的執行次數
+- **Pod 數量**：受管理的 Pod 數。所屬的 Namespace 顯示在分組標題，卡片上不再重複
+- **Process 列表**：觀察期間偵測到的不重複執行檔路徑（顯示二進位名稱，滑鼠懸停可見完整路徑）及各路徑的執行次數。超過 8 個時先顯示前 8 個，點擊「**+N more**」可以展開所有學習到的 process，「**Show less**」收合
 - **since X ago**：本卡片的觀察資料從多久前開始累積
 
 ---

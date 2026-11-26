@@ -38,6 +38,7 @@ flowchart TD
 | UI 無法開啟（connection refused） | `port-forward` 未執行或已中斷 | 重新執行 `kubectl port-forward -n sentinel-system svc/sentinel 8080:80` |
 | 登入失敗（帳號密碼錯誤） | 預設帳號已被修改或遺忘 | 重置 `users.json`（見下方步驟） |
 | Policy 套用後無效 | 模式為 Monitoring（非 Protect） | 在 Tracing Policy 列表把該 Policy 的 Mode 切換為 Protect（Protect 只能逐一開啟，見 [執行模式切換](./features/execution-mode.md)） |
+| Tracing Policy 列表中的 Policy 標示 **Not active** | Tetragon 沒有成功載入該 Policy，最常見的原因是叢集已超過 127 個 Tracing Policy 的上限 | 滑鼠懸停在標示上查看原因。超過上限時，先刪除不需要的 Policy，再把該 Policy **刪除後重新建立**，見 [Not active](./features/tracing-policy.md#not-active) |
 | Behavior Discovery 無資料 | Tetragon Agent 未正常運作 | 確認 `tetragon` DaemonSet 狀態（見下方步驟） |
 | Security Events 頁面空白 | TracingPolicy 尚未建立，或 Tetragon 事件串流中斷 | 先到「Cluster → Event Sources」確認各節點 Ingestion 為 `Connected`（`Stream Down` 時檢查 Tetragon gRPC 綁定與網路），再確認已建立 TracingPolicy |
 | Vulnerabilities 頁面顯示 `Trivy Operator was not found in this cluster.` | 尚未安裝 Trivy Operator（只套用 `deploy/sentinel.yaml` 不會安裝） | 依 [安裝 Trivy Operator](./installation/trivy-operator.md) 安裝 |

@@ -44,7 +44,7 @@ Everything else keeps working. Those processes are then listed by the file the k
 
 ## Viewing the Behavior Discovery Page
 
-Navigate to the **"Behavior Discovery"** page. Observation results are displayed as a card grid, with each card representing a workload.
+Navigate to the **"Behavior Discovery"** page. Observation results are grouped by namespace and displayed as a card grid, with each card representing a workload.
 
 ![Behavior Discovery page](/img/features/discovery/overview.png)
 
@@ -55,7 +55,6 @@ Navigate to the **"Behavior Discovery"** page. Observation results are displayed
 | **Stats counter** | Shows "N workloads · N pods total" in the top-right corner - the current count of observed workloads and Pods |
 | **Namespace filter** | Select a specific Namespace to narrow the display |
 | **Search pod...** | Enter a Pod name keyword to quickly locate workload cards containing that Pod |
-| **Group by namespace** | Toggle to group cards by Namespace |
 | **Clear All** | Clear all accumulated Behavior Discovery data and start learning fresh |
 
 **Workload card details:**
@@ -64,8 +63,8 @@ Each card contains:
 
 - **Resource type badge**: `Deployment`, `DaemonSet`, or `Pod`
 - **Workload name**: The name of the Deployment / DaemonSet / Pod
-- **Namespace · Pod count**: The owning Namespace and number of managed Pods
-- **Process list**: Unique executable paths detected during the observation period (showing binary names; hover to see full paths) along with execution counts
+- **Pod count**: The number of managed Pods. The namespace is the heading of the group and is not repeated on the card
+- **Process list**: Unique executable paths detected during the observation period (showing binary names; hover to see full paths) along with execution counts. Past 8, the first 8 are shown: click **+N more** to see everything learned, and **Show less** to fold it again
 - **since X ago**: How long ago this card's observation data started accumulating
 
 ---

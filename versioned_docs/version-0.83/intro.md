@@ -1,0 +1,61 @@
+---
+id: intro
+title: 專案簡介
+sidebar_position: 1
+slug: /
+---
+
+# 專案簡介
+
+## K8s Sentinel 是什麼
+
+K8s Sentinel 是一套以 **Cilium 與 Tetragon（eBPF）** 為基礎的 Kubernetes 安全管理平台，將叢集安全防護所需的能力整合在同一套圖形化介面中：
+
+- **執行期安全**：以 TracingPolicy 監控與阻擋行程執行、檔案存取（Monitoring / Protect 模式）；Lock to Image 可讓工作負載只能執行 Image 本身帶有的執行檔
+- **網路安全**：以 Cilium Network Policy 管理 Pod 的 Ingress / Egress 存取，搭配 Network Topology 呈現實際流量與對外暴露面
+- **資源准入**：以 ValidatingAdmissionPolicy 在資源建立當下即攔截違規設定
+- **弱點掃描**：呈現執行中工作負載與 Registry 內 Image 的已知弱點（CVE），由 Trivy 掃描；可搭配 Admission Policy 拒絕弱點超過上限的 Image
+- **事件應變**：即時安全事件串流、一鍵 Pod 網路隔離（Quarantine）、Webhook 告警與 Syslog 轉送
+- **可稽核性**：所有操作與登入行為完整記錄於 Audit Log
+
+DevSecOps 工程師與 Platform 團隊不需手寫 YAML 或逐一 kubectl 操作，即可管理安全策略的完整生命週期、即時掌握叢集安全狀態，大幅降低 Kubernetes 安全防護的落地與維運門檻。
+
+## 核心功能一覽
+
+| 功能模組 | 說明 |
+|---|---|
+| TracingPolicy 管理 | 以視覺化方式建立、編輯、啟用、停用及刪除 TracingPolicy，無需手動撰寫 YAML |
+| Admission Policy | 圖形化建立 Kubernetes ValidatingAdmissionPolicy，支援 Label、Image、資源限制、hostPath、環境變數、ConfigMap / Secret 大小、弱點上限等十四種規則類型 |
+| Network Policy | 圖形化建立 Cilium Network Policy，管理 Pod 的 Ingress / Egress 網路存取規則（含 L7 HTTP 規則） |
+| Quarantine | 事件應變時一鍵隔離可疑 Pod 的網路連線，保留行程與記憶體狀態供鑑識調查 |
+| Network Topology | 以互動式圖形呈現 Cilium 觀測到的 Pod 連線關係（含 L7），快速識別異常網路流量；具 Critical 弱點的 Pod 會被標示 |
+| Vulnerabilities（Workloads） | 列出執行中工作負載 Image 的已知 CVE（讀取 Trivy Operator 的報告），同時為 Critical 且對外暴露者優先；未掃描不會顯示成乾淨 |
+| Vulnerabilities（Registries） | 在部署前掃描 Harbor、Docker Registry、quay.io 中的 Image，以 Filters 選擇範圍，可排程或手動觸發 |
+| Behavior Discovery | 自動分析叢集內的工作負載行為，協助工程師探索潛在的安全基準線 |
+| Security Events | 即時呈現 Tetragon 捕捉到的 kprobe 安全事件，支援篩選與追蹤 |
+| Admission Events | 記錄 ValidatingAdmissionPolicy 違規事件，透過 Audit Webhook 接收 |
+| Alerts | 設定 Webhook 告警規則，將安全事件推送至 Slack（Discord 可透過其 Slack 相容端點接收） |
+| Syslog | 將安全事件轉送至外部 Syslog 伺服器，支援 UDP / TCP |
+| Event Sources | 即時顯示 Tetragon 各節點與 Hubble Relay 的事件串流健康狀態，避免「看似監控中、實際收不到事件」；同時列出 Trivy Operator 是否持續產出報告 |
+| User 管理 | 提供使用者帳號建立、角色指派與 JWT 驗證管理功能，含首次登入強制改密碼與登入速率限制 |
+| Audit Log | 記錄每一筆透過 K8s Sentinel 執行的操作（誰、何時、對誰、結果），支援篩選與 CSV 匯出 |
+| Event Retention | 設定安全事件的最大保留筆數與 TTL，控制資料庫使用空間 |
+
+## 適用對象
+
+- **DevSecOps 工程師**：需要在 Kubernetes 環境中快速制定與調整 eBPF 安全策略，並持續監控安全事件的人員
+- **Platform 團隊**：負責維運 Kubernetes 叢集、管理 Cilium 網路策略，並確保 Tetragon 安全觀測能力正常運作的工程師
+- **需在 K8s 落地 Tetragon 策略的人員**：希望將 Tetragon TracingPolicy 導入生產環境，但不熟悉 CRD 操作或希望提升策略管理效率的技術人員
+
+## 閱讀指引
+
+建議依照以下順序閱讀本份文件，以最快速地完成 K8s Sentinel 的部署與上手：
+
+```mermaid
+flowchart LR
+    A([開始]) --> B[前置需求]
+    B --> C[安裝部署]
+    C --> D[存取 UI]
+    D --> E[功能操作]
+    E --> F([完成])
+```

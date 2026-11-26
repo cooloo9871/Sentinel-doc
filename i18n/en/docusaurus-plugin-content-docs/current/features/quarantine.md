@@ -20,7 +20,7 @@ Quarantine behaves as follows:
 
 - **All traffic in and out is blocked, except the kubelet's health probes.** Keeping the probes alive is deliberate - without them the Pod would be restarted and replaced by a fresh, uncontained one, destroying the evidence and giving the threat its network back.
 - **The state is the Pod's `sentinel.io/quarantine=true` label**, so it survives a K8s Sentinel restart.
-- Isolation is enforced by one cluster-wide Cilium policy, **`sentinel-quarantine`**, which selects that label. It is created the first time it is needed. Since v0.82.1 it is read-only in the Network Policy list and cannot be edited from there.
+- Isolation is enforced by one cluster-wide Cilium policy, **`sentinel-quarantine`**, which selects that label. It is created the first time it is needed. It is read-only in the Network Policy list and cannot be edited from there.
 - **A Pod that is deleted and recreated comes back without the label**, and so without the quarantine. If the threat may return with the recreated workload, combine quarantine with other policies.
 
 ---

@@ -48,7 +48,7 @@ Protect 只能逐一為每個 Policy 開啟（方法一或方法二），沒有�
 確認後，叢集內所有 TracingPolicy 與 TracingPolicyNamespaced 都會改為 Monitoring。違規行為仍會被記錄，只是不再被阻擋；要恢復阻擋，需要再逐一把 Policy 切回 Protect。這個操作會記錄在 [Audit Log](./audit-log.md)。
 
 - 這個按鈕需要 Tracing Policy 的 Manage 權限（見 [角色與權限](./roles.md)），被限制在部分 Namespace 的帳號不會看到
-- 頁首的標示與 Dashboard 的 **Policies in Protect** 卡片會顯示有幾個 Policy 處於 Protect，例如 `2 / 4 in Protect`
+- Dashboard 的 **Policies in Protect** 卡片會顯示有幾個 Policy 處於 Protect，例如 `2 / 4`
 
 :::note[沒有條件的 Policy 不會進入 Protect]
 selector 沒有任何條件的 Policy（例如「Monitor All Process Executions」範本，回報每一次呼叫）即使設為 Protect 也會維持 Monitoring，因為對每一次呼叫都執行終止，會停止所選 Pod 中的所有行程。

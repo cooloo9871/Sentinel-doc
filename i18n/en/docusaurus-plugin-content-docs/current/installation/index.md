@@ -41,15 +41,17 @@ After installation:
 - **A cluster with no internet access**: Use [Offline Installation](./offline-install.md). Carry the images to a private registry first, then install from the offline bundle.
 :::
 
-## Upgrading to v0.82
+## Upgrading to v0.84
 
-Upgrading from v0.81 needs only the new image: no manifest to re-apply and no data migration. Behaviour changes as follows:
+Upgrading from v0.83 needs only the new image: no manifest to re-apply and no data migration. Behaviour changes as follows:
 
-- **Roles of your own**: existing Admin and Viewer accounts need no change. Roles made here are kept in `roles.json` in the data directory and need [Persistent Storage](./persistent-storage.md) to survive a restart, see [Roles and Permissions](../features/roles.md)
-- **Every API route checks the role for reads as well**: the built-in Viewer can no longer read `GET /api/alerts`, `GET /api/rsyslog` or `GET /api/settings/session-ttl` directly
-- The `sentinel-quarantine` policy that isolates quarantined pods is read-only in the Network Policy list (v0.82.1)
+- **Lock to Image is now called Image Lockdown**: existing `image-lock-*` policies are unaffected
+- **Not active**: a Tracing Policy Tetragon did not load is marked **Not active** in the list. A cluster holds at most 127 Tracing Policies, see [Not active](../features/tracing-policy.md#not-active)
+- **The header no longer shows how many policies are in Protect**: the number is still on the **Policies in Protect** card of the Dashboard
+- **Behavior Discovery is always grouped by namespace**
+- Creating a Tracing Policy no longer waits for Tetragon and answers as soon as the policy is written (v0.84.1)
 
-When upgrading from a release before v0.81, re-apply `deploy/sentinel.yaml`, restart K8s Sentinel, and make sure Tetragon, Cilium (Hubble Relay) and Trivy Operator are set up as the pages of this chapter describe. For the upgrade notes of another release, switch to that version's docs with the version menu at the top of the page.
+When upgrading from a release before v0.83, re-apply `deploy/sentinel.yaml`, restart K8s Sentinel, and make sure Tetragon, Cilium (Hubble Relay) and Trivy Operator are set up as the pages of this chapter describe. For the upgrade notes of another release, switch to that version's docs with the version menu at the top of the page.
 
 ```bash
 kubectl apply -f deploy/sentinel.yaml

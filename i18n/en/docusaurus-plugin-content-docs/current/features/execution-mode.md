@@ -48,7 +48,7 @@ The other direction can be done in one step. While any policy is in Protect, the
 Once confirmed, every TracingPolicy and TracingPolicyNamespaced in the cluster is set to Monitoring. Violations are still recorded, only no longer blocked; to block again, Protect has to be turned back on one policy at a time. The change is recorded in the [Audit Log](./audit-log.md).
 
 - The button needs Manage on Tracing Policy (see [Roles and Permissions](./roles.md)) and is not shown to an account limited to namespaces
-- The badge in the header and the **Policies in Protect** card on the Dashboard show how many policies are in Protect, for example `2 / 4 in Protect`
+- The **Policies in Protect** card on the Dashboard shows how many policies are in Protect, for example `2 / 4`
 
 :::note[A policy with no conditions does not go into Protect]
 A policy whose selector has no conditions (the shape of the "Monitor All Process Executions" template, which reports every call) stays in Monitoring when set to Protect, because killing on every call would stop every process in the pods it selects.

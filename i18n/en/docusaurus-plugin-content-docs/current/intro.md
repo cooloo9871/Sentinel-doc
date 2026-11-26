@@ -11,7 +11,7 @@ slug: /
 
 K8s Sentinel is a Kubernetes security management platform built on **Cilium and Tetragon (eBPF)**, bringing the capabilities a cluster's security posture needs into one graphical console:
 
-- **Runtime security**: monitor and block process executions and file access with TracingPolicy (Monitoring / Protect modes)
+- **Runtime security**: monitor and block process executions and file access with TracingPolicy (Monitoring / Protect modes); Image Lockdown keeps a workload to the executables its image came with
 - **Network security**: manage Pod Ingress / Egress access with Cilium Network Policy, with Network Topology showing actual traffic and the external exposure surface
 - **Admission control**: intercept non-compliant configuration at creation time with ValidatingAdmissionPolicy
 - **Vulnerability scanning**: show the known vulnerabilities (CVEs) in the images of running workloads and of registries, scanned by Trivy; combine with Admission Policy to refuse images over a vulnerability limit

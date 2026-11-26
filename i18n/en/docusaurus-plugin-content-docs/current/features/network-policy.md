@@ -113,7 +113,7 @@ Scope is determined by the manifest kind - `CiliumNetworkPolicy` is namespaced, 
 
 Creating a policy from YAML under a name that already exists is refused instead of overwriting the existing policy.
 
-:::note[The quarantine policy is read-only in the list (v0.82.1+)]
+:::note[The quarantine policy is read-only in the list]
 The `sentinel-quarantine` policy used by [Quarantine](./quarantine.md) appears in the Network Policy list but can only be viewed there, not edited. Otherwise an account that manages Network Policy but not Quarantine could have changed it and put every quarantined pod back on the network while the pages still showed them as quarantined.
 :::
 

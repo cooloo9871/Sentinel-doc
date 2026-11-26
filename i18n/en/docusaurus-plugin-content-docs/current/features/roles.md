@@ -104,8 +104,7 @@ Notifications and System belong to the cluster and stay out of reach of a limite
 
 ---
 
-## Storage and Upgrading
+## Storage
 
-- Upgrading to v0.82.0 needs no data migration and no manifest to be re-applied
 - Roles made here are kept in `roles.json` in the data directory. Like the other settings, they need [Persistent Storage](../installation/persistent-storage.md) to survive a pod restart
 - Creating, editing and deleting roles, and changing an account's role, need Manage on System

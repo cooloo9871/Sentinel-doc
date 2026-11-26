@@ -11,7 +11,7 @@ slug: /
 
 K8s Sentinel 是一套以 **Cilium 與 Tetragon（eBPF）** 為基礎的 Kubernetes 安全管理平台，將叢集安全防護所需的能力整合在同一套圖形化介面中：
 
-- **執行期安全**：以 TracingPolicy 監控與阻擋行程執行、檔案存取（Monitoring / Protect 模式）
+- **執行期安全**：以 TracingPolicy 監控與阻擋行程執行、檔案存取（Monitoring / Protect 模式）；Image Lockdown 可讓工作負載只能執行 Image 本身帶有的執行檔
 - **網路安全**：以 Cilium Network Policy 管理 Pod 的 Ingress / Egress 存取，搭配 Network Topology 呈現實際流量與對外暴露面
 - **資源准入**：以 ValidatingAdmissionPolicy 在資源建立當下即攔截違規設定
 - **弱點掃描**：呈現執行中工作負載與 Registry 內 Image 的已知弱點（CVE），由 Trivy 掃描；可搭配 Admission Policy 拒絕弱點超過上限的 Image
