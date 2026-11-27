@@ -46,7 +46,7 @@ Everything else keeps working. Those processes are then listed by the file the k
 
 Navigate to the **"Behavior Discovery"** page. Observation results are displayed as a card grid, with each card representing a workload.
 
-![Behavior Discovery page](/img/features/discovery/overview.png)
+![Behavior Discovery page](/img/v0.83/features/discovery/overview.png)
 
 **Page elements:**
 

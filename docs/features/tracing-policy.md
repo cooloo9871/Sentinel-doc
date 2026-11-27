@@ -35,7 +35,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 | 欄位 | 說明 |
 |---|---|
-| **Name** | TracingPolicy 的資源名稱。名稱過長時會截斷，滑鼠懸停可見完整名稱。Tetragon 沒有成功載入的 Policy 會在名稱旁標示 **Not active**，見下方 [Not active](#not-active) |
+| **Name** | TracingPolicy 的資源名稱。名稱過長時會截斷，滑鼠懸停可見完整名稱。Tetragon 沒有成功載入的 Policy 會在名稱旁標示 **Not active**，見下方 [Not active](#not-active)。Image Lockdown 的 Policy 可能標示 **New image blocked, set to Monitoring**，見 [新 Image 被擋下](./image-lockdown.md#新-image-被擋下) |
 | **Scope** | 作用範圍：`cluster`（叢集層級）或 `namespaced`（Namespace 層級） |
 | **Mode** | 執行模式下拉選單：可直接在列表中切換 `Monitoring` 或 `Protect`，無需進入編輯頁 |
 | **Namespace** | Namespace-scoped Policy 所屬的 Namespace；Cluster-scoped 顯示「-」 |

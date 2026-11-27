@@ -8,7 +8,7 @@ sidebar_position: 3
 
 ## 功能說明
 
-表單編輯器提供圖形化的視覺介面，讓使用者不需要手寫 YAML 即可設定 TracingPolicy 的三個區段：Pod Selector（目標 Pod 選擇）、Process Rules（行程規則）與 File Rules（檔案規則）。右側的 **Generated YAML** 面板會隨表單變更即時更新，方便確認產生的 TracingPolicy 內容。
+表單編輯器提供圖形化的視覺介面，讓使用者不需要手寫 YAML 即可設定 TracingPolicy 的四個區段：Pod Selector（目標 Pod 選擇）、Containers（容器選擇）、Process Rules（行程規則）與 File Rules（檔案規則）。右側的 **Generated YAML** 面板會隨表單變更即時更新，方便確認產生的 TracingPolicy 內容。
 
 點擊 Tracing Policy 列表頁的「**+ New Policy**」即進入表單編輯器；點擊既有 Policy 的「**Edit**」則以表單模式編輯該 Policy。若偏好直接撰寫 YAML，請改用「**+ New YAML**」（見 [YAML 編輯器](./yaml-editor.md)）。
 
@@ -33,6 +33,21 @@ Pod 的**網路存取規則**不在 TracingPolicy 表單中，由 [Network Polic
 |---|---|
 | **Monitoring** | 僅記錄偵測到的事件，不阻擋任何行為 |
 | **Protect** | 同時記錄事件並主動阻擋違規行為 |
+
+---
+
+## Containers（容器選擇）
+
+Containers 區段位於 Pod Selector 下方，用來指定 Policy 要套用到 Pod 中的哪些容器。
+
+![表單的 Containers 區段](/img/features/policy/containers.png)
+
+- 點擊「**+ Add Container**」並填入容器名稱，可新增多個；「**Remove**」移除
+- 沒有指定任何容器時顯示 `All containers`，Policy 套用到所選 Pod 的**每一個容器**，包含 sidecar、由 webhook 加入的容器與 init container。這些容器全部以同一組規則檢查，因此 Process 白名單必須列出每一個容器會執行的程式
+- 指定主要容器的名稱後，其他容器不受這個 Policy 影響
+- 產生的 YAML 為 `containerSelector`，以容器名稱比對（`name In [...]`）
+
+以其他方式選擇容器的 Policy（例如依 Image repository，或以排除的方式）需要以 [YAML 編輯器](./yaml-editor.md) 撰寫與編輯。
 
 ---
 

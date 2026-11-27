@@ -22,9 +22,13 @@ K8s Sentinel reads the list of executables from a running container on the node,
 1. Open the **Tracing Policy** page and click **+ Image Lockdown** at the top right
 2. In the dialog, choose the **Namespace** and the **Workload** (the select lists that namespace's Deployments, StatefulSets and DaemonSets)
 3. Choose the **Mode**: it starts at `Monitoring`, and watching for a while before switching to `Protect` is recommended
+![Image Lockdown dialog](/img/features/image-lockdown/dialog.png)
+
 4. Click **Lock**. The button reads `Reading the image...` while K8s Sentinel reads the container's executables on the node
 
 When it is done the message is `<workload> locked to its image`, and the Tracing Policy list has a new policy named **`image-lock-<workload name>`** (namespaced, in the workload's namespace).
+
+![An image-lock policy in the list](/img/features/policy/list.png)
 
 | Case | Message |
 |---|---|
@@ -48,6 +52,8 @@ The policy sits in the same list as every other Tracing Policy and is handled th
 
 When the images change (a rollout, for example), K8s Sentinel reads the list again and updates the policy, which keeps its mode and its author. During a rollout both images are running and the executables of both are listed.
 
+The policy is likewise rebuilt when the workload is later given an exec probe, an exec lifecycle hook or a shared process namespace, or is made again under another selector (checked every 15 seconds).
+
 ---
 
 ## When `kubectl exec` Is Not Stopped
@@ -58,7 +64,7 @@ When the workload meets any of these, commands sent in from outside are **left a
 - It uses `shareProcessNamespace`
 - It uses `hostPID`
 
-The kubelet's own commands arrive the same way `kubectl exec` does, so stopping them would fail the probes and hooks. The message after locking says so: `<workload> locked to its image. kubectl exec is not stopped for this workload.`
+The kubelet's own commands arrive the same way `kubectl exec` does, so stopping them would fail the probes and hooks. This is read from the workload's pods as well as its template, so the exec probe of a container a webhook adds counts too. The message after locking says so: `<workload> locked to its image. kubectl exec is not stopped for this workload.`
 
 ---
 
@@ -70,15 +76,31 @@ While the policy is in Protect, nobody can run a command in the container with `
 
 - **Everything the image has may run, by path**: a shell or `curl` that ships in the image can still be run by whoever gets into the application; only what was added afterwards is stopped
 - **The list is paths, not contents**: a listed file overwritten in place still runs; a script handed to an interpreter the image has (`sh x.sh`, `python x.py`) is the interpreter running; so is a new binary run through the image's own loader. A read-only root filesystem closes the first; nothing here closes the other two
-- **Rolling out a new image**: a new image's files can only be read once a container of it runs, which K8s Sentinel checks every 15 seconds. Until then a file that is new in that image is treated as not belonging. Between versions of one image most paths are the same and nothing happens; a move to a different base image has its first seconds stopped. Roll out in Monitoring when the image changes that much
+- **Rolling out a new image**: a new image's files can only be read once a container of it runs, which K8s Sentinel checks every 15 seconds. Until then a file that is new in that image is treated as not belonging. Between versions of one image most paths are the same and nothing happens; but when the new image starts with a file the old one did not have, a lock in Protect keeps the new container from starting at all, see [New Image Blocked](#new-image-blocked) below. Roll out in Monitoring when the image changes that much
 - **A container's first seconds are not covered**: Tetragon puts a new container under a policy a moment after it starts, so a file written and run in that time runs
 - **Executables on volumes are not listed**: only the image's own filesystem is, so a script mounted from a ConfigMap and run directly is stopped
-- **Init containers are left alone**
+- **Init containers that run once and exit are left alone**. A sidecar written as an init container with `restartPolicy: Always` stays running and is locked like any other container, and so is a container a webhook adds to the pod
 - **Deployments, StatefulSets and DaemonSets only**: Jobs, bare pods and workloads of other controllers are not offered
 
 - **Each Image Lockdown is one Tracing Policy**: it counts towards the cluster's limit of 127 Tracing Policies, and one past the limit is marked **Not active** and does nothing, see [Not active](./tracing-policy.md#not-active)
 
 Verified on containerd (runc) and CRI-O (crun and runc) with Tetragon 1.8.0.
+
+---
+
+## New Image Blocked
+
+When a workload moves to an image whose first process is not on the list, a lock in **Protect** stops the new container as it starts. It never runs, so K8s Sentinel can never read its files, and the workload **stays down until someone acts**.
+
+The Tracing Policy list then marks that policy with a red **New image blocked, set to Monitoring**, with the image on hover. To let it through:
+
+1. Set the policy's Mode to `Monitoring`
+2. Let the new container start and K8s Sentinel read the new image's list (within 15 seconds)
+3. Set the Mode back to `Protect`
+
+:::note[K8s Sentinel does not take a lock out of Protect on its own]
+Doing so would let anyone allowed to create a pod with the workload's labels switch a lock off, so lowering protection is left to the administrator.
+:::
 
 ---
 

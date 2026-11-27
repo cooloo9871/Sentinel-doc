@@ -21,7 +21,7 @@ K8s Sentinel 的每條 TracingPolicy 皆支援兩種執行模式，可依照部�
 
 **最快速**的切換方式：在 Tracing Policy 列表頁的 **Mode** 欄位，直接點擊下拉選單選擇 `Monitoring` 或 `Protect`。
 
-![Tracing Policy 列表（Mode 欄位下拉）](/img/features/policy/list.png)
+![Tracing Policy 列表（Mode 欄位下拉）](/img/v0.83/features/policy/list.png)
 
 Tetragon Agent 會在數秒內套用新模式，無需進入編輯頁面或重啟任何服務。
 

@@ -19,7 +19,7 @@ TracingPolicy 是 Cilium/Tetragon 定義的 Custom Resource Definition（CRD）�
 
 進入「**Tracing Policy**」頁面後，所有已建立的 Policy 會以表格形式列出。
 
-![TracingPolicy 列表頁](/img/features/policy/list.png)
+![TracingPolicy 列表頁](/img/v0.83/features/policy/list.png)
 
 **頂部工具列：**
 

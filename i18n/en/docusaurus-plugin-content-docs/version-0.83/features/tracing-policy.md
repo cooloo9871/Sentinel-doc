@@ -19,7 +19,7 @@ TracingPolicy is a Custom Resource Definition (CRD) defined by Cilium/Tetragon t
 
 Navigate to the **"TracingPolicy"** page to see all created Policies listed in a table.
 
-![TracingPolicy list page](/img/features/policy/list.png)
+![TracingPolicy list page](/img/v0.83/features/policy/list.png)
 
 **Toolbar:**
 

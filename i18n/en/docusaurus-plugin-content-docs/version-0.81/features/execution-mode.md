@@ -21,7 +21,7 @@ Each TracingPolicy in K8s Sentinel supports two execution modes that can be swit
 
 The quickest way to switch modes: on the **Tracing Policy list page**, click the **Mode** column dropdown directly and select `Monitoring` or `Protect`.
 
-![Tracing Policy list - Mode column dropdown](/img/features/policy/list.png)
+![Tracing Policy list - Mode column dropdown](/img/v0.83/features/policy/list.png)
 
 The Tetragon Agent applies the new mode within seconds - no need to open the edit page or restart any service.
 

@@ -8,7 +8,7 @@ sidebar_position: 3
 
 ## Overview
 
-The form editor provides a graphical interface for configuring the three sections of a TracingPolicy - Pod Selector, Process Rules, and File Rules - without writing YAML by hand. The **Generated YAML** panel on the right updates live as you edit the form, so you can verify the resulting TracingPolicy at any time.
+The form editor provides a graphical interface for configuring the four sections of a TracingPolicy - Pod Selector, Containers, Process Rules, and File Rules - without writing YAML by hand. The **Generated YAML** panel on the right updates live as you edit the form, so you can verify the resulting TracingPolicy at any time.
 
 Click "**+ New Policy**" on the Tracing Policy list page to open the form editor; click "**Edit**" on an existing policy to edit it in form mode. If you prefer writing YAML directly, use "**+ New YAML**" instead (see [YAML Editor](./yaml-editor.md)).
 
@@ -33,6 +33,21 @@ Pod **network access rules** are not part of the TracingPolicy form - they are m
 |---|---|
 | **Monitoring** | Records detected events only; nothing is blocked |
 | **Protect** | Records events and actively blocks violations |
+
+---
+
+## Containers
+
+The Containers section sits below the Pod Selector and names the containers of the selected pods the policy applies to.
+
+![Containers section of the form](/img/features/policy/containers.png)
+
+- Click **+ Add Container** and enter a container name; add as many as needed, and **Remove** takes one out
+- With none named the section reads `All containers` and the policy applies to **every container** of the pods it selects: sidecars, containers a webhook adds, and init containers too. All of them are checked against the same rules, so a process whitelist then has to list what each of them runs
+- Naming the main container leaves the others alone
+- The generated YAML is a `containerSelector` matching on the container name (`name In [...]`)
+
+A policy that selects containers some other way (by image repository, or by exclusion) is written and edited in the [YAML Editor](./yaml-editor.md).
 
 ---
 

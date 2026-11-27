@@ -50,6 +50,9 @@ K8s Sentinel 提供三種安裝方式，可依據使用場景與需求選擇最�
 - **頁首不再顯示處於 Protect 的 Policy 數量**：這個數字仍可在 Dashboard 的 **Policies in Protect** 卡片查看
 - **Behavior Discovery 固定依 Namespace 分組**
 - 建立 Tracing Policy 不再等待 Tetragon 載入，寫入後立即回應（v0.84.1）
+- **既有的 Image Lockdown Policy 會在升級後自動重建一次**（15 秒內），Mode 與建立者都會保留。重建後會納入以 `restartPolicy: Always` 撰寫的 sidecar（v0.84.2、v0.84.5）
+- **表單可以指定容器**：以表單建立的 Tracing Policy 可以指定套用的容器，未指定時與先前相同，套用到所有容器（v0.84.5），見 [表單編輯器](../features/form-editor.md)
+- **Liveness probe**（v0.84.4）：K8s Sentinel 新增 `/healthz`，`deploy/sentinel.yaml` 加上以它為準的 liveness probe，readiness probe 也改用同一個路徑。`/healthz` 只表示行程有回應，連不上叢集不會讓 K8s Sentinel 被重啟。要取得新的 probe 需要重新套用 `deploy/sentinel.yaml`（請先閱讀下方的注意事項）；只更新 Image 的安裝會保留原本的 probe，照常運作
 
 從 v0.83 以前的版本升級時，請重新套用 `deploy/sentinel.yaml` 再重啟 K8s Sentinel，並確認 Tetragon、Cilium（Hubble Relay）與 Trivy Operator 都已依本章各頁面的方式設定。其他版本的升級說明，請以頁面上方的版本選單切換到該版本的文件。
 

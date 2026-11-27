@@ -46,7 +46,7 @@ kubectl -n kube-system delete rolebinding,role sentinel-tetragon-exec
 
 進入「**Behavior Discovery**」頁面後，觀察結果會以卡片網格形式呈現，每張卡片代表一個工作負載。
 
-![Behavior Discovery 頁面](/img/features/discovery/overview.png)
+![Behavior Discovery 頁面](/img/v0.83/features/discovery/overview.png)
 
 **頁面元素說明：**
 

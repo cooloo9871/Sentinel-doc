@@ -50,6 +50,9 @@ Upgrading from v0.83 needs only the new image: no manifest to re-apply and no da
 - **The header no longer shows how many policies are in Protect**: the number is still on the **Policies in Protect** card of the Dashboard
 - **Behavior Discovery is always grouped by namespace**
 - Creating a Tracing Policy no longer waits for Tetragon and answers as soon as the policy is written (v0.84.1)
+- **Each existing Image Lockdown policy is rebuilt once after the upgrade** (within 15 seconds), keeping its mode and author. The rebuild brings in sidecars written with `restartPolicy: Always` (v0.84.2, v0.84.5)
+- **Containers in the policy form**: a Tracing Policy made with the form can name the containers it applies to; with none named it applies to every container, as before (v0.84.5), see [Form Editor](../features/form-editor.md)
+- **Liveness probe** (v0.84.4): K8s Sentinel answers on `/healthz`, and `deploy/sentinel.yaml` has a liveness probe on it; the readiness probe uses the same path. `/healthz` says only that the process answers, so a cluster that cannot be reached does not restart K8s Sentinel. Getting the new probes takes re-applying `deploy/sentinel.yaml` (read the caution below first); an install that only changes the image keeps its old probes and works as before
 
 When upgrading from a release before v0.83, re-apply `deploy/sentinel.yaml`, restart K8s Sentinel, and make sure Tetragon, Cilium (Hubble Relay) and Trivy Operator are set up as the pages of this chapter describe. For the upgrade notes of another release, switch to that version's docs with the version menu at the top of the page.
 

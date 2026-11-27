@@ -35,7 +35,7 @@ Navigate to the **"TracingPolicy"** page to see all created Policies listed in a
 
 | Column | Description |
 |---|---|
-| **Name** | The resource name of the TracingPolicy. A long name is cut short, with the full name on hover. A policy Tetragon did not load is marked **Not active** beside its name, see [Not active](#not-active) below |
+| **Name** | The resource name of the TracingPolicy. A long name is cut short, with the full name on hover. A policy Tetragon did not load is marked **Not active** beside its name, see [Not active](#not-active) below. An Image Lockdown policy may be marked **New image blocked, set to Monitoring**, see [New Image Blocked](./image-lockdown.md#new-image-blocked) |
 | **Scope** | Scope: `cluster` (cluster-level) or `namespaced` (Namespace-level) |
 | **Mode** | Execution mode dropdown - click to switch between `Monitoring` and `Protect` directly in the list |
 | **Namespace** | The Namespace a Namespace-scoped Policy belongs to; blank for Cluster-scoped |

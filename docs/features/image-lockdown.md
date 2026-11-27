@@ -22,9 +22,13 @@ K8s Sentinel 會在節點上從執行中的容器讀取執行檔清單，工作�
 1. 進入「**Tracing Policy**」頁面，點擊右上角的「**+ Image Lockdown**」
 2. 在對話框中選擇 **Namespace** 與 **Workload**（清單列出該 Namespace 的 Deployment、StatefulSet 與 DaemonSet）
 3. 選擇 **Mode**：預設為 `Monitoring`，建議先觀察一段時間再切換為 `Protect`
+![Image Lockdown 對話框](/img/features/image-lockdown/dialog.png)
+
 4. 點擊「**Lock**」。按鈕會顯示 `Reading the image...`，K8s Sentinel 此時正在節點上讀取容器的執行檔清單
 
 完成後會顯示 `<工作負載> locked to its image`，Tracing Policy 列表多出一個名為 **`image-lock-<工作負載名稱>`** 的 Policy（Namespace 層級，位於該工作負載的 Namespace）。
+
+![列表中的 image-lock Policy](/img/features/policy/list.png)
 
 | 情況 | 訊息 |
 |---|---|
@@ -48,6 +52,8 @@ K8s Sentinel 會在節點上從執行中的容器讀取執行檔清單，工作�
 
 Image 更換時（例如 rollout），K8s Sentinel 會重新讀取清單並更新 Policy，Policy 原本的 Mode 與建立者都會保留。Rollout 期間新舊 Image 同時在執行，兩者的執行檔都會列入。
 
+工作負載之後才加上 exec probe、exec lifecycle hook 或共用 process namespace，或以不同的 selector 重新建立時，Policy 同樣會自動重建（每 15 秒檢查一次）。
+
 ---
 
 ## `kubectl exec` 不會被擋下的情況
@@ -58,7 +64,7 @@ Image 更換時（例如 rollout），K8s Sentinel 會重新讀取清單並更�
 - 使用 `shareProcessNamespace`
 - 使用 `hostPID`
 
-原因是 kubelet 自己的指令與 `kubectl exec` 以同樣的方式進入容器，擋下後 probe 與 hook 會跟著失敗。這種情況下，鎖定完成的訊息會註明：`<工作負載> locked to its image. kubectl exec is not stopped for this workload.`
+原因是 kubelet 自己的指令與 `kubectl exec` 以同樣的方式進入容器，擋下後 probe 與 hook 會跟著失敗。判斷時除了工作負載的 template，也會讀取實際的 Pod，因此由 webhook 注入的容器所帶的 exec probe 也算在內。這種情況下，鎖定完成的訊息會註明：`<工作負載> locked to its image. kubectl exec is not stopped for this workload.`
 
 ---
 
@@ -70,15 +76,31 @@ Policy 處於 Protect 時，任何人都不能以 `kubectl exec` 在容器中執
 
 - **Image 帶有的檔案都可以執行，判斷依據是路徑**：Image 中若有 shell 或 `curl`，取得應用程式控制權的人仍然可以執行它們；被擋下的只有之後才加入的檔案
 - **清單比對的是路徑，不是內容**：清單上的檔案被原地覆寫後仍然可以執行；交給 Image 內直譯器執行的腳本（`sh x.sh`、`python x.py`）視為直譯器在執行；透過 Image 自己的 loader 執行的新執行檔也是如此。把根檔案系統設為唯讀可以防止第一種情況，後兩種無法由這個功能防止
-- **Rollout 換成新 Image 時**：新 Image 的檔案要等到它的容器開始執行才能讀取，K8s Sentinel 每 15 秒檢查一次。在那之前，新 Image 才有的檔案會被視為不屬於 Image。同一個 Image 的不同版本之間路徑大多相同，不會有影響；換成不同的 base image 時，最初幾秒的執行會被擋下。Image 變動這麼大時，請先切換為 Monitoring 再 rollout
+- **Rollout 換成新 Image 時**：新 Image 的檔案要等到它的容器開始執行才能讀取，K8s Sentinel 每 15 秒檢查一次。在那之前，新 Image 才有的檔案會被視為不屬於 Image。同一個 Image 的不同版本之間路徑大多相同，不會有影響；但新 Image 的第一個行程若是舊 Image 沒有的檔案，處於 Protect 的鎖定會讓新容器完全無法啟動，見下方 [新 Image 被擋下](#新-image-被擋下)。Image 變動較大時，請先切換為 Monitoring 再 rollout
 - **容器啟動後的最初幾秒不受保護**：Tetragon 在容器啟動後片刻才把 Policy 套用上去，這段時間內寫入並執行的檔案可以執行
 - **Volume 上的執行檔不在清單上**：只列出 Image 自己的檔案系統，因此從 ConfigMap 掛載並直接執行的腳本會被擋下
-- **Init container 不在範圍內**
+- **執行一次就結束的 init container 不在範圍內**。以 init container 加上 `restartPolicy: Always` 撰寫的 sidecar 會持續執行，與其他容器一樣受到鎖定；由 webhook 加入 Pod 的容器也是
 - **只支援 Deployment、StatefulSet 與 DaemonSet**：Job、獨立的 Pod 與其他 controller 管理的工作負載不會出現在選單中
 
 - **每一個 Image Lockdown 都算一個 Tracing Policy**：計入叢集 127 個 Tracing Policy 的上限，超過時會標示為 **Not active** 而不生效，見 [Not active](./tracing-policy.md#not-active)
 
 此功能已在 containerd（runc）與 CRI-O（crun 與 runc）搭配 Tetragon 1.8.0 驗證。
+
+---
+
+## 新 Image 被擋下
+
+工作負載換成新的 Image，而新 Image 的第一個行程不在清單上時，處於 **Protect** 的鎖定會在新容器啟動的當下就把它擋下。容器從未執行，K8s Sentinel 也就無法讀取它的檔案，工作負載會**一直無法啟動，直到有人處理**。
+
+這時 Tracing Policy 列表會在該 Policy 標示紅色的 **New image blocked, set to Monitoring**，滑鼠懸停可以看到是哪一個 Image。處理方式：
+
+1. 把該 Policy 的 Mode 切換為 `Monitoring`
+2. 等新容器啟動，K8s Sentinel 讀取新 Image 的清單（15 秒內）
+3. 把 Mode 切回 `Protect`
+
+:::note[K8s Sentinel 不會自行解除 Protect]
+若自動把鎖定切出 Protect，任何有權限以該工作負載的 Label 建立 Pod 的人都能藉此關閉鎖定，因此降低保護的動作保留給管理者。
+:::
 
 ---
 
