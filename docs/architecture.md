@@ -10,19 +10,7 @@ sidebar_position: 2
 
 下圖說明 K8s Sentinel 各元件之間的部署關係與通訊路徑：
 
-```mermaid
-graph TD
-    A["Browser (React SPA)"] -->|"HTTP/REST + SSE"| B["Go Backend (port 8080)"]
-    B -->|"Kubernetes API"| C["K8s Cluster"]
-    B -->|"gRPC GetEvents（每節點）"| D["Cilium Tetragon (eBPF)"]
-    B -->|"gRPC GetFlows"| H["Hubble Relay"]
-    C --> D
-    D --> E["TracingPolicy CRD"]
-    B -->|"讀取 VulnerabilityReport"| C
-    T["Trivy Operator（選用）"] -->|"掃描工作負載 Image，寫出 VulnerabilityReport"| C
-    B -->|"建立掃描 Job（sentinel-system）"| R["Trivy 掃描 Pod（Registry 掃描）"]
-    B -->|"/data/sentinel/"| F["Persistent Storage"]
-```
+![K8s Sentinel 系統架構圖](/img/architecture/overview.svg)
 
 ## 元件說明
 

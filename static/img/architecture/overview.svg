@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="'Noto Sans TC','Microsoft JhengHei','PingFang TC','Segoe UI',Helvetica,Arial,sans-serif">
+<defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker><marker id="as" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#475569"/></marker></defs>
+<rect width="1200" height="800" rx="16" fill="#ffffff"/>
+<rect x="470" y="28" width="260" height="56" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/><text x="600" y="63" font-size="18" font-weight="600" fill="#0f172a" text-anchor="middle">使用者瀏覽器</text>
+<rect x="860" y="28" width="145" height="56" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/><text x="932.5" y="62" font-size="15" font-weight="500" fill="#0f172a" text-anchor="middle">Webhook 告警</text>
+<rect x="1020" y="28" width="145" height="56" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/><text x="1092.5" y="62" font-size="15" font-weight="500" fill="#0f172a" text-anchor="middle">Syslog 伺服器</text>
+<rect x="30" y="128" width="1140" height="644" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="52" y="156" font-size="15" font-weight="600" fill="#64748b" text-anchor="start">Kubernetes 叢集</text>
+<rect x="360" y="176" width="480" height="96" rx="14" fill="#0f172a"/>
+<text x="600" y="218" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">K8s Sentinel</text><text x="600" y="248" font-size="15" font-weight="400" fill="#cbd5e1" text-anchor="middle">Web UI + API（單一 Pod，sentinel-system）</text>
+<path d="M600 84 L600 174" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)" marker-start="url(#as)"/><text x="612" y="134" font-size="14" font-weight="500" fill="#475569" text-anchor="start">HTTPS</text>
+<path d="M840 200 L1012 200 L1012 86" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)"/>
+<text x="1024" y="122" font-size="14" font-weight="500" fill="#475569" text-anchor="start">事件通知</text>
+<rect x="60" y="188" width="220" height="72" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><text x="170" y="220" font-size="16" font-weight="600" fill="#0f172a" text-anchor="middle">永久儲存</text><text x="170" y="244" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">/data/sentinel</text>
+<path d="M360 224 L282 224" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)"/>
+<path d="M420 272 L420 316 L180 316 L180 368" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)" marker-start="url(#as)"/>
+<rect x="128" y="330" width="104" height="24" rx="12" fill="#ffffff" stroke="#cbd5e1"/><text x="180" y="347" font-size="13" font-weight="500" fill="#475569" text-anchor="middle">gRPC 事件</text>
+<rect x="50" y="370" width="260" height="236" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<path d="M50 384 a14 14 0 0 1 14 -14 h232 a14 14 0 0 1 14 14 v26 h-260 z" fill="#2563eb"/><text x="180" y="397" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">執行期安全</text>
+<text x="180" y="446" font-size="21" font-weight="700" fill="#0f172a" text-anchor="middle">Tetragon</text><text x="180" y="470" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">eBPF，每個節點</text>
+<rect x="70" y="490" width="220" height="28" rx="8" fill="#ffffff" stroke="#2563eb" stroke-opacity="0.45"/><text x="180" y="509" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Tracing Policy</text>
+<rect x="70" y="526" width="220" height="28" rx="8" fill="#ffffff" stroke="#2563eb" stroke-opacity="0.45"/><text x="180" y="545" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Image Lockdown</text>
+<rect x="70" y="562" width="220" height="28" rx="8" fill="#ffffff" stroke="#2563eb" stroke-opacity="0.45"/><text x="180" y="581" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Security Events</text>
+<path d="M180 606 L180 676" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#ae)"/><text x="180" y="0" font-size="1" font-weight="400" fill="#0f172a" text-anchor="middle"></text>
+<rect x="68" y="628" width="224" height="24" rx="12" fill="#f8fafc"/><text x="180" y="645" font-size="13" font-weight="500" fill="#2563eb" text-anchor="middle">監控與阻擋行程、檔案</text>
+<path d="M540 272 L540 316 L460 316 L460 368" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)" marker-start="url(#as)"/>
+<rect x="408" y="330" width="104" height="24" rx="12" fill="#ffffff" stroke="#cbd5e1"/><text x="460" y="347" font-size="13" font-weight="500" fill="#475569" text-anchor="middle">gRPC 流量</text>
+<rect x="330" y="370" width="260" height="236" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+<path d="M330 384 a14 14 0 0 1 14 -14 h232 a14 14 0 0 1 14 14 v26 h-260 z" fill="#0d9488"/><text x="460" y="397" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">網路安全</text>
+<text x="460" y="446" font-size="21" font-weight="700" fill="#0f172a" text-anchor="middle">Cilium + Hubble</text><text x="460" y="470" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">CNI 與流量觀測</text>
+<rect x="350" y="490" width="220" height="28" rx="8" fill="#ffffff" stroke="#0d9488" stroke-opacity="0.45"/><text x="460" y="509" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Network Policy</text>
+<rect x="350" y="526" width="220" height="28" rx="8" fill="#ffffff" stroke="#0d9488" stroke-opacity="0.45"/><text x="460" y="545" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Network Topology</text>
+<rect x="350" y="562" width="220" height="28" rx="8" fill="#ffffff" stroke="#0d9488" stroke-opacity="0.45"/><text x="460" y="581" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Quarantine</text>
+<path d="M460 606 L460 676" stroke="#0d9488" stroke-width="2" fill="none" marker-end="url(#ae)"/><text x="460" y="0" font-size="1" font-weight="400" fill="#0f172a" text-anchor="middle"></text>
+<rect x="348" y="628" width="224" height="24" rx="12" fill="#f8fafc"/><text x="460" y="645" font-size="13" font-weight="500" fill="#0d9488" text-anchor="middle">管控與觀測網路流量</text>
+<path d="M660 272 L660 316 L740 316 L740 368" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)" marker-start="url(#as)"/>
+<rect x="688" y="330" width="104" height="24" rx="12" fill="#ffffff" stroke="#cbd5e1"/><text x="740" y="347" font-size="13" font-weight="500" fill="#475569" text-anchor="middle">K8s API</text>
+<rect x="610" y="370" width="260" height="236" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+<path d="M610 384 a14 14 0 0 1 14 -14 h232 a14 14 0 0 1 14 14 v26 h-260 z" fill="#7c3aed"/><text x="740" y="397" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">資源准入</text>
+<text x="740" y="446" font-size="21" font-weight="700" fill="#0f172a" text-anchor="middle">Kubernetes API</text><text x="740" y="470" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">准入控制與稽核</text>
+<rect x="630" y="490" width="220" height="28" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-opacity="0.45"/><text x="740" y="509" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Admission Policy</text>
+<rect x="630" y="526" width="220" height="28" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-opacity="0.45"/><text x="740" y="545" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Admission Events</text>
+<rect x="630" y="562" width="220" height="28" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-opacity="0.45"/><text x="740" y="581" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Audit Webhook</text>
+<path d="M740 606 L740 676" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#ae)"/><text x="740" y="0" font-size="1" font-weight="400" fill="#0f172a" text-anchor="middle"></text>
+<rect x="628" y="628" width="224" height="24" rx="12" fill="#f8fafc"/><text x="740" y="645" font-size="13" font-weight="500" fill="#7c3aed" text-anchor="middle">建立資源時檢查</text>
+<path d="M780 272 L780 316 L1020 316 L1020 368" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#ae)" marker-start="url(#as)"/>
+<rect x="968" y="330" width="104" height="24" rx="12" fill="#ffffff" stroke="#cbd5e1"/><text x="1020" y="347" font-size="13" font-weight="500" fill="#475569" text-anchor="middle">弱點報告</text>
+<rect x="890" y="370" width="260" height="236" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+<path d="M890 384 a14 14 0 0 1 14 -14 h232 a14 14 0 0 1 14 14 v26 h-260 z" fill="#d97706"/><text x="1020" y="397" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">弱點掃描</text>
+<text x="1020" y="446" font-size="21" font-weight="700" fill="#0f172a" text-anchor="middle">Trivy</text><text x="1020" y="470" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">Operator 與掃描 Job</text>
+<rect x="910" y="490" width="220" height="28" rx="8" fill="#ffffff" stroke="#d97706" stroke-opacity="0.45"/><text x="1020" y="509" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Workloads</text>
+<rect x="910" y="526" width="220" height="28" rx="8" fill="#ffffff" stroke="#d97706" stroke-opacity="0.45"/><text x="1020" y="545" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Registries</text>
+<rect x="910" y="562" width="220" height="28" rx="8" fill="#ffffff" stroke="#d97706" stroke-opacity="0.45"/><text x="1020" y="581" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">弱點准入規則</text>
+<path d="M1020 606 L1020 676" stroke="#d97706" stroke-width="2" fill="none" marker-end="url(#ae)"/><text x="1020" y="0" font-size="1" font-weight="400" fill="#0f172a" text-anchor="middle"></text>
+<rect x="908" y="628" width="224" height="24" rx="12" fill="#f8fafc"/><text x="1020" y="645" font-size="13" font-weight="500" fill="#d97706" text-anchor="middle">掃描 Image 的 CVE</text>
+<rect x="50" y="680" width="1100" height="64" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><text x="600" y="719" font-size="18" font-weight="600" fill="#0f172a" text-anchor="middle">工作負載（各節點上的 Pod 與 Image）</text>
+</svg>

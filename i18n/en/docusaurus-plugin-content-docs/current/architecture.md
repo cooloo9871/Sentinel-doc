@@ -10,19 +10,7 @@ sidebar_position: 2
 
 The diagram below illustrates the deployment relationships and communication paths between K8s Sentinel components:
 
-```mermaid
-graph TD
-    A["Browser (React SPA)"] -->|"HTTP/REST + SSE"| B["Go Backend (port 8080)"]
-    B -->|"Kubernetes API"| C["K8s Cluster"]
-    B -->|"gRPC GetEvents (per node)"| D["Cilium Tetragon (eBPF)"]
-    B -->|"gRPC GetFlows"| H["Hubble Relay"]
-    C --> D
-    D --> E["TracingPolicy CRD"]
-    B -->|"read VulnerabilityReport"| C
-    T["Trivy Operator (optional)"] -->|"scans workload images, writes VulnerabilityReport"| C
-    B -->|"create scan Jobs (sentinel-system)"| R["Trivy scan Pods (registry scanning)"]
-    B -->|"/data/sentinel/"| F["Persistent Storage"]
-```
+![K8s Sentinel architecture](/img/architecture/overview-en.svg)
 
 ## Component Overview
 
